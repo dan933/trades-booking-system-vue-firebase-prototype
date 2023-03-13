@@ -1,21 +1,40 @@
 <script setup>
-  import navBar from './components/shared/navBar.vue';
+  import NavBar from './components/shared/NavBar.vue';
 </script>
 
 <template>
-  <div class="app-container">
-    <navBar></navBar>
-    <main style="max-width:100vw; height: 100%; overflow: auto;">
-      
-    </main>
-  </div>
+  <v-app>
+    <div class="app-container">
+      <NavBar></NavBar>
+      <div class="router-container">
+        <router-view></router-view>
+      </div>
+    </div>
+
+  </v-app>
 </template>
 
 <style lang="scss">
+
+.router-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 70px;
+  column-gap: 10px;
+  overflow: auto;
+}
+
+.v-application__wrap{
+  min-height: 0vh !important;
+}
+
 .app-container{
   display: flex;
   flex-flow: column;
-  height: 100vh;
+  min-height: 95vh;
+  overflow: auto;
 }
 
 </style>

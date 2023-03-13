@@ -1,29 +1,61 @@
 <template>
-    <nav
-    class="nav"
-    >
-        <v-toolbar
-        class="test"
-        title="Ange's Prototype"
-        color="primary"
-        >
-        </v-toolbar>
-        <v-icon icon="mdi-home" />
+    <nav>
+        <v-app-bar :elevation="2" class="nav">
+            <v-btn
+            @click.stop="drawer = !drawer"
+            >
+                <v-icon icon="mdi:mdi-menu"></v-icon>
+            </v-btn>
+            <h3>Booking prototype</h3>
+        </v-app-bar>
     </nav>
+    <v-navigation-drawer
+        v-model="drawer"
+        temporary
+      >
+        <v-divider></v-divider>
+        <v-list density="compact" nav>
+            <v-list-item
+                @click="() => {navigate('/')}"
+                prepend-icon="mdi:mdi-view-dashboard" title="Home" value="home"></v-list-item>
+            <v-list-item
+                @click="() => {navigate('/about')}"
+                prepend-icon="mdi:mdi-forum" title="About" value="about"></v-list-item>
+            <v-list-item
+                @click="() => {navigate('/services')}"
+                prepend-icon="mdi:mdi-wrench" title="Services" value="services"></v-list-item>
+            <v-list-item prepend-icon="mdi:mdi-calendar-blank-outline" title="Book Online" value="Book "></v-list-item>
+            <v-list-item
+            @click="() => {navigate('/contact')}"
+            prepend-icon="mdi:mdi-account-box " title="Contact Us" value="contact"></v-list-item>
+        </v-list>
+    </v-navigation-drawer>
 </template>
 
 <script lang="js">
 
 
 export default {
-    name: "navBar",
+    name: "NavBar",
+    data () {
+      return {
+        drawer: null,
+      }
+    },
+    methods: {
+        navigate(route) {
+            this.drawer = !this.drawer;
+            this.$router.push(route);
+        }
+    }
 }
 
 </script>
 
 <style lang="scss">
-.nav{
-    width: 100vw;
-}
 
+.v-toolbar__content{
+    display: flex;
+    column-gap: 5px;
+}
 </style>

@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "vue": "^3.2.45",
+    "vue-router": "^4.1.6",
     "vuetify": "^3.1.8"
   },
   "devDependencies": {
+    "@mdi/font": "^7.1.96",
+    "@mdi/js": "^7.1.96",
     "@vitejs/plugin-vue": "^4.0.0",
     "sass": "^1.59.2",
     "vite": "^4.1.0"
