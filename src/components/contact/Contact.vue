@@ -62,6 +62,10 @@
         flex-direction: column;
         max-width: 400px;
         justify-content: center;
+        align-items: center;
         margin-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        text-align: center;
     }
 </style>
