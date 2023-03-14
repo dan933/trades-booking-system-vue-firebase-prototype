@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "ajhomeservices"
+  },
+  "targets": {
+    "ajhomeservices-a31dd": {
+      "hosting": {
+        "ajhomeservices": [
+          "ajhomeservices"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
