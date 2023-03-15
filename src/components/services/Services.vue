@@ -1,5 +1,5 @@
 <template>
-    <div class="text-h3">
+    <div class="text-h3 mt-3">
         Services
     </div>
     <br>
@@ -34,11 +34,13 @@
     class="ma-3 pa-3 d-flex flex-column justify-center align-center">
         <v-card-text>
             <div class="pa-3 text-body text-center">
-                todo replace content with home description
-            </div>
-            <div class="pa-3 text-body text-center">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, sit, temporibus voluptate recusandae culpa maiores fugiat perferendis ipsam ex eaque facilis modi sint voluptatibus vero, impedit odio exercitationem harum perspiciatis.
-            </div>  
+            </div>
+            <ul v-for="service in servicesBulletPoints">
+                <li>
+                    {{ service }}
+                </li>
+            </ul>
         </v-card-text>
     </v-card>
 
@@ -155,6 +157,14 @@ export default {
             carouselImages: [
                 "https://images.unsplash.com/photo-1622480198867-016a77991bd1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80",
                 "https://images.unsplash.com/photo-1526392587392-d1627b6c134a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80"
+            ],
+            servicesBulletPoints: [
+                "Regularly check and clean gutters to prevent water damage",
+                "Replace air filters in HVAC system every 3 months",
+                "Test smoke detectors and carbon monoxide detectors monthly",
+                "Inspect and repair roof as needed to prevent leaks",
+                "Seal cracks in foundation and walls to prevent water penetration",
+                "Keep trees and bushes trimmed away from your home to prevent damage from falling branches",
             ]
         }
     }

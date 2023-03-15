@@ -1,5 +1,5 @@
 <template>
-    <div class="text-h3">About Us</div>
+    <div class="text-h3 mt-3">About Us</div>
     <br>
     <div class="carousel-container">
         <v-carousel
@@ -32,14 +32,13 @@
     class="ma-3 pa-3 d-flex flex-column justify-center align-center">
         <v-card-text>
             <div class="pa-3 text-body text-center">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae voluptatem in eos, rerum dolorum vero dolore laborum dicta, eligendi totam ab expedita ex eveniet eum animi odio. Maxime, cum sint.
+                We are a team of experienced professionals dedicated to helping you create the home of your dreams. Our home renovation services are designed to meet your needs and style preferences, no matter how unique they may be.
+                We understand that home renovations can be stressful, which is why we make the process as smooth as possible. From obtaining necessary permits to ensuring that the work meets all safety standards, we handle all of the details so that you don't have to.
+                Our team is committed to providing high-quality workmanship and exceptional customer service. We'll work with you from start to finish to ensure that your vision becomes a reality.
+                Contact us today to learn more about our home renovation services and start transforming your space into the home of your dreams.
             </div>  
         </v-card-text>
     </v-card>
-
-
-
-
 </template>
 
 <script>

@@ -21,7 +21,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 70px;
+  padding-top: 60px;
   column-gap: 10px;
   overflow: auto;
 }

@@ -1,52 +1,47 @@
 <template>
-    <div class="text-h3">
-        company logo here
-    </div>
-    <br>
-    <div class="carousel-container">
-        <v-carousel
-            cycle
-            height="200"
-            hide-delimiter-background
-            show-arrows="hover"
-            color="#D3D3D3"
-        >
-            <v-carousel-item
-            v-for="(slide, i) in carouselImages"
-            :key="i"
-            >
-            <v-sheet
-                height="100%"
-            >
-                <div class="d-flex fill-height justify-center align-center">
-                    <img
-                        class="carousel-image"
-                        :src="slide" alt=""
+    <v-parallax
+    src="https://images.unsplash.com/photo-1481277542470-605612bd2d61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1406&q=80">
+        <div
+        class="parallax-container">
+            <div class="carousel-container">
+                <v-carousel
+                    cycle
+                    height="200"
+                    hide-delimiter-background
+                    show-arrows="hover"
+                    color="#D3D3D3"
+                >
+                    <v-carousel-item
+                    v-for="(slide, i) in carouselImages"
+                    :key="i"
                     >
-                </div>
-            </v-sheet>
-            </v-carousel-item>
-        </v-carousel>
-    </div>
-    <br>
-    <v-card
-    elevation="3"
-    class="ma-3 pa-3 d-flex flex-column justify-center align-center">
-        <v-card-text>
-            <div class="pa-3 text-body text-center">
-                todo replace content with home description
+                        <div class="d-flex fill-height justify-center align-center">
+                            <img
+                                class="carousel-image"
+                                :src="slide" alt=""
+                            >
+                        </div>
+                    </v-carousel-item>
+                </v-carousel>
             </div>
-            <div class="pa-3 text-body text-center">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, sit, temporibus voluptate recusandae culpa maiores fugiat perferendis ipsam ex eaque facilis modi sint voluptatibus vero, impedit odio exercitationem harum perspiciatis.
-            </div>  
-        </v-card-text>
+            <v-card
+            elevation="3"
+            class="card"
+            >
+                <v-card-text>
+                    <div class="pa-3 text-body text-center">
+                        As your home ages, it may no longer meet your needs or style preferences. That's where we come in. Our home renovation services can help you create the home of your dreams.
 
-        <ul>
-            <li>Quality</li>
-            <li>Experience</li>
-            <li>Ect</li>
-        </ul>
-    </v-card>
+Whether you want to update your kitchen, add a home office, or renovate your entire home, our team of experienced professionals can help. We'll work with you from start to finish, ensuring that your vision becomes a reality.
+
+We understand that home renovations can be stressful, which is why we make the process as smooth as possible. Our team will handle all of the details, from obtaining necessary permits to ensuring that the work meets all safety standards.
+
+Don't settle for a home that doesn't meet your needs. Contact us today to learn more about our home renovation services and start transforming your space into the home of your dreams.
+                    </div>  
+                </v-card-text>
+            </v-card>
+        </div>
+</v-parallax>
 
 </template>
 
@@ -56,8 +51,8 @@ export default {
     data() {
         return {
             carouselImages: [
-                "https://images.unsplash.com/photo-1622480198867-016a77991bd1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80",
-                "https://images.unsplash.com/photo-1526392587392-d1627b6c134a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80"
+                "https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80",
+                "https://images.unsplash.com/photo-1586280268958-9483002d016a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80"
             ]
         }
     }
@@ -67,9 +62,7 @@ export default {
 
 <style lang="scss" scoped>
 
-
 .carousel-image{
-    width: 100%;
     border-radius: 5px;
 }
 
@@ -79,6 +72,30 @@ export default {
     max-width: 600px;
     
 }
+.card{
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 600px;
+    width: 90%;
+}
 
+.carousel-image{
+    width: 100%;
+    border-radius: 5px;
+}
 
+.parallax-container{
+    display: flex;
+    min-width:100vw;
+    overflow: auto;
+    min-height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: auto;
+}
 </style>

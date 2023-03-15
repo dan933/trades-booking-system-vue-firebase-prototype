@@ -6,7 +6,9 @@
             >
                 <v-icon icon="mdi:mdi-menu"></v-icon>
             </v-btn>
-            <h3>Booking prototype</h3>
+            <h3
+            class="header-text"
+            >Booking prototype</h3>
         </v-app-bar>
     </nav>
     <v-navigation-drawer
