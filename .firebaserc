@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "ajhomeservices"
+    "default": "ajhomeservices-a31dd"
   },
   "targets": {
     "ajhomeservices-a31dd": {
@@ -11,5 +11,9 @@
       }
     }
   },
-  "etags": {}
+  "etags": {
+    "ajhomeservices-a31dd": {
+      "extensionInstances": {}
+    }
+  }
 }

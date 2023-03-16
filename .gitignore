@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Firestore
+
+firestore-send-email.env
+*.env
+*firestore-send-email.env
+extensions/firestore-send-email.env
+
+funcations/.env
+
