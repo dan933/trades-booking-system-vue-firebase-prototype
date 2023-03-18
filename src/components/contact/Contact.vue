@@ -1,23 +1,81 @@
 <template>
     <div class="contact-container">
-
-        <div class="text-h3">Contact</div>
-
-        <div class="text-body">
-            We would love to hear from you please leave us a message and we will get back to you as soon as possible
+      <v-card
+      elevation="3"
+      class="ma-3 pa-5"
+      v-if="!formSent && !formError"
+      >
+        <div class="text-body text-left mb-3">
+            We would love to hear from you please leave us a message and we will get back to you as soon as possible.
         </div>
+        <v-form 
+        
+        ref="form"
+        class="contact-form"
+        v-model="valid"
+        @submit.prevent="submitForm"
+        >
+          <v-text-field v-model="name" :rules="nameRules" label="Name"></v-text-field>
+          <v-text-field v-model="email" :rules="emailRules" label="Email"></v-text-field>
+          <v-textarea v-model="message" :rules="messageRules" label="Message"></v-textarea>
+          <v-btn
+          :disabled="formSending"
+          type="submit"
+          color="primary"
+          class="form-button"
+          >
 
+            <span 
+              v-if="!formSending"
+            >Submit</span>
+
+            <v-progress-circular
+              v-else
+              indeterminate
+            ></v-progress-circular>
+          </v-btn>
+        </v-form>
+      </v-card>
+      <v-card
+        elevation="3"
+        class="ma-10 pa-5"
+        v-if="formSent"
+      >
+        <div class="text-body text-left mb-3">
+           Thank you your enquiry has been sent and we will get back to you soon.
+        </div>
+        <v-btn
+        type="submit"
+        color="primary"
+        @click="resetForm"
+        class="form-button"
+        >
+          <span>Send Another Enquiry</span>
+        </v-btn>
+      </v-card>
+      <v-card
+        elevation="3"
+        class="ma-10 pa-5"
+        v-if="formError"
+      >
+        <div class="text-body text-left mb-3 text-red">
+           Sorry an error occured please try again.
+        </div>
+        <v-btn
+        type="submit"
+        color="primary"
+        @click="resetForm"
+        class="form-button"
+        >
+          <span>Send Another Enquiry</span>
+        </v-btn>
+      </v-card>
     </div>
-
-    <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
-      <v-text-field v-model="name" :rules="nameRules" label="Name"></v-text-field>
-      <v-text-field v-model="email" :rules="emailRules" label="Email"></v-text-field>
-      <v-textarea v-model="message" :rules="messageRules" label="Message"></v-textarea>
-      <v-btn type="submit" color="primary">Submit</v-btn>
-    </v-form>
 </template>
   
   <script>
+  import { SendEmail } from '../../services/api/submitContactFormService.js';
+
   export default {
     name:'Contact',
     data() {
@@ -26,6 +84,9 @@
         email: '',
         message: '',
         valid: false,
+        formSending: false,
+        formSent: false,
+        formError:false,
         nameRules: [
           (v) => !!v || 'Name is required',
           (v) => v.length <= 50 || 'Name must be less than 50 characters'
@@ -41,22 +102,62 @@
       }
     },
     methods: {
-      submitForm() {
-        if (this.$refs.form.validate()) {
+      resetForm() {
+
+        this.message = '',
+        this.formSending = false;
+        this.formSent = false;
+        this.formError = false;
+      },
+      async submitForm() {
+        console.log("this.valid", this.valid);
+
+        if (this.valid) {
+
+          this.formSending = true;
+
+          console.log("valid")
+
           const formData = {
             name: this.name,
             email: this.email,
             message: this.message,
           }
-          // Here you can use axios or any other library to make a post request to your backend
-          console.log(formData)
+          
+          const response = await SendEmail(formData);
+
+          if (response?.success) {
+            this.formSending = false;
+            this.formSent = true;
+
+          } else {
+
+              this.formSending = false;
+              this.formError = true;
+          }
+
+
+
         }
       }
     }
   }
   </script>
 <style lang="scss">
+    .form-button{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .contact-form{
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+    }
     .contact-container{
+        margin-top: 10px;
         display: flex;
         row-gap: 20px;
         flex-direction: column;

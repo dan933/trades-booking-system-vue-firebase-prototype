@@ -1,12 +1,9 @@
 <template>
-    <div class="text-h3 mt-3">
-        Services
-    </div>
-    <br>
+
     <div class="carousel-container">
         <v-carousel
             cycle
-            height="200"
+            height="100%"
             hide-delimiter-background
             show-arrows="hover"
             color="#D3D3D3"
@@ -15,156 +12,40 @@
             v-for="(slide, i) in carouselImages"
             :key="i"
             >
-            <v-sheet
-                height="100%"
-            >
                 <div class="d-flex fill-height justify-center align-center">
                     <img
                         class="carousel-image"
                         :src="slide" alt=""
                     >
                 </div>
-            </v-sheet>
             </v-carousel-item>
         </v-carousel>
     </div>
-    <br>
-    <v-card
-    elevation="3"
-    class="ma-3 pa-3 d-flex flex-column justify-center align-center">
-        <v-card-text>
-            <div class="pa-3 text-body text-center">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, sit, temporibus voluptate recusandae culpa maiores fugiat perferendis ipsam ex eaque facilis modi sint voluptatibus vero, impedit odio exercitationem harum perspiciatis.
-            </div>
-            <ul v-for="service in servicesBulletPoints">
-                <li>
-                    {{ service }}
-                </li>
-            </ul>
-        </v-card-text>
-    </v-card>
-
-    <div class="services-gallery">
+    <section class="home-section">
         <v-card
-        class="mx-auto"
-        max-width="400"
+        elevation="3"
+        class="card"
         >
-        <v-img
-        class="align-end text-white"
-        height="200"
-        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        cover
-        >
-        <v-card-title>Top 10 Australian beaches</v-card-title>
-        </v-img>
-
-        <v-card-subtitle class="pt-4">
-        Number 10
-        </v-card-subtitle>
-
-        <v-card-text>
-        <div>Whitehaven Beach</div>
-
-        <div>Whitsunday Island, Whitsunday Islands</div>
-        </v-card-text>
-
-        <v-card-actions>
-        <v-btn color="orange">
-        Share
-        </v-btn>
-
-        <v-btn color="orange">
-        Explore
-        </v-btn>
-        </v-card-actions>
+            <v-card-text>
+                <div class="pa-3 text-body text-center">
+                    As your home ages, it may no longer meet your needs or style preferences. That's where we come in. Our home renovation services can help you create the home of your dreams.
+                    Whether you want to update your kitchen, add a home office, or renovate your entire home, our team of experienced professionals can help. We'll work with you from start to finish, ensuring that your vision becomes a reality.
+                    We understand that home renovations can be stressful, which is why we make the process as smooth as possible. Our team will handle all of the details, from obtaining necessary permits to ensuring that the work meets all safety standards.
+                    Don't settle for a home that doesn't meet your needs. Contact us today to learn more about our home renovation services and start transforming your space into the home of your dreams.
+                </div>  
+            </v-card-text>
         </v-card>
-
-        <v-card
-        class="mx-auto"
-        max-width="400"
-        >
-        <v-img
-        class="align-end text-white"
-        height="200"
-        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        cover
-        >
-        <v-card-title>Top 10 Australian beaches</v-card-title>
-        </v-img>
-
-        <v-card-subtitle class="pt-4">
-        Number 10
-        </v-card-subtitle>
-
-        <v-card-text>
-        <div>Whitehaven Beach</div>
-
-        <div>Whitsunday Island, Whitsunday Islands</div>
-        </v-card-text>
-
-        <v-card-actions>
-        <v-btn color="orange">
-        Share
-        </v-btn>
-
-        <v-btn color="orange">
-        Explore
-        </v-btn>
-        </v-card-actions>
-        </v-card>
-
-        <v-card
-        class="mx-auto"
-        max-width="400"
-        >
-        <v-img
-        class="align-end text-white"
-        height="200"
-        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        cover
-        >
-        <v-card-title>Top 10 Australian beaches</v-card-title>
-        </v-img>
-
-        <v-card-subtitle class="pt-4">
-        Number 10
-        </v-card-subtitle>
-
-        <v-card-text>
-        <div>Whitehaven Beach</div>
-
-        <div>Whitsunday Island, Whitsunday Islands</div>
-        </v-card-text>
-
-        <v-card-actions>
-        <v-btn color="orange">
-        Share
-        </v-btn>
-
-        <v-btn color="orange">
-        Explore
-        </v-btn>
-        </v-card-actions>
-        </v-card>
-    </div>
+    </section>
 </template>
 
 <script>
 export default {
-    name: "Services",
+    name: "Home",
     data() {
         return {
             carouselImages: [
-                "https://images.unsplash.com/photo-1622480198867-016a77991bd1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80",
-                "https://images.unsplash.com/photo-1526392587392-d1627b6c134a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80"
-            ],
-            servicesBulletPoints: [
-                "Regularly check and clean gutters to prevent water damage",
-                "Replace air filters in HVAC system every 3 months",
-                "Test smoke detectors and carbon monoxide detectors monthly",
-                "Inspect and repair roof as needed to prevent leaks",
-                "Seal cracks in foundation and walls to prevent water penetration",
-                "Keep trees and bushes trimmed away from your home to prevent damage from falling branches",
+                "https://source.unsplash.com/TRCJ-87Yoh0/700x200",               
+                "https://source.unsplash.com/bIhpiQA009k/700x200"
             ]
         }
     }
@@ -174,12 +55,11 @@ export default {
 
 <style lang="scss" scoped>
 
-.services-gallery{
+.home-section{
     display: flex;
-    flex-wrap: wrap;
-    column-gap: 3px;
-    row-gap: 15px;
-    margin: 5px;
+    justify-content: center;
+    max-width: 700px;
+    width: 90%;
 }
 
 .carousel-image{
@@ -189,10 +69,20 @@ export default {
 
 .carousel-container{
     display: flex;
-    width: 90vw;
-    max-width: 600px;
-    
+    max-width: 90vw;
+    width: 700px;
+}
+.card{
+    margin-top: 5px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-
+.carousel-image{
+    width: 100%;
+    border-radius: 5px;
+}
 </style>

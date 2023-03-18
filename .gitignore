@@ -23,8 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
-# Firestore
+#environment variables
+*.env
+.env
 
+# Firestore
 firestore-send-email.env
 *.env
 *firestore-send-email.env

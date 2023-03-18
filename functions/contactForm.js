@@ -1,8 +1,4 @@
-
 const nodemailer = require('nodemailer');
-//todo add allowed origins
-//todo add security
-const cors = require('cors')({ origin: true, allowedHeaders: "POST" });
 
 let transporter = nodemailer.createTransport({
 
@@ -13,44 +9,56 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-
 exports.handler = async (req, res) => {
 
-    // Check for POST request
-    if (req.method !== "POST") {
-        res.status(400).send('Please send a POST request');
-        return;
-    }
+    // Set CORS headers for preflight requests
+    // Allows GETs from any origin with the Content-Type header
+    // and caches preflight response for 3600s
+
+    res.set('Access-Control-Allow-Origin', '*');
+
+    if (req.method === 'OPTIONS') {
+        // Send response to OPTIONS requests
+        res.set('Access-Control-Allow-Methods', 'GET, POST');
+        res.set('Access-Control-Allow-Headers', 'Content-Type');
+        res.set('Access-Control-Max-Age', '3600');
+        res.status(204).send('');
+    } else {
+        
+        // Check for POST request
+        if (req.method !== "POST") {
+            res.status(400).send('Please send a POST request');
+            return;
+        }
+        
+        //get the email and message from the request
+        const { email, message, name } = req.body;
     
-    //get the email and message from the request
-    const { email, message, name } = req.body;
-
-    if (!email) {
-        res.status(400).send('Email is Empty')
-        return;
-    }
-    if (!name) {
-        res.status(400).send('name is Empty')
-        return;
-    }
-    if (!message) {
-        res.status(400).send('Message is Empty')
-        return;
-    }
-
-    //email check
-    let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-    let IsValidEmail = emailRegex.test(email);
-
-    //if the email is not valid return error
-    if (!IsValidEmail) {
-        res.status(400).send('Invalid Email Address')
-        return;
-    }
-
-    cors(req, res, async () => {
-
+        if (!email) {
+            res.status(400).send('Email is Empty')
+            return;
+        }
+        if (!name) {
+            res.status(400).send('name is Empty')
+            return;
+        }
+        if (!message) {
+            res.status(400).send('Message is Empty')
+            return;
+        }
+    
+        //email check
+        let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    
+        let IsValidEmail = emailRegex.test(email);
+    
+        //if the email is not valid return error
+        if (!IsValidEmail) {
+            res.status(400).send('Invalid Email Address')
+            return;
+        }
+    
+    
         const mailOptions = {
             from: 'Ange <ange@ajmhomeservice.com>',
             to: email,
@@ -65,17 +73,17 @@ exports.handler = async (req, res) => {
                 <p>Director of things</p>
             `
         };
-
+    
         const mailOptionsForAJM = {
             from: 'Ange <ange@ajmhomeservice.com>',
             to: `${process.env.EMAIL}`,
-            subject:`AJM Home Services Message`,
+            subject: `AJM Home Services Message`,
             html: `<p>You have a new message from ${name}</p>
                     <br/>
                     <p>message: ${message}</p>
                     `
         }
-
+    
         await transporter.sendMail(mailOptions)
             .catch((error) => {
                 return res.status(500)
@@ -95,11 +103,15 @@ exports.handler = async (req, res) => {
                         error: error
                     }));
             });
-        
-        return res.send(
-            JSON.stringify({
-                message: "messages sent to user and website owner",
-                success:true
-        }))
-    });
+                
+        return res.status(200).json(
+        {
+            message: "messages sent to user and website owner",
+            success: true
+        });
+
+
+    }
+
+
 };

@@ -4,9 +4,6 @@ import App from './App.vue'
 import Vuetify from './plugins/vuetify.js'
 import Router from './router/router.js'
 
-
-
-
 createApp(App)
 .use(Router)
 .use(Vuetify)
