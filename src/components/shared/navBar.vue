@@ -2,14 +2,29 @@
     <nav>
         <v-app-bar :elevation="2" class="nav">
             <v-btn
+            v-if="!mdAndUp"
             @click.stop="drawer = !drawer"
             >
                 <v-icon icon="mdi:mdi-menu"></v-icon>
             </v-btn>
             <h3
-            class="header-text"
-            >Booking prototype</h3>
+                class="header-text"
+                :class="{'ma-5': mdAndUp}"
+            >
+                Booking prototype
+            </h3>
+            <div
+            v-if="mdAndUp"
+            >
+                <v-btn @click="() => {navigate('/')}" variant="flat">Overview</v-btn>
+                <v-btn @click="() => {navigate('/about')}" variant="flat">About</v-btn>
+                <v-btn @click="() => {navigate('/services')}" variant="flat">Services</v-btn>
+                <v-btn @click="() => {navigate('/contact')}" variant="flat">Contact</v-btn>
+            </div>
+
         </v-app-bar>
+
+        
     </nav>
     <v-navigation-drawer
         v-model="drawer"
@@ -36,9 +51,16 @@
 
 <script lang="js">
 
+import { useDisplay } from 'vuetify'
 
 export default {
     name: "NavBar",
+    setup () {
+      // Destructure only the keys we want to use
+        const { mdAndUp } = useDisplay()
+
+      return { mdAndUp }
+    },
     data () {
       return {
         drawer: null,
