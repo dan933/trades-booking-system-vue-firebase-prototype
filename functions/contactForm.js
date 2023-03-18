@@ -23,6 +23,7 @@ exports.handler = async (req, res) => {
         res.set('Access-Control-Allow-Headers', 'Content-Type');
         res.set('Access-Control-Max-Age', '3600');
         res.status(204).send('');
+
     } else {
         
         // Check for POST request
@@ -79,8 +80,10 @@ exports.handler = async (req, res) => {
             to: `${process.env.EMAIL}`,
             subject: `AJM Home Services Message`,
             html: `<p>You have a new message from ${name}</p>
-                    <br/>
-                    <p>message: ${message}</p>
+                    <p>
+                    email: ${email}
+                    message: ${message}
+                    </p>
                     `
         }
     
