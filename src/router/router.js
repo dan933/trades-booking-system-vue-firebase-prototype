@@ -23,7 +23,11 @@ const routes = [
     },
     {
         path: '/book',
-        component: () => import(/* webpackChunkName: "group-book" */'../components/book/Book.vue')
+        component: () => import('../components/book/Book.vue')
+    },
+    {
+        path: '/auth',
+        component: () => import('../components/book/Auth.vue')
     }
 ]
 

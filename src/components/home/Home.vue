@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { auth } from "../../services/firebase/firebaseConfig.js";
 export default {
     name: "Home",
     data() {
@@ -47,6 +48,8 @@ export default {
                 "https://source.unsplash.com/bIhpiQA009k/700x200"
             ]
         }
+    },
+    methods: {
     }
 }
 
