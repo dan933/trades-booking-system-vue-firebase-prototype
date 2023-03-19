@@ -68,7 +68,12 @@ export default {
     },
     methods: {
         navigate(route) {
-            this.drawer = !this.drawer;
+
+            if (!this.mdAndUp) {
+
+                this.drawer = !this.drawer;
+            }
+            
             this.$router.push(route);
         }
     }
