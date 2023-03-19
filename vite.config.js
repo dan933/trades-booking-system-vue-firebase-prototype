@@ -14,4 +14,16 @@ export default defineConfig({
       },
     }
   },
+  build: {
+    rollupOptions: {
+      // https://rollupjs.org/guide/en/#outputmanualchunks
+      output: {
+        manualChunks: {
+          'group-book': [
+            './src/book/Book'
+          ],
+        },
+      },
+    },
+  },
 })

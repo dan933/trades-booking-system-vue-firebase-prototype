@@ -20,6 +20,10 @@ const routes = [
     {
         path: '/contact',
         component: Contact
+    },
+    {
+        path: '/book',
+        component: () => import(/* webpackChunkName: "group-book" */'../components/book/Book.vue')
     }
 ]
 

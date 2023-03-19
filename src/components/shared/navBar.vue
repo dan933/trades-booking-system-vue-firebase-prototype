@@ -19,6 +19,7 @@
                 <v-btn @click="() => {navigate('/')}" variant="flat">Overview</v-btn>
                 <v-btn @click="() => {navigate('/about')}" variant="flat">About</v-btn>
                 <v-btn @click="() => {navigate('/services')}" variant="flat">Services</v-btn>
+                <v-btn @click="() => {navigate('/book')}" variant="flat">Book Online</v-btn>
                 <v-btn @click="() => {navigate('/contact')}" variant="flat">Contact</v-btn>
             </div>
 
@@ -41,7 +42,11 @@
             <v-list-item
                 @click="() => {navigate('/services')}"
                 prepend-icon="mdi:mdi-wrench" title="Services" value="services"></v-list-item>
-            <v-list-item prepend-icon="mdi:mdi-calendar-blank-outline" title="Book Online" value="Book "></v-list-item>
+            <v-list-item
+            @click="() => {navigate('/book')}" 
+            prepend-icon="mdi:mdi-calendar-blank-outline"
+            title="Book Online"
+            value="Book"></v-list-item>
             <v-list-item
             @click="() => {navigate('/contact')}"
             prepend-icon="mdi:mdi-account-box " title="Contact Us" value="contact"></v-list-item>
