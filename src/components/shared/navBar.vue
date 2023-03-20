@@ -57,6 +57,8 @@
 <script lang="js">
 
 import { useDisplay } from 'vuetify'
+import { getAuth, signOut } from "firebase/auth";
+import { auth } from '../../services/firebase/firebaseConfig.js'
 
 export default {
     name: "NavBar",
@@ -81,6 +83,8 @@ export default {
             
             this.$router.push(route);
         }
+    },
+    mounted() {
     }
 }
 

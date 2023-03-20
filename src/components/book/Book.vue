@@ -32,6 +32,12 @@ Promise.resolve({
                     "https://source.unsplash.com/AQl-J19ocWE/700x200"
                 ]
             }
+        },
+        methods: {
+        },
+        mounted() {
+        },
+        computed: {     
         }
     }
     
