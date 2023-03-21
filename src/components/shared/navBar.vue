@@ -7,12 +7,12 @@
             >
                 <v-icon icon="mdi:mdi-menu"></v-icon>
             </v-btn>
-            <h3
+            <h4
                 class="header-text"
                 :class="{'ma-5': mdAndUp}"
             >
                 Booking prototype
-            </h3>
+            </h4>
             <div
             v-if="mdAndUp"
             >
@@ -21,6 +21,34 @@
                 <v-btn @click="() => {navigate('/services')}" variant="flat">Services</v-btn>
                 <v-btn @click="() => {navigate('/book')}" variant="flat">Book Online</v-btn>
                 <v-btn @click="() => {navigate('/contact')}" variant="flat">Contact</v-btn>
+            </div>
+            <div v-if="!!currentUser"
+            class="account-container"
+            >
+
+            <v-btn
+                color="primary"
+            >
+                <v-icon>mdi:mdi-account</v-icon>
+                <v-menu
+                    transition="slide-x-transition"
+                    activator="parent"
+                >
+                    <v-list>
+                        <v-list-item
+                        :title="currentUser.email"
+                        >
+                        </v-list-item>
+
+                        <v-list-item 
+                        prepend-icon="mdi:mdi-logout" 
+                        title="Sign Out" value="logoutButton"
+                        @click="logout"
+                        >
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
+            </v-btn>
             </div>
 
         </v-app-bar>
@@ -58,7 +86,6 @@
 
 import { useDisplay } from 'vuetify'
 import { getAuth, signOut } from "firebase/auth";
-import { auth } from '../../services/firebase/firebaseConfig.js'
 
 export default {
     name: "NavBar",
@@ -70,10 +97,17 @@ export default {
     },
     data () {
       return {
-        drawer: null,
+            drawer: null,
+            currentUser:null
       }
     },
     methods: {
+        logout() {
+            let auth = getAuth();
+            signOut(auth).then(() => {
+                this.$router.push('/');
+            }).catch((err) => {console.log(err)})
+        },
         navigate(route) {
 
             if (!this.mdAndUp) {
@@ -84,13 +118,23 @@ export default {
             this.$router.push(route);
         }
     },
+    computed: {
+    },
     mounted() {
+        getAuth()
+            .onAuthStateChanged((auth) => {
+                this.currentUser = auth;
+        })
     }
 }
 
 </script>
 
 <style lang="scss">
+.account-container{
+    margin-left: auto;
+    margin-right: 15px;
+}
 
 .v-toolbar__content{
     display: flex;

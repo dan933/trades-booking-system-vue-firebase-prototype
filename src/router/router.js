@@ -34,7 +34,7 @@ const routes = [
     {
         name:'Auth',
         path: '/auth',
-        component: () => import('../components/book/Auth.vue')
+        component: () => import('../components/book/auth/Auth.vue')
     }
 ]
 

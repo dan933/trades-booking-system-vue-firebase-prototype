@@ -8,7 +8,7 @@ Promise.resolve({
 					<h1 class="card-title">Login in to book</h1>
 					<div class="card-container">
 						<v-btn @click="signIn" class="google-button">
-							<img class="google-logo" src="../../../public/icons/google-logo.png" alt="" srcset=""/>
+							<img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset=""/>
 							<span>Sign In With Google</span>
 						</v-btn>
 					
@@ -19,8 +19,10 @@ Promise.resolve({
     </template>
     
     <script>
+    //todo google/facebook component
+    //todo regular signing
     import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-    import router from "../../router/router";
+    import router from "../../../router/router.js";
 
     export default {
         name: "Auth",
@@ -29,19 +31,21 @@ Promise.resolve({
                 provider: null
             }
         },
+        computed:{
+        },
         mounted() {
         },
         methods: {
             signIn() {
 
-							this.provider = new GoogleAuthProvider();
+                this.provider = new GoogleAuthProvider();
 
-							const auth = getAuth();
-							signInWithPopup(auth, this.provider)
-							.then(() => {
-								
-								router.push('/book')
-            	}).catch((error) => {
+                const auth = getAuth();
+                signInWithPopup(auth, this.provider)
+                .then(() => {
+                    
+                    router.push('/book')
+                }).catch((error) => {
                 
                 // // Handle Errors here.
                 // const errorCode = error.code;
@@ -50,7 +54,7 @@ Promise.resolve({
                 // const email = error.customData.email;
                 // // The AuthCredential type that was used.
                 // const credential = GoogleAuthProvider.credentialFromError(error);
-            });
+                });
             }
         }
     }
