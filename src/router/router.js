@@ -1,61 +1,60 @@
-import Home from '../components/home/Home.vue'
-import About from '../components/about/About.vue'
-import Services from '../components/services/services.vue'
-import Contact from '../components/contact/contact.vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import Home from "../components/home/Home.vue";
+import About from "../components/about/About.vue";
+import Services from "../components/services/services.vue";
+import Contact from "../components/contact/contact.vue";
+import { createRouter, createWebHistory } from "vue-router";
 import { getAuth } from "firebase/auth";
 
 const routes = [
-    {
-        name:'Home',
-        path: '/',
-        component: Home
-    },
-    {
-        name:'About',
-        path: '/about',
-        component: About
-    },
-    {
-        name:'Services',
-        path: '/services',
-        component: Services
-    },
-    {
-        name:'Contact',
-        path: '/contact',
-        component: Contact
-    },
-    {
-        name:'Book',
-        path: '/book',
-        component: () => import('../components/book/Book.vue')
-    },
-    {
-        name:'Auth',
-        path: '/auth',
-        component: () => import('../components/book/auth/Auth.vue')
-    }
-]
+  {
+    name: "Home",
+    path: "/",
+    component: Home,
+  },
+  {
+    name: "About",
+    path: "/about",
+    component: About,
+  },
+  {
+    name: "Services",
+    path: "/services",
+    component: Services,
+  },
+  {
+    name: "Contact",
+    path: "/contact",
+    component: Contact,
+  },
+  {
+    name: "Book",
+    path: "/book",
+    component: () => import("../components/book/Book.vue"),
+  },
+  {
+    name: "Auth",
+    path: "/auth",
+    component: () => import("../components/book/auth/Auth.vue"),
+  },
+];
 
 const router = createRouter({
-    // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-    history: createWebHistory(),
-    routes, // short for `routes: routes`
+  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
+  history: createWebHistory(),
+  routes, // short for `routes: routes`
 });
+setTimeout(() => {
+  router.beforeEach(async (to, from, next) => {
+    const auth = getAuth().currentUser;
 
-router.beforeEach(async (to, from, next) => {
+    let IsLoggedIn = !!auth;
 
-    const auth = getAuth();
-    const user = auth.currentUser;
+    console.log(IsLoggedIn);
 
-    let IsLoggedIn = !!user;
-
-    console.log(IsLoggedIn)
-    
-    if (to.name === 'Auth' && IsLoggedIn) next({ name: 'Book' })
-    if (to.name === 'Book' && !IsLoggedIn) next({ name: 'Auth' })
+    if (to.name === "Auth" && IsLoggedIn) next({ name: "Book" });
+    if (to.name === "Book" && !IsLoggedIn) next({ name: "Auth" });
     else next();
-});
+  });
+}, 400);
 
 export default router;
