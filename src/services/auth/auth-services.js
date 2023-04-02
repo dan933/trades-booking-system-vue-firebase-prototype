@@ -6,9 +6,27 @@ import {
   linkWithPopup,
   fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 
 var authService = {
+  registerUser: async (registerUserObject) => {
+    try {
+      const email = registerUserObject.email;
+      const password = registerUserObject.password;
+
+      const auth = getAuth();
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      return response;
+    } catch (error) {
+      return { errorCode: error.code, errorMessage: error.message };
+    }
+  },
   signIn: async (providerName) => {
     //Creates auth instance
     const auth = getAuth();

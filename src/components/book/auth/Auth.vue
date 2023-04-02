@@ -86,16 +86,7 @@ export default {
 
 .auth-section {
   display: block;
-  // justify-content: center;
-  // align-items: center;
-  // flex-direction: column;
-  // row-gap: 10px;
-  // max-width: 500px;
-  // max-height: 400px;
-  // width: 90%;
-  // height: 100%;
-  // padding: 20px;
-  // overflow: auto;
+  overflow: auto;
 }
 
 .provider-container {

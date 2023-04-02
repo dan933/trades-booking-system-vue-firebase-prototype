@@ -35,6 +35,6 @@ import NavBar from "./components/shared/NavBar.vue";
 .parallax-container {
   overflow: auto;
   width: 100vw;
-  height: 100vh;
+  max-height: 100vh;
 }
 </style>
