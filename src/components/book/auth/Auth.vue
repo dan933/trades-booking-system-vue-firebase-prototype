@@ -1,50 +1,59 @@
 const Auth = () => Promise.resolve({
 <template>
-  <div class="auth-section">
-    <v-card elevation="5">
-      <h1 class="card-title">Login in to book</h1>
-      <div class="card-container">
-        <v-btn @click="() => signIn('Google')" class="google-button">
+  <section class="container-center">
+    <v-card elevation="5" class="auth-section">
+      <h1 class="card-title">{{ title }}</h1>
+
+      <EmailRegister @switchForm="switchForm" v-if="!IsLogin"></EmailRegister>
+
+      <EmailLogin @switchForm="switchForm" v-if="IsLogin"></EmailLogin>
+      <v-container class="provider-container">
+        <v-btn @click="() => signIn('Google')" class="provider-button">
           <img
             class="google-logo"
             src="../../../../public/icons/google-logo.png"
             alt=""
             srcset=""
           />
-          <span>Sign In With Google</span>
+          <span>Continue With Google</span>
         </v-btn>
-        <v-btn @click="() => signIn('Facebook')" class="google-button">
-          <img
-            class="facebook-logo"
-            src="../../../../public/icons/facebook-login.png"
-            alt=""
-            srcset=""
-          />
+        <v-btn @click="() => signIn('Facebook')" class="provider-button">
+          <v-icon icon="mdi:mdi-facebook" size="50px" color="blue"></v-icon>
+          <span> Continue With Facebook </span>
         </v-btn>
-      </div>
+      </v-container>
     </v-card>
-  </div>
-  <LinkCredentialsDialog ref="linkCredentialsDialogRef"></LinkCredentialsDialog>
+    <LinkCredentialsDialog
+      ref="linkCredentialsDialogRef"
+    ></LinkCredentialsDialog>
+  </section>
 </template>
 
 <script>
-//todo google/facebook component
-//todo regular signing
-import router from "../../../router/router.js";
 import { authService } from "../../../services/auth/auth-services.js";
 import LinkCredentialsDialog from "./LinkCredentialsDialog.vue";
+import EmailRegister from "./emailRegister.vue";
+import EmailLogin from "./emailLogin.vue";
 
 export default {
   name: "Auth",
-  components: { LinkCredentialsDialog },
+  components: { LinkCredentialsDialog, EmailRegister, EmailLogin },
   data() {
     return {
+      IsLogin: true,
       provider: null,
     };
   },
-  computed: {},
+  computed: {
+    title() {
+      return this.IsLogin ? "Login" : "Register";
+    },
+  },
   mounted() {},
   methods: {
+    switchForm() {
+      this.IsLogin = !this.IsLogin;
+    },
     async signIn(providerName) {
       const signInResponse = await authService.signIn(providerName);
 
@@ -66,12 +75,50 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.google-button {
-  margin: 10px;
-  height: 60px;
+.container-center {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.auth-section {
+  display: block;
+  // justify-content: center;
+  // align-items: center;
+  // flex-direction: column;
+  // row-gap: 10px;
+  // max-width: 500px;
+  // max-height: 400px;
+  // width: 90%;
+  // height: 100%;
+  // padding: 20px;
+  // overflow: auto;
+}
+
+.provider-container {
+  padding: 10px;
+  background-color: lightgrey;
+  height: 200px;
+  width: 90%;
+  min-width: 200px;
+  display: flex;
+  row-gap: 30px;
+  border-radius: 5px;
   flex-direction: column;
-  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.provider-button {
+  font-size: 14px;
+  padding: 30px;
+  width: 332px;
+  display: flex;
+  flex-direction: row;
 }
 .google-logo {
   margin-right: 10px;
@@ -79,36 +126,17 @@ export default {
   max-height: 10vh;
 }
 
-.facebook-logo {
-  height: 50px;
-}
-
-.auth-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 700px;
-  width: 90%;
-  height: 100%;
-}
-
 .card-title {
+  margin-top: 10px;
   text-align: center;
-  margin: 10px;
 }
 
-.card-container {
-  overflow: auto;
-  height: 500px;
-  width: 500px;
-  max-height: 50vh;
-  max-width: 90vw;
-  margin-top: 5px;
-  padding: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+@media screen and (max-width: 400px) {
+  span {
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>
 
