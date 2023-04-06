@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="mx-auto" max-width="500">
+    <v-card class="mx-auto" min-width="150">
       <v-card-text>
         <v-form @submit.prevent="login">
           <v-text-field
@@ -15,8 +15,14 @@
             required
           ></v-text-field>
           <div class="mb-4"><a href="#">Forgot Password</a> <br /></div>
-          <v-btn type="submit" color="primary" class="mr-4"> Login </v-btn>
-          <v-btn @click="switchForm">Register Account</v-btn>
+          <v-card-actions class="card-button-container">
+            <v-btn size="small" type="submit" color="primary" class="mr-4 mb-4">
+              Login
+            </v-btn>
+            <v-btn size="small" class="mb-4" @click="switchForm"
+              >Register Account</v-btn
+            >
+          </v-card-actions>
         </v-form>
       </v-card-text>
     </v-card>
@@ -44,3 +50,12 @@ export default {
   },
 };
 </script>
+<style type="scss">
+.card-button-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+</style>

@@ -98,6 +98,7 @@ var authService = {
 
       return;
     }
+
     let provider = this.getProviderForProviderId(
       signInResponse?.firstSignInMethod
     );
@@ -106,23 +107,23 @@ var authService = {
 
     const response = await signInWithPopup(auth, provider);
 
+    let IsSameToExistingEmailSignIn =
+      signInResponse?.tokenResponse?.email === response?.user?.email;
+
     if (response?.user?.uid) {
-      return true;
+      return {
+        IsSameToExistingEmailSignIn: IsSameToExistingEmailSignIn,
+        success: true,
+      };
     } else {
       return false;
     }
   },
   linkAccounts: async function (signInResponse) {
-    console.log(signInResponse);
     const providerId = signInResponse?.pendingProvider;
-    console.log(providerId);
-
     const provider = this.getProviderForProviderId(providerId);
     const auth = getAuth();
-    console.log(auth);
-    linkWithPopup(auth.currentUser, provider).then((result) => {
-      console.log(result);
-    });
+    await linkWithPopup(auth.currentUser, provider);
   },
 };
 

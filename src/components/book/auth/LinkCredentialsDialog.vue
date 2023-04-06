@@ -4,11 +4,11 @@
       <v-card v-if="signInResponse?.firstSignInMethod && !IsSignedIn">
         <v-card-text>
           You already have an account with
-          {{ dialogMessage() }} please sign in.
+          {{ signedInMessage() }} please sign in.
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary" block @click="signInWithExistingAccount"
-            >Sign in with {{ dialogMessage() }}</v-btn
+            >Sign in with {{ signedInMessage() }}</v-btn
           >
           <v-btn color="primary" block @click="dialog = false"
             >Close Dialog</v-btn
@@ -17,11 +17,11 @@
       </v-card>
       <v-card v-if="IsSignedIn">
         <v-card-text>
-          You are signed in with {{ dialogMessage() }}
+          You are signed in with {{ signedInMessage() }}
         </v-card-text>
         <v-card-actions class="flex-column">
           <v-btn color="primary" block @click="linkAccounts">
-            Link Accounts
+            Link {{ linkMessage() }} Account
           </v-btn>
           <v-btn color="primary" block @click="closeDialog">Close</v-btn>
         </v-card-actions>
@@ -50,7 +50,7 @@ export default {
       this.dialog = false;
       this.$router.push("/book");
     },
-    dialogMessage() {
+    signedInMessage() {
       let message = "";
       switch (this.signInResponse?.firstSignInMethod) {
         case "google.com":
@@ -63,14 +63,27 @@ export default {
       }
       return message;
     },
+    linkMessage() {
+      let reg = /^.*(?=\.com)/g;
+      let message = this.signInResponse?.pendingProvider?.match(reg)[0];
+      return message;
+    },
     async signInWithExistingAccount() {
-      this.IsSignedIn = await authService.signInWithExistingAccount(
+      let response = await authService.signInWithExistingAccount(
         this.signInResponse
       );
-      console.log("line 69", this.IsSignedIn);
+
+      if (response?.IsSameToExistingEmailSignIn) {
+        this.IsSignedIn = true;
+      } else {
+        this.dialog = false;
+        this.$router.push("/book");
+      }
     },
     linkAccounts() {
       authService.linkAccounts(this.signInResponse);
+
+      this.$router.push("/book");
     },
   },
 };

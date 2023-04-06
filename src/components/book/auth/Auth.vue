@@ -7,6 +7,7 @@ const Auth = () => Promise.resolve({
       <EmailRegister @switchForm="switchForm" v-if="!IsLogin"></EmailRegister>
 
       <EmailLogin @switchForm="switchForm" v-if="IsLogin"></EmailLogin>
+
       <v-container class="provider-container">
         <v-btn @click="() => signIn('Google')" class="provider-button">
           <img
@@ -87,6 +88,7 @@ export default {
 .auth-section {
   display: block;
   overflow: auto;
+  width: 466px;
 }
 
 .provider-container {
