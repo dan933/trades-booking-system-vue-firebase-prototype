@@ -4,7 +4,11 @@ const Auth = () => Promise.resolve({
     <v-card elevation="5" class="auth-section">
       <h1 class="card-title">{{ title }}</h1>
 
-      <EmailRegister @switchForm="switchForm" v-if="!IsLogin"></EmailRegister>
+      <EmailRegister
+        v-if="!IsLogin"
+        @switchForm="switchForm"
+        @registerEmailUser="registerEmailUser"
+      ></EmailRegister>
 
       <EmailLogin @switchForm="switchForm" v-if="IsLogin"></EmailLogin>
 
@@ -70,6 +74,9 @@ export default {
         //open dialog box
         this.$refs.linkCredentialsDialogRef.open(signInResponse);
       }
+    },
+    async registerEmailUser(registerUser) {
+      const response = await authService.registerUser(registerUser);
     },
   },
 };

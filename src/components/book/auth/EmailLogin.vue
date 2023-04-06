@@ -4,25 +4,27 @@
       <v-card-text>
         <v-form @submit.prevent="login">
           <v-text-field
-            v-model="username"
-            label="Username"
+            v-model="user.email"
+            autocomplete="email"
+            label="Email"
             required
           ></v-text-field>
           <v-text-field
-            v-model="password"
+            v-model="user.password"
             label="Password"
+            autocomplete="current-password"
             type="password"
             required
           ></v-text-field>
           <div class="mb-4"><a href="#">Forgot Password</a> <br /></div>
-          <v-card-actions class="card-button-container">
+          <div class="card-button-container">
             <v-btn size="small" type="submit" color="primary" class="mr-4 mb-4">
               Login
             </v-btn>
             <v-btn size="small" class="mb-4" @click="switchForm"
               >Register Account</v-btn
             >
-          </v-card-actions>
+          </div>
         </v-form>
       </v-card-text>
     </v-card>
@@ -34,8 +36,10 @@ export default {
   name: "emailLogin",
   data() {
     return {
-      username: "",
-      password: "",
+      user: {
+        email: "",
+        password: "",
+      },
     };
   },
   methods: {

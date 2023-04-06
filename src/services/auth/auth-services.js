@@ -12,6 +12,7 @@ import {
 var authService = {
   registerUser: async (registerUserObject) => {
     try {
+      console.log("registerUserObject", registerUserObject);
       const email = registerUserObject.email;
       const password = registerUserObject.password;
 
