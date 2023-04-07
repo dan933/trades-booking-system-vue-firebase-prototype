@@ -86,12 +86,7 @@ export default {
       this.$emit("switchForm");
     },
     register() {
-      // perform registration logic here
-
       if (this.registrationForm) {
-        console.log("Email:", this.userRegister.email);
-        console.log("Password:", this.userRegister.password);
-
         let newUser = {
           email: this.userRegister.email,
           password: this.userRegister.password,

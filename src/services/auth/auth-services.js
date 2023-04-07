@@ -28,11 +28,25 @@ var authService = {
       return { errorCode: error.code, errorMessage: error.message };
     }
   },
-  signIn: async (providerName) => {
+  signIn: async ({ providerName, user }) => {
     //Creates auth instance
     const auth = getAuth();
 
     try {
+      if (providerName === "email") {
+        let response = await signInWithEmailAndPassword(
+          auth,
+          user.email,
+          user.password
+        );
+
+        return {
+          result: result,
+          IsLoginSuccess: true,
+          response: response,
+        };
+      }
+
       //get provider
       let provider =
         providerName === "Google"
@@ -49,7 +63,16 @@ var authService = {
 
       //if true return result if error return auth/account-exists-with-different-credential details
     } catch (error) {
-      if (error.code == "auth/account-exists-with-different-credential") {
+      //if the error is Incorrect password
+      if (error.code === "auth/wrong-password") {
+        return {
+          IsLoginSuccess: false,
+          IsPasswordIncorrect: true,
+          errorMessage: "Incorrect Password",
+        };
+      }
+
+      if (error.code === "auth/account-exists-with-different-credential") {
         let email = error.customData.email;
         let pendingCredential = error.credential;
 

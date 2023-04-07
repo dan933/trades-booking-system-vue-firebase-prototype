@@ -43,18 +43,16 @@ const router = createRouter({
   history: createWebHistory(),
   routes, // short for `routes: routes`
 });
-setTimeout(() => {
-  router.beforeEach(async (to, from, next) => {
-    const auth = getAuth().currentUser;
+router.beforeEach(async (to, from, next) => {
+  const auth = getAuth().currentUser;
 
-    let IsLoggedIn = !!auth;
+  let IsLoggedIn = !!auth;
 
-    console.log(IsLoggedIn);
+  console.log(IsLoggedIn);
 
-    if (to.name === "Auth" && IsLoggedIn) next({ name: "Book" });
-    if (to.name === "Book" && !IsLoggedIn) next({ name: "Auth" });
-    else next();
-  });
-}, 400);
+  if (to.name === "Auth" && IsLoggedIn) next({ name: "Book" });
+  if (to.name === "Book" && !IsLoggedIn) next({ name: "Auth" });
+  else next();
+});
 
 export default router;

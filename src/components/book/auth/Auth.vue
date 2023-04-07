@@ -10,10 +10,18 @@ const Auth = () => Promise.resolve({
         @registerEmailUser="registerEmailUser"
       ></EmailRegister>
 
-      <EmailLogin @switchForm="switchForm" v-if="IsLogin"></EmailLogin>
+      <EmailLogin
+        :signInResponse="signInResponse"
+        @switchForm="switchForm"
+        @signIn="signIn"
+        v-if="IsLogin"
+      ></EmailLogin>
 
       <v-container class="provider-container">
-        <v-btn @click="() => signIn('Google')" class="provider-button">
+        <v-btn
+          @click="() => signIn({ providerName: 'Google' })"
+          class="provider-button"
+        >
           <img
             class="google-logo"
             src="../../../../public/icons/google-logo.png"
@@ -22,7 +30,10 @@ const Auth = () => Promise.resolve({
           />
           <span>Continue With Google</span>
         </v-btn>
-        <v-btn @click="() => signIn('Facebook')" class="provider-button">
+        <v-btn
+          @click="() => signIn({ providerName: 'Facebook' })"
+          class="provider-button"
+        >
           <v-icon icon="mdi:mdi-facebook" size="50px" color="blue"></v-icon>
           <span> Continue With Facebook </span>
         </v-btn>
@@ -39,6 +50,7 @@ import { authService } from "../../../services/auth/auth-services.js";
 import LinkCredentialsDialog from "./LinkCredentialsDialog.vue";
 import EmailRegister from "./emailRegister.vue";
 import EmailLogin from "./emailLogin.vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   name: "Auth",
@@ -47,6 +59,7 @@ export default {
     return {
       IsLogin: true,
       provider: null,
+      signInResponse: null,
     };
   },
   computed: {
@@ -54,29 +67,39 @@ export default {
       return this.IsLogin ? "Login" : "Register";
     },
   },
-  mounted() {},
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.checkUserState();
+      }
+    });
+  },
   methods: {
+    //checks to see if user is trying to link accounts
+    checkUserState() {
+      setTimeout(() => {
+        if (!this.signInResponse?.IsUserDifferentCredentials) {
+          this.$router.push("/book");
+        }
+      }, 500);
+    },
     switchForm() {
       this.IsLogin = !this.IsLogin;
     },
-    async signIn(providerName) {
-      const signInResponse = await authService.signIn(providerName);
-
-      console.log(signInResponse);
-
-      //if response is successful reroute to booking page
-      if (signInResponse?.IsLoginSuccess) {
-        this.$router.push("/book");
-      }
+    async signIn(signInDetails) {
+      this.signInResponse = await authService.signIn(signInDetails);
 
       //if account exists with different credentials
-      if (signInResponse?.IsUserDifferentCredentials) {
+      if (this.signInResponse?.IsUserDifferentCredentials) {
         //open dialog box
-        this.$refs.linkCredentialsDialogRef.open(signInResponse);
+        this.$refs.linkCredentialsDialogRef.open(this.signInResponse);
       }
     },
     async registerEmailUser(registerUser) {
       const response = await authService.registerUser(registerUser);
+
+      console.log("response", response);
     },
   },
 };

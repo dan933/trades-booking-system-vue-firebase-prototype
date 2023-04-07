@@ -1,23 +1,43 @@
 <template>
   <div class="text-center">
     <v-dialog v-model="dialog" width="auto">
-      <v-card v-if="signInResponse?.firstSignInMethod && !IsSignedIn">
+      <!-- ------ provider sign in -------- -->
+      <v-card
+        v-if="
+          signInResponse?.firstSignInMethod &&
+          signInResponse?.firstSignInMethod !== 'password' &&
+          !IsSignedIn
+        "
+      >
         <v-card-text>
           You already have an account with
-          {{ signedInMessage() }} please sign in.
+          {{ signedInMessage().provider }} please sign in.
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary" block @click="signInWithExistingAccount"
-            >Sign in with {{ signedInMessage() }}</v-btn
+            >Sign in with {{ signedInMessage().button }}</v-btn
           >
           <v-btn color="primary" block @click="dialog = false"
             >Close Dialog</v-btn
           >
         </v-card-actions>
       </v-card>
-      <v-card v-if="IsSignedIn">
+      <!-- ------ Email sign in -------- -->
+      <v-card v-if="signInResponse?.firstSignInMethod === 'password'">
         <v-card-text>
-          You are signed in with {{ signedInMessage() }}
+          You are signed in with {{ signedInMessage().provider }}
+        </v-card-text>
+        <v-card-actions class="flex-column">
+          <v-btn color="primary" block @click="linkAccounts"> Sign In </v-btn>
+          <v-btn color="primary" block @click="closeDialog">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+      <v-card
+        v-if="IsSignedIn && signInResponse?.firstSignInMethod !== 'password'"
+      >
+        <!-- ------ Link Accounts -------- -->
+        <v-card-text>
+          You are signed in with {{ signedInMessage().provider }}
         </v-card-text>
         <v-card-actions class="flex-column">
           <v-btn color="primary" block @click="linkAccounts">
@@ -51,13 +71,19 @@ export default {
       this.$router.push("/book");
     },
     signedInMessage() {
-      let message = "";
+      let message = {};
       switch (this.signInResponse?.firstSignInMethod) {
         case "google.com":
-          message = "Google";
+          message.provider = "Google";
+          message.button = "Google";
           break;
         case "facebook.com":
-          message = "Facebook";
+          message.provider = "Facebook";
+          message.button = "Facebook";
+          break;
+        case "password":
+          message.provider = "us";
+          message.button = "Your Email";
         default:
           break;
       }
