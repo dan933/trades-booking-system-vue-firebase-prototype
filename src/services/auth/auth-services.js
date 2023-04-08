@@ -7,16 +7,18 @@ import {
   fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  linkWithCredential,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 var authService = {
   registerUser: async (registerUserObject) => {
+    const auth = getAuth();
     try {
-      console.log("registerUserObject", registerUserObject);
       const email = registerUserObject.email;
       const password = registerUserObject.password;
 
-      const auth = getAuth();
       const response = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -25,6 +27,23 @@ var authService = {
 
       return response;
     } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        let email = registerUserObject.email;
+
+        let userSignInMethods = await fetchSignInMethodsForEmail(auth, email);
+        let firstSignInMethod =
+          userSignInMethods?.length > 0 ? userSignInMethods[0] : "";
+
+        return {
+          IsUserDifferentCredentials: true,
+          firstSignInMethod: firstSignInMethod,
+          // customData: error?.customData,
+          // tokenResponse: error?.customData?._tokenResponse,
+          error: error,
+          registerUserObject: registerUserObject,
+        };
+      }
+
       return { errorCode: error.code, errorMessage: error.message };
     }
   },
@@ -41,7 +60,6 @@ var authService = {
         );
 
         return {
-          result: result,
           IsLoginSuccess: true,
           response: response,
         };
@@ -71,6 +89,16 @@ var authService = {
           errorMessage: "Incorrect Password",
         };
       }
+      console.log("error.code", error.code);
+      console.log("error.code", error.message);
+      console.log("error.code", error);
+      if (error.code === "auth/user-not-found") {
+        return {
+          IsLoginSuccess: false,
+          IsPasswordIncorrect: true,
+          errorMessage: "Incorrect Password",
+        };
+      }
 
       if (error.code === "auth/account-exists-with-different-credential") {
         let email = error.customData.email;
@@ -94,6 +122,19 @@ var authService = {
       }
     }
   },
+  resetPassword: async (email) => {
+    const auth = getAuth();
+
+    try {
+      const response = await sendPasswordResetEmail(auth, email);
+      console.log("reset resposne", response);
+      return true;
+    } catch (error) {
+      console.log(error.code);
+      console.log(error.message);
+      return true;
+    }
+  },
   getProviderForProviderId: function (providerId) {
     switch (providerId) {
       case GoogleAuthProvider.PROVIDER_ID:
@@ -104,7 +145,7 @@ var authService = {
         return null;
     }
   },
-  signInWithExistingAccount: async function (signInResponse, userCredentials) {
+  signInWithExistingAccount: async function (signInResponse) {
     if (signInResponse?.firstSignInMethod === "password") {
       signInWithEmailAndPassword(
         userCredentials.email,
@@ -132,7 +173,8 @@ var authService = {
     const response = await signInWithPopup(auth, provider);
 
     let IsSameToExistingEmailSignIn =
-      signInResponse?.tokenResponse?.email === response?.user?.email;
+      signInResponse?.tokenResponse?.email === response?.user?.email ||
+      signInResponse?.registerUserObject?.email === response?.user?.email;
 
     if (response?.user?.uid) {
       return {
@@ -144,10 +186,49 @@ var authService = {
     }
   },
   linkAccounts: async function (signInResponse) {
-    const providerId = signInResponse?.pendingProvider;
-    const provider = this.getProviderForProviderId(providerId);
     const auth = getAuth();
-    await linkWithPopup(auth.currentUser, provider);
+
+    try {
+      if (signInResponse?.registerUserObject) {
+        const credential = EmailAuthProvider.credential(
+          signInResponse?.registerUserObject.email,
+          signInResponse?.registerUserObject.password
+        );
+        await linkWithCredential(auth.currentUser, credential);
+
+        return {
+          IsSuccess: true,
+        };
+      } else if (signInResponse?.user) {
+        await signInWithEmailAndPassword(
+          auth,
+          signInResponse?.user.email,
+          signInResponse?.user.password
+        );
+
+        const providerId = signInResponse?.pendingProvider;
+        const provider = this.getProviderForProviderId(providerId);
+        await linkWithPopup(auth.currentUser, provider);
+      } else {
+        const providerId = signInResponse?.pendingProvider;
+        const provider = this.getProviderForProviderId(providerId);
+        await linkWithPopup(auth.currentUser, provider);
+      }
+
+      return {
+        IsSuccess: true,
+      };
+    } catch (error) {
+      if (error?.code === "auth/wrong-password") {
+        return {
+          IsError: true,
+          message: "Password Incorrect",
+        };
+      }
+      console.log(error.code, "line 218");
+      console.log(error.message, "line 218");
+      console.log(error, "line 218");
+    }
   },
 };
 

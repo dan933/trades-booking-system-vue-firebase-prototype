@@ -48,7 +48,7 @@ router.beforeEach(async (to, from, next) => {
 
   let IsLoggedIn = !!auth;
 
-  console.log(IsLoggedIn);
+  // console.log(IsLoggedIn);
 
   if (to.name === "Auth" && IsLoggedIn) next({ name: "Book" });
   if (to.name === "Book" && !IsLoggedIn) next({ name: "Auth" });

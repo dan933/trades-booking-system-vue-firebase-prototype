@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-card class="mx-auto" min-width="150">
+      <h1 class="card-title">Register</h1>
       <v-card-text>
         <v-form @submit.prevent="register" v-model="registrationForm">
           <v-text-field
@@ -34,7 +35,11 @@
             <v-btn size="small" type="submit" color="primary" class="mr-4 mb-4">
               Register
             </v-btn>
-            <v-btn size="small" class="mr-4 mb-4" @click="switchForm">
+            <v-btn
+              size="small"
+              class="mr-4 mb-4"
+              @click="() => switchForm('Login')"
+            >
               Have an account?
             </v-btn>
           </div>
@@ -51,9 +56,9 @@ export default {
     return {
       registrationForm: false,
       userRegister: {
-        email: "",
-        password: "",
-        confirmPassword: "",
+        email: "dnadistrictservices@gmail.com",
+        password: "daniel180",
+        confirmPassword: "daniel180",
       },
       emailRules: [
         (v) => !!v || "Email is required",
@@ -82,8 +87,8 @@ export default {
     },
   },
   methods: {
-    switchForm() {
-      this.$emit("switchForm");
+    switchForm(selectedForm) {
+      this.$emit("switchForm", selectedForm);
     },
     register() {
       if (this.registrationForm) {
@@ -105,5 +110,9 @@ export default {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+}
+.card-title {
+  margin-top: 10px;
+  text-align: center;
 }
 </style>

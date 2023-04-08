@@ -2,19 +2,17 @@ const Auth = () => Promise.resolve({
 <template>
   <section class="container-center">
     <v-card elevation="5" class="auth-section">
-      <h1 class="card-title">{{ title }}</h1>
-
       <EmailRegister
-        v-if="!IsLogin"
+        v-if="selectedForm === 'Register'"
         @switchForm="switchForm"
         @registerEmailUser="registerEmailUser"
       ></EmailRegister>
 
       <EmailLogin
+        v-if="selectedForm === 'Login'"
         :signInResponse="signInResponse"
         @switchForm="switchForm"
         @signIn="signIn"
-        v-if="IsLogin"
       ></EmailLogin>
 
       <v-container class="provider-container">
@@ -48,8 +46,8 @@ const Auth = () => Promise.resolve({
 <script>
 import { authService } from "../../../services/auth/auth-services.js";
 import LinkCredentialsDialog from "./LinkCredentialsDialog.vue";
-import EmailRegister from "./emailRegister.vue";
-import EmailLogin from "./emailLogin.vue";
+import EmailRegister from "./EmailRegister.vue";
+import EmailLogin from "./EmailLogin.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
@@ -57,37 +55,37 @@ export default {
   components: { LinkCredentialsDialog, EmailRegister, EmailLogin },
   data() {
     return {
-      IsLogin: true,
+      selectedForm: "Login",
       provider: null,
       signInResponse: null,
+      currentUser: null,
     };
   },
-  computed: {
-    title() {
-      return this.IsLogin ? "Login" : "Register";
+  computed: {},
+  watch: {
+    currentUser(newVal) {
+      if (newVal && !this.signInResponse?.IsUserDifferentCredentials) {
+        console.log(newVal);
+        this.$router.push("/book");
+      }
     },
   },
   mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        this.checkUserState();
+        this.currentUser = user;
       }
     });
   },
   methods: {
     //checks to see if user is trying to link accounts
-    checkUserState() {
-      setTimeout(() => {
-        if (!this.signInResponse?.IsUserDifferentCredentials) {
-          this.$router.push("/book");
-        }
-      }, 500);
-    },
-    switchForm() {
-      this.IsLogin = !this.IsLogin;
+    switchForm(formName) {
+      this.selectedForm = formName;
     },
     async signIn(signInDetails) {
+      //stops redirect to booking page
+      //redirect too book happens if the user is already signed in on initial load
       this.signInResponse = await authService.signIn(signInDetails);
 
       //if account exists with different credentials
@@ -97,9 +95,14 @@ export default {
       }
     },
     async registerEmailUser(registerUser) {
-      const response = await authService.registerUser(registerUser);
+      //stops redirect to booking page
+      //redirect too book happens if the user is already signed in on initial load
+      this.signInResponse = await authService.registerUser(registerUser);
 
-      console.log("response", response);
+      if (this.signInResponse?.IsUserDifferentCredentials) {
+        //open dialog box
+        this.$refs.linkCredentialsDialogRef.open(this.signInResponse);
+      }
     },
   },
 };

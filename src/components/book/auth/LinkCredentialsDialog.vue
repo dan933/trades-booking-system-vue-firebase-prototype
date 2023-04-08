@@ -25,12 +25,38 @@
       <!-- ------ Email sign in -------- -->
       <v-card v-if="signInResponse?.firstSignInMethod === 'password'">
         <v-card-text>
-          You are signed in with {{ signedInMessage().provider }}
+          You already have an account with {{ signedInMessage().provider }}
+          <v-form @submit.prevent="linkAccounts" v-model="loginForm">
+            <v-text-field
+              v-model="user.email"
+              autocomplete="email"
+              label="Email"
+              required
+              :rules="emailRules"
+            ></v-text-field>
+            <v-text-field
+              v-model="user.password"
+              label="Password"
+              autocomplete="current-password"
+              type="password"
+              required
+              :rules="passwordRules"
+            ></v-text-field>
+            <v-alert
+              v-if="!!message"
+              class="mb-3"
+              type="error"
+              :text="message"
+              variant="outlined"
+              density="compact"
+            ></v-alert>
+            <div class="mb-5"><a href="#">Forgot Password</a> <br /></div>
+            <v-card-actions class="flex-column">
+              <v-btn color="primary" block type="submit"> Sign In </v-btn>
+              <v-btn color="primary" block @click="closeDialog">Close</v-btn>
+            </v-card-actions>
+          </v-form>
         </v-card-text>
-        <v-card-actions class="flex-column">
-          <v-btn color="primary" block @click="linkAccounts"> Sign In </v-btn>
-          <v-btn color="primary" block @click="closeDialog">Close</v-btn>
-        </v-card-actions>
       </v-card>
       <v-card
         v-if="IsSignedIn && signInResponse?.firstSignInMethod !== 'password'"
@@ -59,6 +85,20 @@ export default {
       dialog: false,
       signInResponse: null,
       IsSignedIn: false,
+      loginForm: false,
+      user: {
+        email: "",
+        password: "",
+      },
+      message: "",
+      emailRules: [
+        (v) => !!v || "Email is required",
+        (v) =>
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+            v
+          ) || "Email must be valid",
+      ],
+      passwordRules: [(value) => !!value || "Password Required"],
     };
   },
   methods: {
@@ -82,7 +122,7 @@ export default {
           message.button = "Facebook";
           break;
         case "password":
-          message.provider = "us";
+          message.provider = "Email";
           message.button = "Your Email";
         default:
           break;
@@ -106,10 +146,31 @@ export default {
         this.$router.push("/book");
       }
     },
-    linkAccounts() {
-      authService.linkAccounts(this.signInResponse);
+    async linkAccounts() {
+      if (this.user && this.loginForm) {
+        this.signInResponse = {
+          user: this.user,
+          ...this.signInResponse,
+        };
 
-      this.$router.push("/book");
+        const response = await authService.linkAccounts(this.signInResponse);
+
+        console.log(response, "line 158");
+
+        if (response?.IsError) {
+          this.message = response?.message;
+        }
+
+        if (response?.IsSuccess) {
+          this.$router.push("/book");
+        }
+      }
+
+      const response = await authService.linkAccounts(this.signInResponse);
+
+      if (response?.IsSuccess) {
+        this.$router.push("/book");
+      }
     },
   },
 };
@@ -121,32 +182,3 @@ export default {
   flex-direction: column;
 }
 </style>
-
-<!-- {
-  "IsUserDifferentCredentials": true,
-  "firstSignInMethod": "google.com",
-  "userSignInMethods": [
-      "google.com"
-  ],
-  "tokenResponse": {
-      "federatedId": "http://facebook.com/10227347098096392",
-      "providerId": "facebook.com",
-      "email": "dnadistrictservices@gmail.com",
-      "emailVerified": false,
-      "firstName": "Daniel",
-      "fullName": "Daniel Albert",
-      "lastName": "Albert",
-      "photoUrl": "https://graph.facebook.com/10227347098096392/picture",
-      "localId": "In8PUoZfosSOzt6aTfIPWGgbwUc2",
-      "displayName": "Daniel Albert",
-      "context": "",
-      "verifiedProvider": [
-          "google.com"
-      ],
-      "needConfirmation": true,
-      "oauthAccessToken": "EAASEOfW0nSkBACX9HZAFOKmW6PDRjA0JmrxNckPMVjQT05aMUdZAatxMlKPCIYdpLKkPMGNQ0k3jNXs7fRp3RdKfNx2n7HlYrbcV8BUdMcKMJ17NuZAxQ8PmARwgbfrzzbxqZCapf1ZArQUV6nqPHLspFkWrZC5v2wEiz7HlfIqjTCZBPxa9KV3lJRFNfqYP5RVIlYvdRsN9Rn7FUJqWcv9vmjTi9mhy6ZAG0iwg3mzeGwZDZD",
-      "oauthExpireIn": 5183999,
-      "rawUserInfo": "{\"name\":\"Daniel Albert\",\"last_name\":\"Albert\",\"granted_scopes\":[\"email\",\"public_profile\"],\"id\":\"10227347098096392\",\"first_name\":\"Daniel\",\"email\":\"dnadistrictservices@gmail.com\",\"picture\":{\"data\":{\"is_silhouette\":false,\"width\":100,\"url\":\"https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10227347098096392&height=100&width=100&ext=1682669816&hash=AeRGnYNzWrneoYe0EeU\",\"height\":100}}}",
-      "kind": "identitytoolkit#VerifyAssertionResponse"
-  }
-} -->
