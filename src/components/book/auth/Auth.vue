@@ -65,7 +65,7 @@ export default {
   watch: {
     currentUser(newVal) {
       if (newVal && !this.signInResponse?.IsUserDifferentCredentials) {
-        console.log(newVal);
+        // console.log(newVal);
         this.$router.push("/book");
       }
     },

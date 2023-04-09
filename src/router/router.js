@@ -30,6 +30,16 @@ const routes = [
     name: "Book",
     path: "/book",
     component: () => import("../components/book/Book.vue"),
+    children: [
+      {
+        path: "appointments",
+        component: () => import("../components/book/Appointments.vue"),
+      },
+      {
+        path: "book-now",
+        component: () => import("../components/book/BookNow.vue"),
+      },
+    ],
   },
   {
     name: "Auth",

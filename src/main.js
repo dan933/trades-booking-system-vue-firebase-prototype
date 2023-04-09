@@ -1,10 +1,14 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
-import Vuetify from './plugins/vuetify.js'
-import Router from './router/router.js'
+import { createApp } from "vue";
+import "./style.css";
+import App from "./App.vue";
+import Vuetify from "./plugins/vuetify.js";
+import Router from "./router/router.js";
+import { Calendar, DatePicker } from "v-calendar";
+import "v-calendar/style.css";
 
 createApp(App)
-.use(Router)
-.use(Vuetify)
-.mount('#app')
+  .use(Router)
+  .use(Vuetify)
+  .component("VCalendar", Calendar)
+  .component("VDatePicker", DatePicker)
+  .mount("#app");
