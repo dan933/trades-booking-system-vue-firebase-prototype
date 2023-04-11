@@ -2,40 +2,49 @@ const Book = () => Promise.resolve({
 <template>
   <section class="book-section">
     <v-card elevation="3" class="card">
-      <v-toolbar color="white" :elevation="7">
-        <v-btn
-          @click="
-            () => {
-              navigate('/book/appointments');
-            }
-          "
-          class="menu-button"
-          >Appointments</v-btn
-        >
-        <v-btn
-          @click="
-            () => {
-              navigate('/book/book-now');
-            }
-          "
-          class="menu-button"
-          >Book Now</v-btn
-        >
+      <v-toolbar color="white" :elevation="6">
+        <v-container class="nav-container">
+          <v-btn
+            class="menu-button"
+            v-bind:active="view === 'appointments'"
+            @click="
+              () => {
+                view = 'appointments';
+              }
+            "
+            >Appointments</v-btn
+          >
+          <v-btn
+            class="menu-button"
+            v-bind:active="view === 'bookNow'"
+            @click="
+              () => {
+                view = 'bookNow';
+              }
+            "
+            >Book Now</v-btn
+          >
+        </v-container>
       </v-toolbar>
-      <router-view class="router"></router-view>
+      <Appointments
+        :class="{ 'view-container': true, hidden: view !== 'appointments' }"
+      ></Appointments>
+      <BookNow
+        :class="{ 'view-container': true, hidden: view !== 'bookNow' }"
+      ></BookNow>
     </v-card>
   </section>
 </template>
 
 <script>
+import Appointments from "./Appointments.vue";
+import BookNow from "./BookNow.vue";
 export default {
   name: "Book",
+  components: { Appointments, BookNow },
   data() {
     return {
-      carouselImages: [
-        "https://source.unsplash.com/TRCJ-87Yoh0/700x200",
-        "https://source.unsplash.com/AQl-J19ocWE/700x200",
-      ],
+      view: "appointments",
     };
   },
   methods: {
@@ -49,6 +58,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.nav-container {
+  column-gap: 5px;
+  display: flex;
+  width: 100%;
+}
 .menu-button {
   width: 50%;
 }
@@ -72,9 +86,12 @@ export default {
   align-items: center;
 }
 
-.router {
+.view-container {
   height: 100%;
   max-height: 700px;
+}
+.hidden {
+  display: none;
 }
 </style>
 

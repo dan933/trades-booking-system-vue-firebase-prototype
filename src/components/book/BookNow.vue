@@ -6,67 +6,43 @@
       class="window-container"
     >
       <v-window-item
-        v-for="n in length"
-        :key="`card-${n}`"
-        :value="n"
+        :key="`card-timeslots`"
+        :value="0"
         class="window-container"
       >
-        <v-card flat rounded="0" class="book-now-card">
-          <h3>Pick a date</h3>
-          <!-- <v-calendar
-            v-model="selectedDate"
-            title-position="left"
-            :disabled-dates="disabledDates"
-            @dayclick="onCalendarClick"
-          >
-          </v-calendar> -->
-          <VDatePicker
-            v-model="selectedDate"
-            :disabled-dates="disabledDates"
-            @dayclick="onCalendarClick"
-          >
-            <template #default="{ togglePopover }">
-              <div class="date-input">
-                <v-btn
-                  class="text-none text-subtitle-1"
-                  color="primary"
-                  variant="elevated"
-                  @click="togglePopover"
-                >
-                  Choose Date
-                </v-btn>
-              </div>
-            </template>
-          </VDatePicker>
-          {{ availabilityMessage }}
-          <v-container v-if="IsAvailableDate" class="timeslot-container">
-            <h3>Pick A Timeslot</h3>
-            <v-autocomplete
-              v-model="selectedTimeSlot"
-              :items="availableTimeSlots"
-              label="Select a time slot"
-              style="width: 200px"
-            ></v-autocomplete>
-            <v-btn
-              v-if="selectedTimeSlot"
-              class="text-none text-subtitle-1"
-              color="primary"
-              variant="elevated"
-            >
-              Select Services
-            </v-btn>
-          </v-container>
-        </v-card>
+        <TimeSlots
+          @storeSelectedTimeSlotData="storeSelectedTimeSlotData"
+        ></TimeSlots>
+      </v-window-item>
+      <v-window-item
+        :key="`card-add-services`"
+        :value="1"
+        class="window-container"
+      >
+        <SelectService
+          :selectedDateTimeSlot="selectedDateTimeSlot"
+        ></SelectService>
       </v-window-item>
     </v-window>
 
     <v-card-actions class="justify-space-evenly">
       <v-item-group v-model="onboarding" class="text-center" mandatory>
         <v-item
-          v-for="n in length"
-          :key="`btn-${n}`"
+          :key="`btn-timeslots`"
           v-slot="{ isSelected, toggle }"
-          :value="n"
+          :value="0"
+        >
+          <v-btn
+            :variant="isSelected ? 'outlined' : 'text'"
+            icon="mdi:mdi-record"
+            @click="toggle"
+          ></v-btn>
+        </v-item>
+        <v-item
+          v-if="selectedDateTimeSlot"
+          :key="`btn-services`"
+          v-slot="{ isSelected, toggle }"
+          :value="1"
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
@@ -80,84 +56,25 @@
 </template>
 
 <script>
+import TimeSlots from "./TimeSlots.vue";
+import SelectService from "./SelectService.vue";
 export default {
   name: "BookNow",
   data: () => ({
     selectedDate: null,
-    length: 3,
     onboarding: 0,
-    availabilityMessage: "",
-    IsAvailableDate: false,
-    selectedTimeSlot: "",
-    availableTimeSlots: ["15:00", "14:00", "13:00"],
+    selectedDateTimeSlot: null,
   }),
   methods: {
-    getOrdinalSuffix(day) {
-      if (day >= 11 && day <= 13) {
-        return "th";
-      }
-      switch (day % 10) {
-        case 1:
-          return "st";
-        case 2:
-          return "nd";
-        case 3:
-          return "rd";
-        default:
-          return "th";
-      }
-    },
-    onCalendarClick(context) {
-      this.selectedTimeSlot = "";
-      const clickedDate = new Date(context.date);
-      const day = clickedDate.getDate();
-      const suffix = this.getOrdinalSuffix(day);
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      const month = monthNames[clickedDate.getMonth()];
-      const year = clickedDate.getFullYear();
-
-      this.IsAvailableDate = !context.isDisabled;
-      if (context.isDisabled) {
-        this.availabilityMessage = `No bookings available for ${day}${suffix} ${month} ${year}`;
-      } else {
-        this.availabilityMessage = `${day}${suffix} ${month} ${year}`;
-      }
+    storeSelectedTimeSlotData(bookingTimeSlotData) {
+      console.log(bookingTimeSlotData, "line 66");
+      this.selectedDateTimeSlot = bookingTimeSlotData;
+      this.onboarding += 1;
     },
   },
   mounted() {},
-  computed: {
-    disabledDates() {
-      // create a new Date object
-      let today = new Date();
-
-      // subtract 1 day from today's date
-      let yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-
-      let disabledDates = [{ start: null, end: null }];
-      disabledDates[0].end = yesterday;
-
-      disabledDates[1] = {
-        start: new Date("2023-04-23"),
-        end: new Date("2023-04-23"),
-      };
-
-      return disabledDates;
-    },
-  },
+  computed: {},
+  components: { TimeSlots, SelectService },
 };
 </script>
 
