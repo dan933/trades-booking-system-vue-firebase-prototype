@@ -50,6 +50,7 @@
               :rules="[
                 (v) =>
                   remainingHoursAvailable >= 0 || 'Hours Available Exceeded',
+                (v) => !!v || 'Hours Required',
               ]"
             ></v-text-field>
           </div>
