@@ -1,6 +1,7 @@
 <template>
   <v-card flat class="book-now-container">
     <v-window
+      :touch="false"
       direction="vertical"
       v-model="onboarding"
       class="window-container"
