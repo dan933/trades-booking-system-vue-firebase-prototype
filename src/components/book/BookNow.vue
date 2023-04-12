@@ -14,6 +14,7 @@
           @storeSelectedTimeSlotData="storeSelectedTimeSlotData"
         ></TimeSlots>
       </v-window-item>
+
       <v-window-item
         :key="`card-add-services`"
         :value="1"
@@ -21,7 +22,15 @@
       >
         <SelectService
           :selectedDateTimeSlot="selectedDateTimeSlot"
+          @storeSelectedServices="storeSelectedServices"
         ></SelectService>
+      </v-window-item>
+      <v-window-item
+        :key="`card-customer-details`"
+        :value="2"
+        class="window-container"
+      >
+        <h1>Details</h1>
       </v-window-item>
     </v-window>
 
@@ -50,6 +59,18 @@
             @click="toggle"
           ></v-btn>
         </v-item>
+        <v-item
+          v-if="selectedServices?.length > 0 && selectedServices"
+          :key="`btn-services`"
+          v-slot="{ isSelected, toggle }"
+          :value="2"
+        >
+          <v-btn
+            :variant="isSelected ? 'outlined' : 'text'"
+            icon="mdi:mdi-record"
+            @click="toggle"
+          ></v-btn>
+        </v-item>
       </v-item-group>
     </v-card-actions>
   </v-card>
@@ -64,11 +85,18 @@ export default {
     selectedDate: null,
     onboarding: 0,
     selectedDateTimeSlot: null,
+    selectedServices: [],
   }),
   methods: {
     storeSelectedTimeSlotData(bookingTimeSlotData) {
       console.log(bookingTimeSlotData, "line 66");
       this.selectedDateTimeSlot = bookingTimeSlotData;
+      this.onboarding += 1;
+    },
+    storeSelectedServices(selectedServices) {
+      console.log("line 92", selectedServices);
+      console.log("line 94", this.selectedDateTimeSlot);
+      this.selectedServices = selectedServices;
       this.onboarding += 1;
     },
   },

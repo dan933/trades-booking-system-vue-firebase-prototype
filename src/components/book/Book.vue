@@ -47,11 +47,7 @@ export default {
       view: "appointments",
     };
   },
-  methods: {
-    navigate(route) {
-      this.$router.push(route);
-    },
-  },
+  methods: {},
   mounted() {},
   computed: {},
 };

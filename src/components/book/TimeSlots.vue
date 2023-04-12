@@ -1,13 +1,6 @@
 <template>
   <v-card flat rounded="0" class="book-now-card">
     <h3>Pick a date</h3>
-    <!-- <v-calendar
-            v-model="selectedDate"
-            title-position="left"
-            :disabled-dates="disabledDates"
-            @dayclick="onCalendarClick"
-          >
-          </v-calendar> -->
     <VDatePicker
       v-model="selectedDate"
       :disabled-dates="disabledDates"
@@ -70,8 +63,8 @@ export default {
     selectedTimeSlot: {},
     availableTimeSlots: [
       { time: "15:00", availableHours: 3 },
-      { time: "14:00", availableHours: 3 },
-      { time: "13:00", availableHours: 3 },
+      { time: "14:00", availableHours: 5 },
+      { time: "13:00", availableHours: 2 },
     ],
   }),
   methods: {

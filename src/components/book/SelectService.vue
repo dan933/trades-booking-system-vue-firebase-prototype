@@ -23,11 +23,18 @@
         {{ remainingHoursAvailable }}
       </p>
     </div>
-    <div>
-      <v-form class="d-flex flex-column" v-model="serviceForm">
+    <v-container>
+      <v-form
+        @submit.prevent="storeSelectedServices()"
+        class="d-flex flex-column"
+        v-model="serviceForm"
+      >
         <!-- add v-for that adds input field -->
-        <div v-for="service in selectedServices" class="mb-3">
-          <div class="add-service-container">
+        <v-container
+          v-for="(service, index) in selectedServices"
+          class="mb-3 border"
+        >
+          <div class="service-item-container">
             <v-autocomplete
               v-model="service.selection"
               style="width: 200px; height: 50px"
@@ -54,18 +61,30 @@
               ]"
             ></v-text-field>
           </div>
-          <p class="mt-6">
-            Price: ${{
-              service?.selection?.rate && +service?.hours
-                ? service.selection.rate * +service?.hours
-                : 0
-            }}
-          </p>
-        </div>
+          <div class="d-flex align-center mt-6 flex-wrap">
+            <p class="mr-5">
+              Price: ${{
+                service?.selection?.rate && +service?.hours
+                  ? service.selection.rate * +service?.hours
+                  : 0
+              }}
+            </p>
+            <v-btn color="warning" @click="() => removeServiceItem(index)"
+              >Remove</v-btn
+            >
+          </div>
+        </v-container>
         <v-btn class="mt-5" @click="addInput">Add Service</v-btn>
-        <v-btn class="mt-5" type="submit">Review</v-btn>
+        <v-btn
+          v-if="atLeastOneValidService"
+          elevation="4"
+          color="primary"
+          class="mt-5"
+          type="submit"
+          >Enter Details</v-btn
+        >
       </v-form>
-    </div>
+    </v-container>
   </v-card>
 </template>
 
@@ -86,9 +105,18 @@ export default {
     addInput() {
       this.selectedServices.push({});
     },
+    storeSelectedServices() {
+      if (this.serviceForm) {
+        this.$emit("storeSelectedServices", this.selectedServices);
+      }
+    },
+    removeServiceItem(index) {
+      console.log("index", index);
+      this.selectedServices.splice(index, 1);
+      console.log(this.selectedServices);
+    },
   },
   mounted() {},
-  //todo add watch on this.selectedDateTimeSlot.timeslot.availableHours
   computed: {
     remainingHoursAvailable() {
       let remainingHoursAvailable =
@@ -106,12 +134,28 @@ export default {
 
       return remainingHoursAvailable;
     },
+    atLeastOneValidService() {
+      //if selected service has at least one valid service
+      //show review button
+      if (
+        this.selectedServices?.length > 0 &&
+        this.selectedServices[0]?.selection?.name &&
+        +this.selectedServices[0]?.hours > 0
+      ) {
+        return true;
+      }
+      return false;
+    },
   },
 };
 </script>
 
 <style lang="scss">
-.add-service-container {
+.border {
+  border: black solid 2px !important;
+  border-radius: 5px;
+}
+.service-item-container {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
