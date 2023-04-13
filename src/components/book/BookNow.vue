@@ -121,27 +121,13 @@ export default {
   margin: 10px;
   margin-top: 20px;
   padding: 5px;
-}
-.book-now-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 15px;
-  height: 90%;
-  width: 100%;
-  padding: 10px;
   overflow: auto;
 }
 
-.timeslot-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 15px;
-}
 .window-container {
   width: 100%;
   height: 100%;
+  overflow: auto;
 }
 .vc-day-content.vc-disabled {
   text-decoration: line-through;

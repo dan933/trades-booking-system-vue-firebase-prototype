@@ -1,5 +1,5 @@
 <template>
-  <v-card flat rounded="0" class="book-now-card">
+  <v-card flat rounded="0" class="service-card">
     <h3>Add Services</h3>
     <div>
       <p>
@@ -26,7 +26,7 @@
     <v-container>
       <v-form
         @submit.prevent="storeSelectedServices()"
-        class="d-flex flex-column"
+        class="service-form-container"
         v-model="serviceForm"
       >
         <!-- add v-for that adds input field -->
@@ -49,15 +49,19 @@
               :rules="[(v) => !!v || 'service required']"
             ></v-autocomplete>
             <v-text-field
-              v-model="service.hours"
+              v-model.number="service.hours"
               style="width: 130px"
               type="number"
               label="Hours"
+              @input="() => onInput(index)"
+              step="1"
+              min="0"
               hide-details="auto"
               :rules="[
                 (v) =>
                   remainingHoursAvailable >= 0 || 'Hours Available Exceeded',
                 (v) => !!v || 'Hours Required',
+                (v) => v > 0 || 'Hours must be greater than 1',
               ]"
             ></v-text-field>
           </div>
@@ -81,7 +85,7 @@
           color="primary"
           class="mt-5"
           type="submit"
-          >Enter Details</v-btn
+          >Submit</v-btn
         >
       </v-form>
     </v-container>
@@ -104,6 +108,26 @@ export default {
   methods: {
     addInput() {
       this.selectedServices.push({});
+    },
+    onInput(index) {
+      console.log();
+
+      if (
+        this.selectedServices[index].hours !== null &&
+        !Number.isInteger(
+          Number(this.selectedServices[index].hours) ||
+            this.selectedServices[index].hours < 0
+        )
+      ) {
+        this.selectedServices[index].hours = Math.floor(
+          Number(this.selectedServices[index].hours)
+        );
+
+        if (this.selectedServices[index].hours < 0) {
+          this.selectedServices[index].hours =
+            this.selectedServices[index].hours * -1;
+        }
+      }
     },
     storeSelectedServices() {
       if (this.serviceForm) {
@@ -132,6 +156,10 @@ export default {
 
       remainingHoursAvailable = remainingHoursAvailable - totalHoursSelected;
 
+      if (remainingHoursAvailable < 0) {
+        return "N/A";
+      }
+
       return remainingHoursAvailable;
     },
     atLeastOneValidService() {
@@ -151,6 +179,22 @@ export default {
 </script>
 
 <style lang="scss">
+.service-card {
+  overflow: auto;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.service-form-container {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 5px;
+  overflow: auto;
+}
 .border {
   border: black solid 2px !important;
   border-radius: 5px;

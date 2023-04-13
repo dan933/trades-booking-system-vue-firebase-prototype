@@ -69,7 +69,7 @@ export default {
   align-items: center;
   max-width: 800px;
   width: 90%;
-  height: 90%;
+  height: 100%;
   max-height: 700px;
 }
 
