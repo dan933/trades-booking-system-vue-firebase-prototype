@@ -26,12 +26,13 @@
           @storeSelectedServices="storeSelectedServices"
         ></SelectService>
       </v-window-item>
+
       <v-window-item
         :key="`card-customer-details`"
         :value="2"
         class="window-container"
       >
-        <h1>Details</h1>
+        <CustomerDetails></CustomerDetails>
       </v-window-item>
     </v-window>
 
@@ -80,6 +81,7 @@
 <script>
 import TimeSlots from "./TimeSlots.vue";
 import SelectService from "./SelectService.vue";
+import CustomerDetails from "./CustomerDetails.vue";
 export default {
   name: "BookNow",
   data: () => ({
@@ -103,7 +105,7 @@ export default {
   },
   mounted() {},
   computed: {},
-  components: { TimeSlots, SelectService },
+  components: { TimeSlots, SelectService, CustomerDetails },
 };
 </script>
 

@@ -47,7 +47,7 @@
         variant="elevated"
         @click="storeSelectedTimeSlotData"
       >
-        Select Services
+        Next
       </v-btn>
     </v-container>
   </v-card>

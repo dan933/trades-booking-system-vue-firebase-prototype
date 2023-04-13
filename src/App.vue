@@ -24,7 +24,7 @@ import NavBar from "./components/shared/NavBar.vue";
   align-items: center;
   padding-top: 60px;
   column-gap: 10px;
-  overflow: auto;
+  // overflow: auto;
   height: 100%;
 }
 

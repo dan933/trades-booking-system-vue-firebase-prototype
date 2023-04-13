@@ -85,7 +85,7 @@
           color="primary"
           class="mt-5"
           type="submit"
-          >Submit</v-btn
+          >Next</v-btn
         >
       </v-form>
     </v-container>
