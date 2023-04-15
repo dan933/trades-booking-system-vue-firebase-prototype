@@ -2,31 +2,33 @@
   <v-card flat rounded="0" class="service-card">
     <h3>Your Details</h3>
     <v-container>
-      <v-form v-model="valid">
+      <v-form v-model="valid" @submit.prevent="storeCustomerDetails">
         <v-container class="name-container">
           <v-text-field
             style="width: 150px"
             v-model="firstName"
             label="First name"
-            required
+            :rules="[(v) => !!v || 'First name is required']"
           ></v-text-field>
           <v-text-field
             style="width: 150px"
             v-model="lastName"
             label="Last name"
-            required
+            :rules="[(v) => !!v || 'Last name is required']"
           ></v-text-field>
         </v-container>
         <v-text-field
           v-model="phone"
           label="Phone number"
           type="tel"
-          required
+          :rules="[(v) => !!v || 'Phone number is required']"
         ></v-text-field>
-        <v-textarea v-model="address" label="Address"></v-textarea>
-        <v-btn color="primary" :disabled="!valid" @click="submitForm"
-          >Next</v-btn
-        >
+        <v-textarea
+          v-model="address"
+          label="Address"
+          :rules="[(v) => !!v || 'Address is required']"
+        ></v-textarea>
+        <v-btn color="primary" type="submit">Next</v-btn>
       </v-form>
     </v-container>
   </v-card>
@@ -46,8 +48,20 @@ export default {
   },
   props: ["selectedDateTimeSlot"],
   methods: {
-    submitForm() {
-      // Perform any actions you want to do when the form is submitted
+    storeCustomerDetails() {
+      // Store the customers details
+      //todo add a feature to store customer addresses in a firestore database
+      //todo add check to see if the customer is within the service range
+      if (this.valid) {
+        let customerDetails = {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          phone: this.phone,
+          address: this.address,
+        };
+
+        this.$emit("storeCustomerDetails", customerDetails);
+      }
     },
   },
   mounted() {},

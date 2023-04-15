@@ -7,8 +7,18 @@
       class="window-container"
     >
       <v-window-item
-        :key="`card-timeslots`"
+        :key="`card-customer-details`"
         :value="0"
+        class="window-container"
+      >
+        <CustomerDetails
+          @storeCustomerDetails="storeCustomerDetails"
+        ></CustomerDetails>
+      </v-window-item>
+
+      <v-window-item
+        :key="`card-timeslots`"
+        :value="1"
         class="window-container"
       >
         <TimeSlots
@@ -18,28 +28,33 @@
 
       <v-window-item
         :key="`card-add-services`"
-        :value="1"
+        :value="2"
         class="window-container"
       >
         <SelectService
+          ref="selectServiceRef"
           :selectedDateTimeSlot="selectedDateTimeSlot"
           @storeSelectedServices="storeSelectedServices"
         ></SelectService>
       </v-window-item>
-
       <v-window-item
-        :key="`card-customer-details`"
-        :value="2"
+        :key="`review-booking`"
+        :value="3"
         class="window-container"
       >
-        <CustomerDetails></CustomerDetails>
+        <ReviewBooking
+          :selectedDateTimeSlot="selectedDateTimeSlot"
+          :selectedServices="selectedServices"
+          :customerInformation="customerInformation"
+          ref="reviewBookingRef"
+        ></ReviewBooking>
       </v-window-item>
     </v-window>
 
     <v-card-actions class="justify-space-evenly">
       <v-item-group v-model="onboarding" class="text-center" mandatory>
         <v-item
-          :key="`btn-timeslots`"
+          :key="`customer-details`"
           v-slot="{ isSelected, toggle }"
           :value="0"
         >
@@ -50,8 +65,8 @@
           ></v-btn>
         </v-item>
         <v-item
-          v-if="selectedDateTimeSlot"
-          :key="`btn-services`"
+          v-if="customerInformation"
+          :key="`timeslots`"
           v-slot="{ isSelected, toggle }"
           :value="1"
         >
@@ -62,10 +77,34 @@
           ></v-btn>
         </v-item>
         <v-item
-          v-if="selectedServices?.length > 0 && selectedServices"
-          :key="`btn-services`"
+          v-if="selectedDateTimeSlot"
+          :key="`services`"
           v-slot="{ isSelected, toggle }"
           :value="2"
+        >
+          <v-btn
+            :variant="isSelected ? 'outlined' : 'text'"
+            icon="mdi:mdi-record"
+            @click="toggle"
+          ></v-btn>
+        </v-item>
+        <v-item
+          v-if="selectedServices?.length > 0 && selectedServices"
+          :key="`review`"
+          v-slot="{ isSelected, toggle }"
+          :value="3"
+        >
+          <v-btn
+            :variant="isSelected ? 'outlined' : 'text'"
+            icon="mdi:mdi-record"
+            @click="toggle"
+          ></v-btn>
+        </v-item>
+        <v-item
+          v-if="customerConfirmation"
+          :key="`payment`"
+          v-slot="{ isSelected, toggle }"
+          :value="4"
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
@@ -82,6 +121,7 @@
 import TimeSlots from "./TimeSlots.vue";
 import SelectService from "./SelectService.vue";
 import CustomerDetails from "./CustomerDetails.vue";
+import ReviewBooking from "./ReviewBooking.vue";
 export default {
   name: "BookNow",
   data: () => ({
@@ -89,23 +129,35 @@ export default {
     onboarding: 0,
     selectedDateTimeSlot: null,
     selectedServices: [],
+    customerInformation: null,
+    customerConfirmation: false,
   }),
   methods: {
+    storeCustomerDetails(customerDetails) {
+      this.customerInformation = customerDetails;
+      this.onboarding += 1;
+    },
     storeSelectedTimeSlotData(bookingTimeSlotData) {
-      console.log(bookingTimeSlotData, "line 66");
+      this.selectedServices = [];
+      if (this.$refs.selectServiceRef) {
+        this.$refs.selectServiceRef.reset();
+      }
       this.selectedDateTimeSlot = bookingTimeSlotData;
       this.onboarding += 1;
     },
     storeSelectedServices(selectedServices) {
-      console.log("line 92", selectedServices);
-      console.log("line 94", this.selectedDateTimeSlot);
       this.selectedServices = selectedServices;
       this.onboarding += 1;
+    },
+    bookingConfirmed() {
+      let result = this.$refs.reviewBookingRef.ConfirmBooking();
+      console.log(result, "line 153");
+      // this.onboarding += 1;
     },
   },
   mounted() {},
   computed: {},
-  components: { TimeSlots, SelectService, CustomerDetails },
+  components: { TimeSlots, SelectService, CustomerDetails, ReviewBooking },
 };
 </script>
 

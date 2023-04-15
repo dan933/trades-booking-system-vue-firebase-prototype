@@ -36,9 +36,11 @@
         label="Select a time slot"
         style="width: 245px"
       ></v-autocomplete>
-      <p>
-        This time slot currently has
-        {{ selectedTimeSlot?.availableHours }} hours available.
+      <p v-if="selectedTimeSlot?.availableHours">
+        <strong
+          >This time slot currently has
+          {{ selectedTimeSlot?.availableHours }} hours available.</strong
+        >
       </p>
       <v-btn
         v-if="selectedTimeSlot"
@@ -116,6 +118,13 @@ export default {
       console.log(this.selectedDate);
       console.log(this.selectedTimeSlot);
       //todo organise data
+
+      //add the booking start time to the selected date
+      let bookingStartTime = this.selectedDate;
+      bookingStartTime.setHours(
+        this.selectedTimeSlot.time.split(":")[0],
+        this.selectedTimeSlot.time.split(":")[1]
+      );
 
       let bookingTimeSlotData = {
         date: this.selectedDate,

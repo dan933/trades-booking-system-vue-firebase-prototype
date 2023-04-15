@@ -1,6 +1,6 @@
 const Appointments = () => Promise.resolve({
 <template>
-  <section class="book-section">
+  <section class="appointment-section">
     <h1>You currently have no appointments</h1>
   </section>
 </template>
@@ -23,14 +23,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.book-section {
+.appointment-section {
   margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 800px;
-  width: 90%;
-  height: 90%;
+  text-align: center;
+  width: 100%;
+  height: 100%;
 }
 
 .card {
