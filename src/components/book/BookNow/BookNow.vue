@@ -146,12 +146,11 @@ export default {
       this.onboarding += 1;
     },
     storeSelectedServices(selectedServices) {
-      this.selectedServices = selectedServices;
+      this.selectedServices = JSON.parse(selectedServices);
       this.onboarding += 1;
     },
     bookingConfirmed() {
       let result = this.$refs.reviewBookingRef.ConfirmBooking();
-      console.log(result, "line 153");
       // this.onboarding += 1;
     },
   },

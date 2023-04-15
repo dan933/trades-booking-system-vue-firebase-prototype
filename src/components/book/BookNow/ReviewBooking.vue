@@ -40,6 +40,8 @@ export default {
         return (acc += curr.hours);
       }, 0);
 
+      console.log("totalHours", totalHours);
+
       let startTime = this.selectedDateTimeSlot.date.toLocaleTimeString();
       let endTime = new Date(this.selectedDateTimeSlot?.date);
       endTime.setHours(this.selectedDateTimeSlot.date.getHours() + totalHours);

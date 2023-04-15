@@ -25,7 +25,7 @@
         </p>
       </div>
       <v-form
-        @submit.prevent="storeSelectedServices()"
+        @submit.prevent="storeSelectedServices"
         class="service-form-container"
         v-model="serviceForm"
       >
@@ -143,8 +143,19 @@ export default {
       }
     },
     storeSelectedServices() {
-      if (this.serviceForm) {
-        this.$emit("storeSelectedServices", this.selectedServices);
+      //check all imputs are complete
+      let allInputsComplete = this.selectedServices.every((service) => {
+        return service.selection && service.hours;
+      });
+      //check that available hours has not been exceeded
+      let availableHoursNotExceeded = this.remainingHoursAvailable >= 0;
+
+      //if all is good, emit event to parent
+      if (allInputsComplete && availableHoursNotExceeded) {
+        this.$emit(
+          "storeSelectedServices",
+          JSON.stringify(this.selectedServices)
+        );
       }
     },
     removeServiceItem(index) {
