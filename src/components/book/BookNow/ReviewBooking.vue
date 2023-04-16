@@ -49,6 +49,9 @@
         }}
       </p>
     </div>
+    <div class="action-container">
+      <v-btn color="primary" @click="confirmBooking">Next</v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -92,7 +95,7 @@ export default {
   }),
   methods: {
     confirmBooking() {
-      return true;
+      this.$emit("confirmDetails");
     },
   },
   computed: {

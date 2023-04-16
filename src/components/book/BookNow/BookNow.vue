@@ -43,11 +43,15 @@
         class="window-container"
       >
         <ReviewBooking
+          @confirmDetails="confirmDetails"
           :selectedDateTimeSlot="selectedDateTimeSlot"
           :selectedServices="selectedServices"
           :customerInformation="customerInformation"
           ref="reviewBookingRef"
         ></ReviewBooking>
+      </v-window-item>
+      <v-window-item :key="`payment`" :value="4" class="window-container">
+        <Payment></Payment>
       </v-window-item>
     </v-window>
 
@@ -122,6 +126,7 @@ import TimeSlots from "./TimeSlots.vue";
 import SelectService from "./SelectService.vue";
 import CustomerDetails from "./CustomerDetails.vue";
 import ReviewBooking from "./ReviewBooking.vue";
+import Payment from "./Payment.vue";
 export default {
   name: "BookNow",
   data: () => ({
@@ -149,14 +154,20 @@ export default {
       this.selectedServices = JSON.parse(selectedServices);
       this.onboarding += 1;
     },
-    bookingConfirmed() {
-      let result = this.$refs.reviewBookingRef.ConfirmBooking();
-      // this.onboarding += 1;
+    confirmDetails() {
+      this.customerConfirmation = true;
+      this.onboarding += 1;
     },
   },
   mounted() {},
   computed: {},
-  components: { TimeSlots, SelectService, CustomerDetails, ReviewBooking },
+  components: {
+    Payment,
+    TimeSlots,
+    SelectService,
+    CustomerDetails,
+    ReviewBooking,
+  },
 };
 </script>
 
