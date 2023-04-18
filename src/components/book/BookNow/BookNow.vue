@@ -51,7 +51,11 @@
         ></ReviewBooking>
       </v-window-item>
       <v-window-item :key="`payment`" :value="4" class="window-container">
-        <Payment></Payment>
+        <Payment
+          :selectedDateTimeSlot="selectedDateTimeSlot"
+          :selectedServices="selectedServices"
+          :customerInformation="customerInformation"
+        ></Payment>
       </v-window-item>
     </v-window>
 
