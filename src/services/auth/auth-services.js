@@ -47,7 +47,13 @@ var authService = {
       return { errorCode: error.code, errorMessage: error.message };
     }
   },
-  signIn: async ({ providerName, user }) => {
+  signIn: async ({ providerName, user }, org) => {
+    //An organisation must be present in url
+    if (!org) {
+      alert("No Organisation found in url");
+      return;
+    }
+
     //Creates auth instance
     const auth = getAuth();
 

@@ -131,6 +131,7 @@ import SelectService from "./SelectService.vue";
 import CustomerDetails from "./CustomerDetails.vue";
 import ReviewBooking from "./ReviewBooking.vue";
 import Payment from "./Payment.vue";
+import { getBookingAvailability } from "../../../services/api/bookingService.js";
 export default {
   name: "BookNow",
   data: () => ({
@@ -163,7 +164,9 @@ export default {
       this.onboarding += 1;
     },
   },
-  mounted() {},
+  mounted() {
+    getBookingAvailability();
+  },
   computed: {},
   components: {
     Payment,

@@ -84,15 +84,21 @@ export default {
       this.selectedForm = formName;
     },
     async signIn(signInDetails) {
+      //get the organisation Id
+      // https://127.0.0.1:5173/auth?org=Okq3IGUln18QM90ObeI4
+      const orgId = this.$route.query.org;
+
+      console.log("org", orgId);
+
       //stops redirect to booking page
       //redirect too book happens if the user is already signed in on initial load
-      this.signInResponse = await authService.signIn(signInDetails);
+      this.signInResponse = await authService.signIn(signInDetails, orgId);
 
-      //if account exists with different credentials
-      if (this.signInResponse?.IsUserDifferentCredentials) {
-        //open dialog box
-        this.$refs.linkCredentialsDialogRef.open(this.signInResponse);
-      }
+      // //if account exists with different credentials
+      // if (this.signInResponse?.IsUserDifferentCredentials) {
+      //   //open dialog box
+      //   this.$refs.linkCredentialsDialogRef.open(this.signInResponse);
+      // }
     },
     async registerEmailUser(registerUser) {
       //stops redirect to booking page

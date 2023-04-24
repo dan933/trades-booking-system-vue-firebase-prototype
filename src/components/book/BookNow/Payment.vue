@@ -78,6 +78,10 @@ export default {
   methods: {
     submitForm() {
       if (valid) {
+        //check appointment is still available
+        //stripe stuff here
+        //payment success then
+        //book appointment
       }
     },
   },
