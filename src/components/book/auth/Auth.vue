@@ -66,7 +66,8 @@ export default {
     currentUser(newVal) {
       if (newVal && !this.signInResponse?.IsUserDifferentCredentials) {
         // console.log(newVal);
-        this.$router.push("/book");
+        const orgId = this.$route.params.id;
+        this.$router.push(`/org/${orgId}/book`);
       }
     },
   },
@@ -85,8 +86,7 @@ export default {
     },
     async signIn(signInDetails) {
       //get the organisation Id
-      // https://127.0.0.1:5173/auth?org=Okq3IGUln18QM90ObeI4
-      const orgId = this.$route.query.org;
+      const orgId = this.$route.params.id;
 
       console.log("org", orgId);
 

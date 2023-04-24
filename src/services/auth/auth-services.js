@@ -161,7 +161,7 @@ var authService = {
           result.user.linkAccounts(userCredentials?.tokenResponse);
         })
         .then(() => {
-          this.$router.push("/book");
+          this.$router.push(`/org/${org}/book`);
         })
         .catch(() => {
           //error message here

@@ -37,8 +37,8 @@ const Book = () => Promise.resolve({
 </template>
 
 <script>
-import Appointments from "./Appointments.vue";
-import BookNow from "./BookNow/BookNow.vue";
+import Appointments from "../Appointments.vue";
+import BookNow from "./BookNow.vue";
 export default {
   name: "Book",
   components: { Appointments, BookNow },

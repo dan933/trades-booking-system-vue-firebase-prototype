@@ -2,6 +2,7 @@ import Home from "../components/home/Home.vue";
 import About from "../components/about/About.vue";
 import Services from "../components/services/services.vue";
 import Contact from "../components/contact/contact.vue";
+import NotFound from "../components/not-found/NotFound.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth } from "firebase/auth";
 
@@ -28,13 +29,17 @@ const routes = [
   },
   {
     name: "Book",
-    path: "/book",
-    component: () => import("../components/book/Book.vue"),
+    path: "/org/:id/book",
+    component: () => import("../components/book/BookNow/Book.vue"),
   },
   {
     name: "Auth",
-    path: "/auth",
+    path: "/org/:id/auth",
     component: () => import("../components/book/auth/Auth.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    component: NotFound,
   },
 ];
 
@@ -48,10 +53,13 @@ router.beforeEach(async (to, from, next) => {
 
   let IsLoggedIn = !!auth;
 
-  // console.log(IsLoggedIn);
+  //The organisation id from the previous page
+  let org = from.params.id || to.params.id;
 
-  if (to.name === "Auth" && IsLoggedIn) next({ name: "Book" });
-  if (to.name === "Book" && !IsLoggedIn) next({ name: "Auth" });
+  console.log("org", org);
+
+  if (to.name === "Auth" && IsLoggedIn) next({ path: `/org/${org}/book` });
+  if (to.name === "Book" && !IsLoggedIn) next({ path: `/org/${org}/auth` });
   else next();
 });
 

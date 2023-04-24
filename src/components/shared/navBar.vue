@@ -38,7 +38,7 @@
         <v-btn
           @click="
             () => {
-              navigate('/book');
+              navigate('/org/Okq3IGUln18QM90ObeI4/book');
             }
           "
           variant="flat"
