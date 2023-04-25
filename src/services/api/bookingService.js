@@ -6,7 +6,7 @@ const user = getAuth().currentUser;
 //get token
 const token = await getIdToken(user);
 
-const getBookingAvailability = async () => {
+const getBookingAvailability = async (orgId) => {
   console.log("token", token);
 
   const config = {

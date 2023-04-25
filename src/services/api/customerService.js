@@ -6,7 +6,7 @@ const user = getAuth().currentUser;
 //get token
 const token = await getIdToken(user);
 
-const getCustomerDetails = async () => {
+const getCustomerDetails = async (orgId) => {
   console.log("token", token);
 
   const config = {
@@ -18,15 +18,18 @@ const getCustomerDetails = async () => {
     mode: "cors",
   };
 
-  const response = await fetch(
-    `${apiUrl}/customer/get-customer-details`,
+  let response = await fetch(
+    `${apiUrl}/customer/${orgId}/get-customer-details`,
     config
   );
 
-  return await response.json();
+  response = await response.json();
+  console.log(response);
+
+  return response;
 };
 
-const createCustomer = async () => {
+const createCustomerDetails = async () => {
   console.log("token", token);
 
   const config = {
@@ -41,19 +44,29 @@ const createCustomer = async () => {
   const response = await fetch(`${apiUrl}/customer/get-details`, config);
 };
 
-const updateCustomer = async () => {
+const updateCustomerDetails = async (requestBody, orgId) => {
   console.log("token", token);
 
+  console.log(JSON.stringify(requestBody));
+
   const config = {
-    method: "GET",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify(requestBody),
     mode: "cors",
   };
 
-  const response = await fetch(`${apiUrl}/customer/get-details`, config);
+  let response = await fetch(
+    `${apiUrl}/customer/${orgId}/update-customer-details`,
+    config
+  );
+
+  response = await response.json();
+
+  console.log("response", response);
 };
 
-export { getCustomerDetails, createCustomer, updateCustomer };
+export { getCustomerDetails, createCustomerDetails, updateCustomerDetails };

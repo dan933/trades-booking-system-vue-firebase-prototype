@@ -18,7 +18,7 @@
           ></v-text-field>
         </v-container>
         <v-text-field
-          v-model="phone"
+          v-model="phoneNumber"
           label="Phone number"
           type="tel"
           :rules="[(v) => !!v || 'Phone number is required']"
@@ -43,7 +43,7 @@ export default {
       valid: false,
       firstName: "",
       lastName: "",
-      phone: "",
+      phoneNumber: "",
       address: "",
     };
   },
@@ -57,20 +57,33 @@ export default {
         let customerDetails = {
           firstName: this.firstName,
           lastName: this.lastName,
-          phone: this.phone,
-          address: this.address,
+          phoneNumber: this.phoneNumber,
+          addressList: [this.address],
         };
 
         this.$emit("storeCustomerDetails", customerDetails);
       }
     },
     async getCustomer() {
-      await getCustomerDetails();
+      const orgId = this.$route.params.id;
+      return await getCustomerDetails(orgId);
+    },
+    async init() {
+      //check if the customers details are in the database
+      let customer = await this.getCustomer();
+
+      //if the details exist populate the form
+      if (customer) {
+        this.firstName = customer?.firstName || "";
+        this.lastName = customer?.lastName || "";
+        this.phoneNumber = customer?.phoneNumber || "";
+        this.address =
+          customer?.addressList?.length > 0 ? customer.addressList[0] : "";
+      }
     },
   },
-  mounted() {
-    let customer = this.getCustomer();
-    console.log(customer);
+  async mounted() {
+    await this.init();
   },
 };
 </script>

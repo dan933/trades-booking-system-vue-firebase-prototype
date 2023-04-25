@@ -11,7 +11,11 @@
     </p>
     <p>
       <strong>Address:</strong>
-      {{ customerInformation?.address }}
+      {{
+        customerInformation?.addressList?.length > 0
+          ? customerInformation?.addressList[0]
+          : ""
+      }}
     </p>
 
     <v-table fixed-header max-height="300px">

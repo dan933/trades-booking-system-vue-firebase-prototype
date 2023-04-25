@@ -131,7 +131,10 @@ import SelectService from "./SelectService.vue";
 import CustomerDetails from "./CustomerDetails.vue";
 import ReviewBooking from "./ReviewBooking.vue";
 import Payment from "./Payment.vue";
+
 import { getBookingAvailability } from "../../../services/api/bookingService.js";
+import { updateCustomerDetails } from "../../../services/api/customerService.js";
+
 export default {
   name: "BookNow",
   data: () => ({
@@ -145,6 +148,12 @@ export default {
   methods: {
     storeCustomerDetails(customerDetails) {
       this.customerInformation = customerDetails;
+      console.log(this.customerInformation);
+
+      const orgId = this.$route.params.id;
+
+      updateCustomerDetails(this.customerInformation, orgId);
+
       this.onboarding += 1;
     },
     storeSelectedTimeSlotData(bookingTimeSlotData) {
