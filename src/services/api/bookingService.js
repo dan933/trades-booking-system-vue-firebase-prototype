@@ -18,7 +18,7 @@ const getBookingAvailability = async () => {
     mode: "cors",
   };
 
-  const response = await fetch(`${apiUrl}/booking/get-availability`, config);
+  // const response = await fetch(`${apiUrl}/booking/get-availability`, config);
 };
 
 export { getBookingAvailability };

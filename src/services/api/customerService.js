@@ -18,7 +18,12 @@ const getCustomerDetails = async () => {
     mode: "cors",
   };
 
-  const response = await fetch(`${apiUrl}/customer/get-details`, config);
+  const response = await fetch(
+    `${apiUrl}/customer/get-customer-details`,
+    config
+  );
+
+  return await response.json();
 };
 
 const createCustomer = async () => {

@@ -1,3 +1,6 @@
+// The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
+const functions = require("firebase-functions");
+
 const nodemailer = require("nodemailer");
 
 let transporter = nodemailer.createTransport({
@@ -8,7 +11,7 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-exports.handler = async (req, res) => {
+handler = async (req, res) => {
   // Set CORS headers for preflight requests
   // Allows GETs from any origin with the Content-Type header
   // and caches preflight response for 3600s
@@ -109,3 +112,7 @@ exports.handler = async (req, res) => {
     });
   }
 };
+
+exports.submitContactForm = functions
+  .region("australia-southeast1")
+  .https.onRequest(handler);

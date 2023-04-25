@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { getCustomerDetails } from "../../../services/api/customerService.js";
 export default {
   name: "CustomerDetails",
   data() {
@@ -63,8 +64,14 @@ export default {
         this.$emit("storeCustomerDetails", customerDetails);
       }
     },
+    async getCustomer() {
+      await getCustomerDetails();
+    },
   },
-  mounted() {},
+  mounted() {
+    let customer = this.getCustomer();
+    console.log(customer);
+  },
 };
 </script>
 
