@@ -131,8 +131,6 @@ import SelectService from "./SelectService.vue";
 import CustomerDetails from "./CustomerDetails.vue";
 import ReviewBooking from "./ReviewBooking.vue";
 import Payment from "./Payment.vue";
-
-import { getBookingAvailability } from "../../../services/api/bookingService.js";
 import { updateCustomerDetails } from "../../../services/api/customerService.js";
 
 export default {
@@ -146,13 +144,16 @@ export default {
     customerConfirmation: false,
   }),
   methods: {
-    storeCustomerDetails(customerDetails) {
-      this.customerInformation = customerDetails;
-      console.log(this.customerInformation);
+    async storeCustomerDetails(customerDetails) {
+      console.log("customerDetails", customerDetails);
 
+      //todo only run the update if the customer details
+      //are different to this.customerInformation
       const orgId = this.$route.params.id;
 
-      updateCustomerDetails(this.customerInformation, orgId);
+      await updateCustomerDetails(customerDetails, orgId);
+
+      this.customerInformation = customerDetails;
 
       this.onboarding += 1;
     },
@@ -173,9 +174,7 @@ export default {
       this.onboarding += 1;
     },
   },
-  mounted() {
-    getBookingAvailability();
-  },
+  mounted() {},
   computed: {},
   components: {
     Payment,

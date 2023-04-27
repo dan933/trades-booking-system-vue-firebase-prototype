@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import { getBookingAvailability } from "../../../services/api/bookingService.js";
 export default {
   name: "TimeSlots",
   data: () => ({
@@ -70,6 +71,24 @@ export default {
     ],
   }),
   methods: {
+    resetTimeStamp(inputDate) {
+      console.log(inputDate);
+      let outputDate = new Date(inputDate);
+
+      let startOfDay = new Date(
+        outputDate.getFullYear(),
+        outputDate.getMonth(),
+        outputDate.getDate()
+      );
+      let endOfDay = new Date(
+        outputDate.getFullYear(),
+        outputDate.getMonth(),
+        outputDate.getDate() + 1
+      );
+
+      console.log(startOfDay, endOfDay);
+      return { startOfDay, endOfDay };
+    },
     getOrdinalSuffix(day) {
       if (day >= 11 && day <= 13) {
         return "th";
@@ -138,6 +157,20 @@ export default {
       this.getDateTimeslotData();
 
       //todo emit
+    },
+  },
+  watch: {
+    selectedDate(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        let selectedDate = newValue;
+        selectedDate = this.resetTimeStamp(selectedDate);
+        //api call to get available timeslots
+        const orgId = this.$route.params.id;
+
+        getBookingAvailability(orgId, selectedDate);
+
+        // console.log("line 146", newValue);
+      }
     },
   },
   mounted() {},

@@ -1,72 +1,35 @@
 import { getIdToken, getAuth } from "firebase/auth";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  getDoc,
+  doc,
+  CollectionReference,
+  setDoc,
+} from "firebase/firestore";
+
 const apiUrl = import.meta.env.VITE_APIURL;
 
 //get user
 const user = getAuth().currentUser;
-//get token
-const token = await getIdToken(user);
+
+let userId = user.uid;
+
+const db = getFirestore();
 
 const getCustomerDetails = async (orgId) => {
-  console.log("token", token);
+  let userDocRef = doc(db, `organisations/${orgId}/users/${userId}`);
 
-  const config = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    mode: "cors",
-  };
+  let userDoc = await getDoc(userDocRef);
 
-  let response = await fetch(
-    `${apiUrl}/customer/${orgId}/get-customer-details`,
-    config
-  );
-
-  response = await response.json();
-  console.log(response);
-
-  return response;
-};
-
-const createCustomerDetails = async () => {
-  console.log("token", token);
-
-  const config = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    mode: "cors",
-  };
-
-  const response = await fetch(`${apiUrl}/customer/get-details`, config);
+  return userDoc.data();
 };
 
 const updateCustomerDetails = async (requestBody, orgId) => {
-  console.log("token", token);
+  const userDocRef = doc(db, `organisations/${orgId}/users/${userId}`);
 
-  console.log(JSON.stringify(requestBody));
-
-  const config = {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(requestBody),
-    mode: "cors",
-  };
-
-  let response = await fetch(
-    `${apiUrl}/customer/${orgId}/update-customer-details`,
-    config
-  );
-
-  response = await response.json();
-
-  console.log("response", response);
+  await setDoc(userDocRef, requestBody);
 };
 
-export { getCustomerDetails, createCustomerDetails, updateCustomerDetails };
+export { getCustomerDetails, updateCustomerDetails };

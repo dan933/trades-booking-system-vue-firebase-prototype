@@ -1,10 +1,17 @@
 rules_version = '2';
 service cloud.firestore {
-  //for testing
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2023, 4, 24);
+
+    //Allow a user to access and edit their own data
+    match /organisations/{organisation}/users/{user} {
+      allow read, write, update, delete: if request.auth != null && request.auth.uid == user;
+    }
+
+    //Allow a user to read an organisations bookedSchedule
+    //for the selected request date
+    match /organisations/{organisation}/bookedSchedule {
+      allow read: if request.auth != null &&
+      request.resource.data.selectedDate.toDate().toDateString() == resource.data.endTimestamp.toDate().toDateString();
     }
   }
 }

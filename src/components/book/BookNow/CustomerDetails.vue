@@ -70,6 +70,7 @@ export default {
     },
     async init() {
       //check if the customers details are in the database
+
       let customer = await this.getCustomer();
 
       //if the details exist populate the form

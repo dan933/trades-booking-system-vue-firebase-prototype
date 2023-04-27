@@ -6,6 +6,7 @@ const express = require("express");
 
 const cookieParser = require("cookie-parser")();
 const cors = require("cors")({ origin: true });
+const bodyParser = require("body-parser");
 
 const bookingApi = express();
 
@@ -23,9 +24,10 @@ const bookingController = require("./bookingController.js");
 bookingApi.use(cors);
 bookingApi.use(cookieParser);
 bookingApi.use(validateFirebaseIdToken);
+bookingApi.use(bodyParser.json());
 
 //---------------- Controllers ---------------------------------------//
-bookingApi.get("/get-availability", bookingController.getAvailability);
+bookingApi.post("/:orgId/get-availability", bookingController.getAvailability);
 
 exports.bookingApi = functions
   .region("australia-southeast1")
