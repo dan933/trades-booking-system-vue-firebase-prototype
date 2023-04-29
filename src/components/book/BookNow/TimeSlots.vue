@@ -56,10 +56,14 @@
 </template>
 
 <script>
-import { getBookingAvailability } from "../../../services/api/bookingService.js";
+import {
+  getTimeslotAvailability,
+  getCalendarDatesAvailability,
+} from "../../../services/api/bookingService.js";
 export default {
   name: "TimeSlots",
   data: () => ({
+    disabledDates: null,
     selectedDate: null,
     availabilityMessage: "",
     IsAvailableDate: false,
@@ -71,6 +75,12 @@ export default {
     ],
   }),
   methods: {
+    init() {
+      this.disabledUnavailableDates();
+    },
+    disabledUnavailableDates() {
+      getCalendarDatesAvailability(this.orgId);
+    },
     resetTimeStamp(inputDate) {
       console.log(inputDate);
       let outputDate = new Date(inputDate);
@@ -165,34 +175,33 @@ export default {
         let selectedDate = newValue;
         selectedDate = this.resetTimeStamp(selectedDate);
         //api call to get available timeslots
-        const orgId = this.$route.params.id;
-
-        getBookingAvailability(orgId, selectedDate);
+        // getTimeslotAvailability(this.orgId, selectedDate);
 
         // console.log("line 146", newValue);
       }
     },
   },
-  mounted() {},
+  mounted() {
+    this.init();
+  },
   computed: {
-    disabledDates() {
-      // create a new Date object
-      let today = new Date();
-
-      // subtract 1 day from today's date
-      let yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-
-      let disabledDates = [{ start: null, end: null }];
-      disabledDates[0].end = yesterday;
-
-      disabledDates[1] = {
-        start: new Date("2023-04-23"),
-        end: new Date("2023-04-23"),
-      };
-
-      return disabledDates;
+    orgId() {
+      return this.$route.params.id;
     },
+    // disabledDates() {
+    //   // create a new Date object
+    //   let today = new Date();
+    //   // subtract 1 day from today's date
+    //   let yesterday = new Date(today);
+    //   yesterday.setDate(today.getDate() - 1);
+    //   let disabledDates = [{ start: null, end: null }];
+    //   disabledDates[0].end = yesterday;
+    //   disabledDates[1] = {
+    //     start: new Date("2023-04-23"),
+    //     end: new Date("2023-04-23"),
+    //   };
+    //   return disabledDates;
+    // },
   },
 };
 </script>

@@ -1,13 +1,5 @@
-import { getIdToken, getAuth } from "firebase/auth";
-import {
-  collection,
-  getDocs,
-  getFirestore,
-  getDoc,
-  doc,
-  CollectionReference,
-  setDoc,
-} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
 
 const apiUrl = import.meta.env.VITE_APIURL;
 

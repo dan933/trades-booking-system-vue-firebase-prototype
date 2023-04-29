@@ -65,8 +65,7 @@ export default {
       }
     },
     async getCustomer() {
-      const orgId = this.$route.params.id;
-      return await getCustomerDetails(orgId);
+      return await getCustomerDetails(this.orgId);
     },
     async init() {
       //check if the customers details are in the database
@@ -81,6 +80,11 @@ export default {
         this.address =
           customer?.addressList?.length > 0 ? customer.addressList[0] : "";
       }
+    },
+  },
+  computed: {
+    orgId() {
+      return this.$route.params.id;
     },
   },
   async mounted() {
