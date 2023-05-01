@@ -2,6 +2,7 @@
   <v-card flat rounded="0" class="book-now-card">
     <h3>Pick a date</h3>
     <VDatePicker
+      :min-date="tomorrow"
       v-model="selectedDate"
       :disabled-dates="disabledDates"
       @dayclick="onCalendarClick"
@@ -57,32 +58,73 @@
 
 <script>
 import {
-  getTimeslotAvailability,
+  getTimeSlotsForDate,
   getCalendarDatesAvailability,
 } from "../../../services/api/bookingService.js";
 export default {
   name: "TimeSlots",
   data: () => ({
+    //data that we will get from the db
+    availabilityDoc: null,
+    bookingScheduleData: null,
     disabledDates: null,
     selectedDate: null,
     availabilityMessage: "",
     IsAvailableDate: false,
     selectedTimeSlot: {},
-    availableTimeSlots: [
-      { time: "15:00", availableHours: 3 },
-      { time: "14:00", availableHours: 5 },
-      { time: "13:00", availableHours: 2 },
-    ],
+    availableTimeSlots: null,
   }),
   methods: {
-    init() {
-      this.disabledUnavailableDates();
+    async init() {
+      //gets the availability of the timeslots and dates from db
+      const {
+        bookedOutDates,
+        businessClosedDays,
+        bookMonthsAhead,
+        bookedSchedules,
+        availabilityDoc,
+      } = await getCalendarDatesAvailability(this.orgId);
+
+      //set the booking schedule data
+      this.bookingScheduleData = bookedSchedules;
+
+      //set the availability settings
+      this.availabilityDoc = availabilityDoc;
+
+      // sets the disabled dates
+      this.disabledUnavailableDates(
+        bookedOutDates,
+        businessClosedDays,
+        bookMonthsAhead
+      );
     },
-    disabledUnavailableDates() {
-      getCalendarDatesAvailability(this.orgId);
+    async disabledUnavailableDates(
+      bookedOutDates,
+      businessClosedDays,
+      bookMonthsAhead
+    ) {
+      // Add 1 to get correct day for vuetify calendar
+      let closedDays = businessClosedDays.map((item) => item + 1);
+
+      // Set disabled dates
+      this.disabledDates = [
+        { repeat: { weekdays: closedDays } },
+        { start: bookMonthsAhead, end: null },
+      ];
+
+      // Set booked out dates
+      bookedOutDates.forEach((date) => {
+        let disableDate = {
+          start: new Date(date),
+          end: new Date(date),
+        };
+
+        // add date to disabled dates array
+        this.disabledDates.push(disableDate);
+      });
     },
     resetTimeStamp(inputDate) {
-      console.log(inputDate);
+      // console.log(inputDate);
       let outputDate = new Date(inputDate);
 
       let startOfDay = new Date(
@@ -90,14 +132,14 @@ export default {
         outputDate.getMonth(),
         outputDate.getDate()
       );
-      let endOfDay = new Date(
-        outputDate.getFullYear(),
-        outputDate.getMonth(),
-        outputDate.getDate() + 1
-      );
+      // let endOfDay = new Date(
+      //   outputDate.getFullYear(),
+      //   outputDate.getMonth(),
+      //   outputDate.getDate() + 1
+      // );
 
-      console.log(startOfDay, endOfDay);
-      return { startOfDay, endOfDay };
+      // console.log(startOfDay, endOfDay);
+      return startOfDay;
     },
     getOrdinalSuffix(day) {
       if (day >= 11 && day <= 13) {
@@ -170,12 +212,19 @@ export default {
     },
   },
   watch: {
+    disabledDates(newval) {
+      console.log(newval);
+    },
     selectedDate(newValue, oldValue) {
       if (newValue !== oldValue) {
         let selectedDate = newValue;
         selectedDate = this.resetTimeStamp(selectedDate);
         //api call to get available timeslots
-        // getTimeslotAvailability(this.orgId, selectedDate);
+        this.availableTimeSlots = getTimeSlotsForDate(
+          this.bookingScheduleData,
+          selectedDate,
+          this.availabilityDoc
+        );
 
         // console.log("line 146", newValue);
       }
@@ -185,23 +234,15 @@ export default {
     this.init();
   },
   computed: {
+    //get yesterdays date
+    tomorrow() {
+      let tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return tomorrow;
+    },
     orgId() {
       return this.$route.params.id;
     },
-    // disabledDates() {
-    //   // create a new Date object
-    //   let today = new Date();
-    //   // subtract 1 day from today's date
-    //   let yesterday = new Date(today);
-    //   yesterday.setDate(today.getDate() - 1);
-    //   let disabledDates = [{ start: null, end: null }];
-    //   disabledDates[0].end = yesterday;
-    //   disabledDates[1] = {
-    //     start: new Date("2023-04-23"),
-    //     end: new Date("2023-04-23"),
-    //   };
-    //   return disabledDates;
-    // },
   },
 };
 </script>

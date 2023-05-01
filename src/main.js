@@ -5,6 +5,7 @@ import Vuetify from "./plugins/vuetify.js";
 import Router from "./router/router.js";
 import { Calendar, DatePicker } from "v-calendar";
 import { VDataTable } from "vuetify/labs/VDataTable";
+//auth needs to be imported here
 import { auth } from "./services/firebase/firebaseConfig.js";
 import "v-calendar/style.css";
 
