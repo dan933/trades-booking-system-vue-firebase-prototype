@@ -222,7 +222,7 @@ export default {
       if (newValue !== null && newValue !== oldValue) {
         let selectedDate = newValue;
         selectedDate = this.resetTimeStamp(selectedDate);
-        //api call to get available timeslots
+        //todo api call to get available timeslots
         this.availableTimeSlots = getTimeSlotsForDate(
           this.bookingScheduleData,
           selectedDate,

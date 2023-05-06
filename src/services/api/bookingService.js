@@ -120,6 +120,8 @@ const getTimeSlotsForDate = (
   //gapBetween
   let gapBetween = availabilityDoc.gapBetween;
 
+  //todo potential api call to get the bookedSchedule for the selected date
+
   //filter the bookingSchedule for the selected date
   let bookingScheduleForSelectedDate = bookingSchedule.find((schedule) => {
     // console.log("schedule.bookingScheduleDate", schedule.bookingScheduleDate);
@@ -146,21 +148,24 @@ const getTimeSlotsForDate = (
       //if the timeslots ahead meet the gapBetween settings
       //add current timeslot to the available timeslots array
       if (
-        !bookingScheduleForSelectedDate.bookedTimes[key] &&
-        gapBetweenCheck(key) &&
-        //check if the next timeslot is within business hours
-        +key + gapBetween <= selectedDateOpeningTimes.end
+        +key <= selectedDateOpeningTimes.end &&
+        !bookingScheduleForSelectedDate.bookedTimes[key]
       ) {
         currentTimeSlot.push(+key);
+
+        //if the key is the last key
+        if (+key === selectedDateOpeningTimes.end)
+          timeSlotArray.push(currentTimeSlot);
       } else {
         //add timeslot
         timeSlotArray.push(currentTimeSlot);
+
         //reset
         currentTimeSlot = [];
       }
     });
 
-    // console.log("timeSlotArray", timeSlotArray);
+    console.log("timeSlotArray", timeSlotArray);
 
     //convert times into time and available hours
     let availableTimes = timeSlotArray.filter(
