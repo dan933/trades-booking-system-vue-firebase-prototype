@@ -78,24 +78,24 @@ export default {
   },
   methods: {
     submitForm() {
-      if (this.validForm) {
-        const cardDetails = {
-          cardNumber: this.cardNumber,
-          cardName: this.cardName,
-          expiryDate: this.expiryDate,
-          cvv: this.cvv,
-        };
+      // if (this.validForm) {
+      const cardDetails = {
+        cardNumber: this.cardNumber,
+        cardName: this.cardName,
+        expiryDate: this.expiryDate,
+        cvv: this.cvv,
+      };
 
-        //todo add stripe token here either get existing customer token or create a new one
-        //check appointment is still available
-        //stripe stuff here
-        //payment success then
-        //book appointment
+      //todo add stripe token here either get existing customer token or create a new one
+      //check appointment is still available
+      //stripe stuff here
+      //payment success then
+      //book appointment
 
-        this.$emit("storePaymentDetails", cardDetails);
+      this.$emit("storePaymentDetails", cardDetails);
 
-        return cardDetails;
-      }
+      return cardDetails;
+      // }
     },
     paymentError() {
       //error handling
