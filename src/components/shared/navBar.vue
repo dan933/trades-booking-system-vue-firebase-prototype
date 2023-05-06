@@ -110,7 +110,7 @@
       <v-list-item
         @click="
           () => {
-            navigate('/book');
+            navigate('/org/Okq3IGUln18QM90ObeI4/book');
           }
         "
         prepend-icon="mdi:mdi-calendar-blank-outline"
