@@ -23,6 +23,7 @@ exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   return { bookedTimes, bookingScheduleDate: new Date(bookingDate) };
 };
 
+//Updates the booking schedule with the requested booking
 exports.updateBookedScheduleDocument = (
   bookedSchedule,
   customerServices,
@@ -53,6 +54,57 @@ exports.updateBookedScheduleDocument = (
   return bookedSchedule;
 };
 
-exports.checkRequestedBookingAvailability = (bookedSchedule) => {};
+//Checks existing booking schedule for availability
+exports.checkRequestedBookingAvailability = (
+  bookedSchedule,
+  customerServices,
+  startHour,
+  orgAvailabilityDoc
+) => {
+  //get the total hours required
+  const totalHoursRequired = customerServices.reduce((acc, service) => {
+    return acc + service.hours;
+  }, 0);
+
+  functions.logger.log("totalHoursRequired", totalHoursRequired);
+
+  functions.logger.log("startHour", startHour);
+
+  functions.logger.log(
+    "bookedSchedule.bookingScheduleDate.toDate()",
+    bookedSchedule.bookingScheduleDate.toDate()
+  );
+
+  //get the day of the week for the requested booking
+  let bookedDay = bookedSchedule.bookingScheduleDate.toDate().getDay();
+
+  functions.logger.log("bookedDay", bookedDay);
+
+  //check opperating end time for that day
+  let opperatingEndTime = orgAvailabilityDoc.openingTimes[bookedDay].end;
+
+  let bookedTimes = bookedSchedule.bookedTimes;
+
+  let gapBetween = orgAvailabilityDoc.gapBetween;
+
+  functions.logger.log("gapBetween", gapBetween);
+
+  let endHour = startHour + totalHoursRequired + gapBetween;
+
+  for (let index = startHour; index < endHour; index++) {
+    //if the hour is already booked return false
+    //if there the gap between bookings is not available return false
+    //if the index is greater than the opperating end time return false
+    if (
+      bookedTimes[index] ||
+      bookedTimes[index + gapBetween] ||
+      index > opperatingEndTime
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 exports.createBookedScheduleDocument = (bookingDate) => {};

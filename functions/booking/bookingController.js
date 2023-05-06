@@ -108,13 +108,63 @@ exports.book = async (req, res) => {
       functions.logger.log("bookedSchedule", bookedSchedule.data());
 
       //check that requested time is not already booked
+      const isAvailable = bookingHlper.checkRequestedBookingAvailability(
+        bookedSchedule.data(),
+        customerServices,
+        startHour,
+        orgAvailabilityDoc.data()
+      );
 
-      res.send(bookedSchedule.data());
+      functions.logger.log("isAvailable", isAvailable);
+
+      //if not available don't allow booking
+      if (!isAvailable) {
+        res.send({
+          message: "Requested time is not available",
+          status: "error",
+        });
+      }
+
+      //otherwise update the bookedSchedule document
+      const updatedSchdule = bookingHlper.updateBookedScheduleDocument(
+        bookedSchedule.data(),
+        customerServices,
+        startHour,
+        gapBetween
+      );
+
+      await bookedScheduleRef.set({ ...updatedSchdule });
+
+      functions.logger.log("Booking schedule updated", updatedSchdule);
+
+      res.send({
+        message: "Booking Scheudle Updated",
+        status: "success",
+        data: updatedSchdule,
+      });
     }
 
     //If there is no document for the requested date create one
     if (!bookedSchedule.exists) {
-      //create bookedTimes Object
+      //check that booking times are within opperating hours
+      const isAvailable = bookingHlper.checkRequestedBookingAvailability(
+        newBookedScheduleDoc,
+        startHour,
+        orgAvailabilityDoc.data(),
+        customerServices
+      );
+
+      functions.logger.log("isAvailable", isAvailable);
+
+      //if not available don't allow booking
+      if (!isAvailable) {
+        res.send({
+          message: "Requested time is not available",
+          status: "error",
+        });
+      }
+
+      //update bookedTimes Object with the requested booking
       const updatedSchdule = bookingHlper.updateBookedScheduleDocument(
         newBookedScheduleDoc,
         customerServices,
@@ -124,6 +174,8 @@ exports.book = async (req, res) => {
 
       //create the bookedSchedule document
       await bookedScheduleRef.set({ ...updatedSchdule });
+
+      functions.logger.log("New Booking Created", updatedSchdule);
 
       res.send({
         message: "New Booking Created",
