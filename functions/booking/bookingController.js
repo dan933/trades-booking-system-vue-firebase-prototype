@@ -132,7 +132,8 @@ exports.book = async (req, res) => {
         bookedSchedule.data(),
         customerServices,
         startHour,
-        gapBetween
+        gapBetween,
+        orgAvailabilityDoc.data()
       );
 
       await bookedScheduleRef.set({ ...updatedSchdule });
@@ -175,7 +176,8 @@ exports.book = async (req, res) => {
         newBookedScheduleDoc,
         customerServices,
         startHour,
-        gapBetween
+        gapBetween,
+        orgAvailabilityDoc.data()
       );
 
       //create the bookedSchedule document

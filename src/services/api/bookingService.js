@@ -11,6 +11,8 @@ import {
   where,
 } from "firebase/firestore";
 
+//todo add a guest user
+
 //get user
 const user = getAuth().currentUser;
 let userId = user.uid;

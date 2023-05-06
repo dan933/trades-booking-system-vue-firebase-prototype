@@ -1,7 +1,6 @@
 //Returns the opperating hours for that day as an array
 //Returns the gap between settings as part of the object
 const functions = require("firebase-functions");
-const { book } = require("../../booking/bookingController");
 exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   //get the day of the week
   let day = new Date(bookingDate).getDay();
@@ -29,7 +28,8 @@ exports.updateBookedScheduleDocument = (
   bookedSchedule,
   customerServices,
   startHour,
-  gapBetween
+  gapBetween,
+  orgAvailabilityDoc
 ) => {
   //get the total hours required
   const totalHoursRequired = customerServices.reduce((acc, service) => {
@@ -42,9 +42,24 @@ exports.updateBookedScheduleDocument = (
 
   let bookedTimes = bookedSchedule.bookedTimes;
 
+  //Get the number of hours required for the booking
   let endHour = startHour + totalHoursRequired + gapBetween;
 
+  //get the day of the week for the requested booking
+  let bookedDay = bookedSchedule.bookingScheduleDate;
+  bookedDay = bookedDay?.toDate
+    ? bookedDay.toDate().getDay()
+    : bookedDay.getDay();
+
+  functions.logger.log("bookedDay", bookedDay);
+
+  let closingTime = orgAvailabilityDoc.openingTimes[bookedDay].end;
+
   for (let index = startHour; index < endHour; index++) {
+    if (index > closingTime) {
+      break;
+    }
+
     bookedTimes[index] = true;
   }
 
@@ -79,7 +94,7 @@ exports.checkRequestedBookingAvailability = (
 
   //get the day of the week for the requested booking
   let bookedDay = bookedSchedule.bookingScheduleDate;
-  bookedDay = bookedDay.toDate
+  bookedDay = bookedDay?.toDate
     ? bookedDay.toDate().getDay()
     : bookedDay.getDay();
 
@@ -103,7 +118,8 @@ exports.checkRequestedBookingAvailability = (
     if (
       bookedTimes[index] ||
       bookedTimes[index + gapBetween] ||
-      index > opperatingEndTime
+      //if the booking is the last booking slot for the day
+      index - gapBetween > opperatingEndTime
     ) {
       return false;
     }
