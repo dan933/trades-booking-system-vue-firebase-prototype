@@ -16,6 +16,7 @@ export default defineConfig({
     },
   },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       // https://rollupjs.org/guide/en/#outputmanualchunks
       output: {},
