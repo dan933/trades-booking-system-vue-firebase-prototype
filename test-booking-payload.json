@@ -1,0 +1,39 @@
+{
+    "customerInformation": {
+        "firstName": "Daniel",
+        "lastName": "Albert",
+        "phoneNumber": "041847269300",
+        "addressList": [
+            "16 fake st fake ville"
+        ]
+    },
+    "selectedDateTimeSlot": {
+        "date": "2023-05-07T23:00:00.000Z",
+        "timeslot": {
+            "time": "9:00",
+            "availableHours": 7
+        }
+    },
+    "services": [
+        {
+            "selection": {
+                "name": "Cleaning",
+                "rate": 25
+            },
+            "hours": 3
+        },
+        {
+            "selection": {
+                "name": "Roofing",
+                "rate": 50
+            },
+            "hours": 1
+        }
+    ],
+    "paymentDetails": {
+        "cardNumber": "5404032127932816",
+        "cardName": "Daniel Albert",
+        "expiryDate": "01/2026",
+        "cvv": "356"
+    }
+}

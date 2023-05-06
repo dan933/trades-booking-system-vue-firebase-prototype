@@ -27,7 +27,7 @@ bookingApi.use(validateFirebaseIdToken);
 bookingApi.use(bodyParser.json());
 
 //---------------- Controllers ---------------------------------------//
-bookingApi.post("/:orgId/get-availability", bookingController.getAvailability);
+bookingApi.post("/:orgId/book", bookingController.book);
 
 exports.bookingApi = functions
   .region("australia-southeast1")

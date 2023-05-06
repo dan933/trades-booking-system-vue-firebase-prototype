@@ -5,7 +5,6 @@ import {
   getFirestore,
   getDoc,
   doc,
-  setDoc,
   collection,
   getDocs,
   query,
@@ -15,9 +14,6 @@ import {
 //get user
 const user = getAuth().currentUser;
 let userId = user.uid;
-
-//get token
-const token = await getIdToken(user);
 
 const db = getFirestore();
 
@@ -34,13 +30,14 @@ const getCalendarDatesAvailability = async (orgId) => {
   let { openingTimes, gapBetween, bookMonthsAheadLimit } =
     availabilityDoc.data();
 
-  // 3 months ahead from the current date
+  // get the date for the bookMonthsAheadLimit
   let bookMonthsAhead = new Date();
   bookMonthsAhead.setMonth(bookMonthsAhead.getMonth() + bookMonthsAheadLimit);
 
-  console.log("bookMonthsAhead", bookMonthsAhead);
+  // console.log("bookMonthsAhead", bookMonthsAhead);
 
-  //query the bookedSchedules collection for the bookMonthsAheadLimit
+  //query the bookedSchedules collection for dates in the future
+  //todo paginate based on month selected range
   let bookedSchedulesQuery = query(
     collection(db, `organisations/${orgId}/bookedSchedule`),
     where("bookingScheduleDate", ">=", new Date())
@@ -98,7 +95,7 @@ const getCalendarDatesAvailability = async (orgId) => {
     }
   });
 
-  console.log("bookedOutDates", bookedOutDates);
+  // console.log("bookedOutDates", bookedOutDates);
   return {
     bookedOutDates,
     businessClosedDays,
@@ -206,4 +203,72 @@ const getTimeSlotsForDate = (
   //return one time slot for the day
 };
 
-export { getTimeSlotsForDate, getCalendarDatesAvailability };
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+//Creates booking payload to be sent to the server
+const createBookingPayload = (bookingData) => {
+  console.log(bookingData);
+
+  //get the timeSlot
+  let timeSlot = bookingData?.selectedDateTimeSlot;
+
+  //date in yyyy-mm-dd format
+  let bookingDate = formatDate(timeSlot?.date);
+
+  //get the start hour
+  let startHour = timeSlot?.date.getHours();
+
+  //add the userId to customer information
+  let payload = bookingData;
+
+  payload = {
+    bookingDate: bookingDate,
+    startHour: startHour,
+    customerInformation: {
+      ...payload.customerInformation,
+      userId: userId,
+    },
+    services: payload.services,
+  };
+
+  console.log("payload", payload);
+
+  return JSON.stringify(payload);
+};
+
+//Calls api to attempt to create a booking
+const createBooking = async (bookingData, orgId) => {
+  try {
+    //get token
+    const token = await getIdToken(user);
+
+    let payload = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      mode: "cors",
+      body: createBookingPayload(bookingData),
+    };
+
+    console.log("payload", payload);
+
+    const resposne = await fetch(`${apiUrl}/booking/${orgId}/book`, payload);
+
+    const bodyResponse = await resposne.json();
+
+    return bodyResponse;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+export { getTimeSlotsForDate, getCalendarDatesAvailability, createBooking };

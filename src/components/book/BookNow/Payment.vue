@@ -5,7 +5,7 @@
       <p><strong>Amount Payable:</strong> ${{ amountPayable }}</p>
       <p><strong>Number of Hours:</strong> {{ hoursBooked }}</p>
     </div>
-    <v-form @submit.prevent="submitForm" v-model="valid">
+    <v-form @submit.prevent="submitForm" v-model="validForm">
       <v-text-field v-model="cardName" label="Cardholder Name" />
       <v-text-field
         v-model="cardNumber"
@@ -44,10 +44,11 @@ export default {
   },
   data() {
     return {
-      cardNumber: "",
-      cardName: "",
-      expiryDate: "",
-      cvv: "",
+      validForm: false,
+      cardNumber: "4545454545454545",
+      cardName: "Test Card",
+      expiryDate: "01/2028",
+      cvv: "123",
       cardNumberRules: [
         (v) => !!v || "Card number is required",
         (v) => /^\d{15,16}$/.test(v) || "Card number must be 15 or 16 digits",
@@ -77,12 +78,30 @@ export default {
   },
   methods: {
     submitForm() {
-      if (valid) {
+      if (this.validForm) {
+        const cardDetails = {
+          cardNumber: this.cardNumber,
+          cardName: this.cardName,
+          expiryDate: this.expiryDate,
+          cvv: this.cvv,
+        };
+
+        //todo add stripe token here either get existing customer token or create a new one
         //check appointment is still available
         //stripe stuff here
         //payment success then
         //book appointment
+
+        this.$emit("storePaymentDetails", cardDetails);
+
+        return cardDetails;
       }
+    },
+    paymentError() {
+      //error handling
+    },
+    paymentSuccess() {
+      //book appointment
     },
   },
 };

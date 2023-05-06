@@ -55,6 +55,8 @@
           :selectedDateTimeSlot="selectedDateTimeSlot"
           :selectedServices="selectedServices"
           :customerInformation="customerInformation"
+          ref="paymentRef"
+          @storePaymentDetails="storePaymentDetails"
         ></Payment>
       </v-window-item>
     </v-window>
@@ -68,7 +70,7 @@
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-record"
+            icon="mdi:mdi-account"
             @click="toggle"
           ></v-btn>
         </v-item>
@@ -80,7 +82,7 @@
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-record"
+            icon="mdi:mdi-calendar-clock"
             @click="toggle"
           ></v-btn>
         </v-item>
@@ -92,7 +94,7 @@
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-record"
+            icon="mdi:mdi-briefcase-check"
             @click="toggle"
           ></v-btn>
         </v-item>
@@ -104,7 +106,7 @@
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-record"
+            icon="mdi:mdi-message-draw"
             @click="toggle"
           ></v-btn>
         </v-item>
@@ -116,7 +118,7 @@
         >
           <v-btn
             :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-record"
+            icon="mdi:mdi-credit-card-outline"
             @click="toggle"
           ></v-btn>
         </v-item>
@@ -132,6 +134,7 @@ import CustomerDetails from "./CustomerDetails.vue";
 import ReviewBooking from "./ReviewBooking.vue";
 import Payment from "./Payment.vue";
 import { updateCustomerDetails } from "../../../services/api/customerService.js";
+import { createBooking } from "../../../services/api/bookingService";
 
 export default {
   name: "BookNow",
@@ -142,21 +145,23 @@ export default {
     selectedServices: [],
     customerInformation: null,
     customerConfirmation: false,
+    paymentDetails: null,
   }),
   methods: {
     async storeCustomerDetails(customerDetails) {
-      console.log("customerDetails", customerDetails);
-
-      //todo only run the update if the customer details
       //are different to this.customerInformation
-      const orgId = this.$route.params.id;
-
-      await updateCustomerDetails(customerDetails, orgId);
-
+      if (
+        JSON.stringify(this.customerInformation) !==
+        JSON.stringify(customerDetails)
+      ) {
+        const orgId = this.$route.params.id;
+        await updateCustomerDetails(customerDetails, orgId);
+      }
       this.customerInformation = customerDetails;
 
       this.onboarding += 1;
     },
+
     storeSelectedTimeSlotData(bookingTimeSlotData) {
       this.selectedServices = [];
       if (this.$refs.selectServiceRef) {
@@ -165,13 +170,34 @@ export default {
       this.selectedDateTimeSlot = bookingTimeSlotData;
       this.onboarding += 1;
     },
+
     storeSelectedServices(selectedServices) {
       this.selectedServices = JSON.parse(selectedServices);
       this.onboarding += 1;
     },
+
     confirmDetails() {
       this.customerConfirmation = true;
       this.onboarding += 1;
+    },
+
+    storePaymentDetails(paymentDetails) {
+      this.paymentDetails = paymentDetails;
+
+      this.submitBooking();
+    },
+
+    async submitBooking() {
+      const bookingData = {
+        customerInformation: this.customerInformation,
+        selectedDateTimeSlot: this.selectedDateTimeSlot,
+        services: this.selectedServices,
+        paymentDetails: this.paymentDetails,
+      };
+
+      // //todo later wait for response back from server
+      const resp = await createBooking(bookingData, this.$route.params.id);
+      console.log("resp", resp);
     },
   },
   mounted() {},

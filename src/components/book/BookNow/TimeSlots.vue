@@ -3,7 +3,6 @@
     <h3>Pick a date</h3>
     <VDatePicker
       :min-date="tomorrow"
-      v-model="selectedDate"
       :disabled-dates="disabledDates"
       @dayclick="onCalendarClick"
     >
@@ -157,6 +156,7 @@ export default {
       }
     },
     onCalendarClick(context) {
+      this.selectedDate = context.date;
       this.selectedTimeSlot = "";
       const clickedDate = new Date(context.date);
       const day = clickedDate.getDate();
@@ -186,9 +186,11 @@ export default {
       }
     },
     storeSelectedTimeSlotData() {
-      console.log(this.selectedDate);
-      console.log(this.selectedTimeSlot);
+      // console.log(this.selectedDate);
+      // console.log(this.selectedTimeSlot);
       //todo organise data
+
+      console.log(this.selectedDate, "line 193");
 
       //add the booking start time to the selected date
       let bookingStartTime = this.selectedDate;
@@ -212,11 +214,12 @@ export default {
     },
   },
   watch: {
-    disabledDates(newval) {
-      console.log(newval);
-    },
+    // disabledDates(newval) {
+    //   // console.log(newval);
+    // },
     selectedDate(newValue, oldValue) {
-      if (newValue !== oldValue) {
+      console.log("newValue", newValue);
+      if (newValue !== null && newValue !== oldValue) {
         let selectedDate = newValue;
         selectedDate = this.resetTimeStamp(selectedDate);
         //api call to get available timeslots
@@ -225,8 +228,6 @@ export default {
           selectedDate,
           this.availabilityDoc
         );
-
-        // console.log("line 146", newValue);
       }
     },
   },

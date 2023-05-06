@@ -24,7 +24,7 @@
           <th class="text-left">Service</th>
           <th class="text-left">Rate</th>
           <th class="text-left">Hours</th>
-          <th class="text-left">Subtotal</th>
+          <th class="text-left">lineTotal</th>
         </tr>
       </thead>
       <tbody>
@@ -32,25 +32,26 @@
           <td>{{ item.name }}</td>
           <td>{{ item.rate }}</td>
           <td>{{ item.hours }}</td>
-          <td>{{ item.subtotal }}</td>
+          <td>{{ item.lineTotal }}</td>
         </tr>
       </tbody>
     </v-table>
     <div class="total-container">
       <p>
-        <strong>Hours Required: 3</strong>
+        <strong>Hours Required:</strong>
+        {{ hoursRequired }}
       </p>
       <p>
-        <strong>GST: ??</strong>
+        <strong>Subtotal:</strong>
+        $ {{ `${subtotal.toFixed(2)}` }}
       </p>
       <p>
-        <strong>Total Price:</strong>
-        {{
-          `$${selectedServicesTable.reduce(
-            (acc, curr) => (acc += +curr.subtotal.replace("$", "")),
-            0
-          )}`
-        }}
+        <strong>GST:</strong>
+        $ {{ `${gst.toFixed(2)}` }}
+      </p>
+      <p>
+        <strong>Total:</strong>
+        $ {{ `${total.toFixed(2)}` }}
       </p>
     </div>
     <div class="action-container">
@@ -103,6 +104,29 @@ export default {
     },
   },
   computed: {
+    subtotal() {
+      let subTotal =
+        this.selectedServices.reduce((acc, curr) => {
+          return (acc += +curr.selection.rate * +curr.hours);
+        }, 0) * 1.1;
+      let roundedResult = parseFloat(subTotal.toFixed(2));
+      return roundedResult;
+    },
+    gst() {
+      let gst = this.subtotal * 0.1;
+      let roundedResult = parseFloat(gst.toFixed(2));
+      return roundedResult;
+    },
+    total() {
+      let subTotal = this.subtotal + this.gst;
+      let roundedResult = parseFloat(subTotal.toFixed(2));
+      return roundedResult;
+    },
+    hoursRequired() {
+      return this.selectedServices.reduce((acc, curr) => {
+        return (acc += curr.hours);
+      }, 0);
+    },
     bookingDate() {
       return `${this.selectedDateTimeSlot?.date
         .getDate()
@@ -136,7 +160,7 @@ export default {
           ...item.selection,
           rate: `$ ${item.selection.rate}`,
           hours: item.hours,
-          subtotal: `$ ${+item.selection.rate * +item.hours}`,
+          lineTotal: `$ ${+item.selection.rate * +item.hours}`,
         };
       });
     },
