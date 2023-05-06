@@ -123,6 +123,8 @@ exports.book = async (req, res) => {
           message: "Requested time is not available",
           status: "error",
         });
+
+        return;
       }
 
       //otherwise update the bookedSchedule document
@@ -142,6 +144,8 @@ exports.book = async (req, res) => {
         status: "success",
         data: updatedSchdule,
       });
+
+      return;
     }
 
     //If there is no document for the requested date create one
@@ -162,6 +166,8 @@ exports.book = async (req, res) => {
           message: "Requested time is not available",
           status: "error",
         });
+
+        return;
       }
 
       //update bookedTimes Object with the requested booking
@@ -182,9 +188,12 @@ exports.book = async (req, res) => {
         status: "success",
         data: updatedSchdule,
       });
+
+      return;
     }
   } catch (error) {
     functions.logger.log("error", error);
     res.send(error);
+    return;
   }
 };
