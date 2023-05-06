@@ -149,9 +149,9 @@ exports.book = async (req, res) => {
       //check that booking times are within opperating hours
       const isAvailable = bookingHlper.checkRequestedBookingAvailability(
         newBookedScheduleDoc,
+        customerServices,
         startHour,
-        orgAvailabilityDoc.data(),
-        customerServices
+        orgAvailabilityDoc.data()
       );
 
       functions.logger.log("isAvailable", isAvailable);

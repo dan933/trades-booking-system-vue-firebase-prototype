@@ -5,7 +5,8 @@
       <p><strong>Amount Payable:</strong> ${{ amountPayable }}</p>
       <p><strong>Number of Hours:</strong> {{ hoursBooked }}</p>
     </div>
-    <v-form @submit.prevent="submitForm" v-model="validForm">
+    <!-- <v-form @submit.prevent="submitForm" v-model="validForm"> -->
+    <v-form v-model="validForm">
       <v-text-field v-model="cardName" label="Cardholder Name" />
       <v-text-field
         v-model="cardNumber"
@@ -21,7 +22,8 @@
         <v-text-field v-model="cvv" label="CVV" :rules="cvvRules" />
       </div>
 
-      <v-btn type="submit" color="primary">Pay Now</v-btn>
+      <v-btn @click="submitForm" color="primary">Pay Now</v-btn>
+      <!-- <v-btn type="submit" color="primary">Pay Now</v-btn> -->
     </v-form>
   </v-container>
 </template>

@@ -1,6 +1,7 @@
 //Returns the opperating hours for that day as an array
 //Returns the gap between settings as part of the object
 const functions = require("firebase-functions");
+const { book } = require("../../booking/bookingController");
 exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   //get the day of the week
   let day = new Date(bookingDate).getDay();
@@ -72,11 +73,15 @@ exports.checkRequestedBookingAvailability = (
 
   functions.logger.log(
     "bookedSchedule.bookingScheduleDate.toDate()",
-    bookedSchedule.bookingScheduleDate.toDate()
+    bookedSchedule.bookingScheduleDate,
+    typeof bookedSchedule.bookingScheduleDate
   );
 
   //get the day of the week for the requested booking
-  let bookedDay = bookedSchedule.bookingScheduleDate.toDate().getDay();
+  let bookedDay = bookedSchedule.bookingScheduleDate;
+  bookedDay = bookedDay.toDate
+    ? bookedDay.toDate().getDay()
+    : bookedDay.getDay();
 
   functions.logger.log("bookedDay", bookedDay);
 
