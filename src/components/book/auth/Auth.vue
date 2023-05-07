@@ -88,7 +88,7 @@ export default {
       //get the organisation Id
       const orgId = this.$route.params.id;
 
-      console.log("org", orgId);
+      // console.log("org", orgId);
 
       //stops redirect to booking page
       //redirect too book happens if the user is already signed in on initial load
