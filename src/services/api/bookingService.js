@@ -76,20 +76,45 @@ const getCalendarDatesAvailability = async (orgId) => {
       let startTime = openingTimes[dayOfWeek].start;
       let endTime = openingTimes[dayOfWeek].end;
 
-      //get the number of bookings for that day
-      let numberOfBookingsForTheDay = Object.keys(schedule.bookedTimes).filter(
+      //get the number of timeslots taken for that day
+      let numberOfSlotsTakenForTheDay = Object.keys(schedule.bookedTimes).map(
         (key) => {
-          return schedule.bookedTimes[key];
+          console.log("key", key);
+          console.log(
+            gapBetweenCheck(+key, gapBetween, schedule.bookedTimes),
+            "gapBetweenCheck(+key, gapBetween, schedule.bookedTimes)"
+          );
+          console.log(
+            !schedule.bookedTimes[+key],
+            "!schedule.bookedTimes[+key]"
+          );
+          console.log(+key < endTime, "+key < endTime");
+          if (
+            !schedule.bookedTimes[+key] &&
+            gapBetweenCheck(+key, gapBetween, schedule.bookedTimes) &&
+            +key < endTime
+          ) {
+            return false;
+          } else {
+            return true;
+          }
         }
       );
+
+      //filter the booked out slots
+      numberOfSlotsTakenForTheDay = numberOfSlotsTakenForTheDay.filter(
+        (booking) => booking
+      );
+
+      console.log("numberOfSlotsTakenForTheDay", numberOfSlotsTakenForTheDay);
 
       //Get the available hours for that day
       let availableHours = endTime - startTime;
 
-      console.log(availableHours, numberOfBookingsForTheDay.length);
+      console.log(availableHours, numberOfSlotsTakenForTheDay.length);
 
       //Check if the business is booked out for that day
-      let IsBookedOut = numberOfBookingsForTheDay.length >= availableHours;
+      let IsBookedOut = numberOfSlotsTakenForTheDay.length >= availableHours;
 
       //If the business is Booked out for that day
       if (IsBookedOut) {
@@ -291,6 +316,20 @@ const createBooking = async (bookingData, orgId) => {
     console.error(error);
     return error;
   }
+};
+
+//----------------------- Helpers --------------------------//
+//helper gapBetweenCheck
+//check that the gap between settings have been met
+const gapBetweenCheck = (key, gapBetween, bookedTimes) => {
+  for (let i = 1; gapBetween >= i; i++) {
+    //if the next timeslot is booked
+    if (bookedTimes[`${+key + i}`]) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 export { getTimeSlotsForDate, getCalendarDatesAvailability, createBooking };
