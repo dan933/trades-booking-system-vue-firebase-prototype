@@ -147,10 +147,9 @@ const getTimeSlotsForDate = (
 
     Object.keys(bookingScheduleForSelectedDate.bookedTimes).forEach((key) => {
       //if the time slot is not booked
-      //if the timeslots ahead meet the gapBetween settings
       //add current timeslot to the available timeslots array
       if (
-        +key <= selectedDateOpeningTimes.end &&
+        +key < selectedDateOpeningTimes.end &&
         !bookingScheduleForSelectedDate.bookedTimes[key]
       ) {
         currentTimeSlot.push(+key);
@@ -179,29 +178,30 @@ const getTimeSlotsForDate = (
     });
 
     return availableTimes;
-
-    //helper gapBetweenCheck
-    //check that the gap between settings have been met
-    function gapBetweenCheck(key) {
-      for (let i = 1; gapBetween >= i; i++) {
-        //if the next timeslot is booked
-        if (bookingScheduleForSelectedDate.bookedTimes[`${+key + i}`]) {
-          return false;
-        }
-      }
-
-      return true;
-    }
   } else {
+    //Number of opperating hours
+    const startTime = selectedDateOpeningTimes.start;
+    const endTime = selectedDateOpeningTimes.end;
+
+    const availableTimes = [];
+
+    //Number of bookings for the day
+    for (let index = startTime; index < endTime; index++) {
+      availableTimes.push({
+        time: `${index}:00`,
+        availableHours: endTime - index,
+      });
+    }
+
     //if there is no booking schedule for the selected date
     //return one time slot for the day
-    let availableTimes = [
-      {
-        time: `${selectedDateOpeningTimes.start}:00`,
-        availableHours:
-          selectedDateOpeningTimes.end - selectedDateOpeningTimes.start,
-      },
-    ];
+    // let availableTimes = [
+    //   {
+    //     time: `${selectedDateOpeningTimes.start}:00`,
+    //     availableHours:
+    //       selectedDateOpeningTimes.end - selectedDateOpeningTimes.start,
+    //   },
+    // ];
 
     return availableTimes;
   }

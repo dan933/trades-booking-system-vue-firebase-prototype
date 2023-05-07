@@ -14,7 +14,7 @@ exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   let bookedTimes = {};
 
   //loop through to make the blocks of time
-  for (let index = startTime; index <= endTime; index++) {
+  for (let index = startTime; index < endTime; index++) {
     bookedTimes[index] = false;
   }
 
@@ -56,7 +56,7 @@ exports.updateBookedScheduleDocument = (
   let closingTime = orgAvailabilityDoc.openingTimes[bookedDay].end;
 
   for (let index = startHour; index < endHour; index++) {
-    if (index > closingTime) {
+    if (index >= closingTime) {
       break;
     }
 
@@ -127,5 +127,3 @@ exports.checkRequestedBookingAvailability = (
 
   return true;
 };
-
-exports.createBookedScheduleDocument = (bookingDate) => {};
