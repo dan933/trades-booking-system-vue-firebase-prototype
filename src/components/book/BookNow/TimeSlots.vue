@@ -190,7 +190,7 @@ export default {
       // console.log(this.selectedTimeSlot);
       //todo organise data
 
-      console.log(this.selectedDate, "line 193");
+      // console.log(this.selectedDate, "line 193");
 
       //add the booking start time to the selected date
       let bookingStartTime = this.selectedDate;

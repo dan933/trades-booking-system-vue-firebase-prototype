@@ -121,6 +121,7 @@ exports.book = async (req, res) => {
       if (!isAvailable) {
         res.send({
           message: "Requested time is not available",
+          success: false,
           status: "error",
         });
 
@@ -143,6 +144,7 @@ exports.book = async (req, res) => {
       res.send({
         message: "Booking Scheudle Updated",
         status: "success",
+        success: true,
         data: updatedSchdule,
       });
 
@@ -165,6 +167,7 @@ exports.book = async (req, res) => {
       if (!isAvailable) {
         res.send({
           message: "Requested time is not available",
+          success: false,
           status: "error",
         });
 
@@ -188,6 +191,7 @@ exports.book = async (req, res) => {
       res.send({
         message: "New Booking Created",
         status: "success",
+        success: true,
         data: updatedSchdule,
       });
 

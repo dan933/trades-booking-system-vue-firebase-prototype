@@ -28,10 +28,21 @@ const routes = [
     component: Contact,
   },
   {
+    name: "SuccessBooking",
+    path: "/org/:id/book/confirmation",
+    component: () => import("../components/book/BookNow/SuccessBooking.vue"),
+  },
+  {
+    name: "FailedBooking",
+    path: "/org/:id/book/failed",
+    component: () => import("../components/book/BookNow/FailedBooking.vue"),
+  },
+  {
     name: "Book",
     path: "/org/:id/book",
     component: () => import("../components/book/BookNow/Book.vue"),
   },
+
   {
     name: "Auth",
     path: "/org/:id/auth",

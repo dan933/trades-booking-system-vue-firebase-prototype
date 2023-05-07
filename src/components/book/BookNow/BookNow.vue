@@ -13,6 +13,7 @@
       >
         <CustomerDetails
           @storeCustomerDetails="storeCustomerDetails"
+          ref="customerDetailsRef"
         ></CustomerDetails>
       </v-window-item>
 
@@ -154,8 +155,13 @@ export default {
         JSON.stringify(this.customerInformation) !==
         JSON.stringify(customerDetails)
       ) {
+        this.$refs.customerDetailsRef.toggleLoading(true);
+
         const orgId = this.$route.params.id;
         await updateCustomerDetails(customerDetails, orgId);
+
+        this.$refs.customerDetailsRef.toggleLoading(false);
+        this.$refs.customerDetailsRef.validateForm();
       }
       this.customerInformation = customerDetails;
 
@@ -195,9 +201,28 @@ export default {
         paymentDetails: this.paymentDetails,
       };
 
-      // //todo later wait for response back from server
+      //Toggle loading  on payment page
+      this.$refs.paymentRef.toggleLoading(true);
+
       const resp = await createBooking(bookingData, this.$route.params.id);
+
+      //Stop loading
+      this.$refs.paymentRef.toggleLoading(false);
+
+      //reset bookNow form
+      this.$refs.paymentRef.resetForm();
+
       console.log("resp", resp);
+
+      //Navigate to booking confirmation page
+
+      //if resp success route to confirmation page
+      if (resp.success) {
+        //todo add booking id to url that will be retrieved from the db later on
+        this.$router.push(`/org/${this.$route.params.id}/book/confirmation`);
+      } else {
+        this.$router.push(`/org/${this.$route.params.id}/book/failed`);
+      }
     },
   },
   mounted() {},

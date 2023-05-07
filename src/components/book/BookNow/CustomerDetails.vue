@@ -1,8 +1,13 @@
 <template>
   <v-card flat rounded="0" class="service-card">
     <h3>Your Details</h3>
-    <v-container>
-      <v-form v-model="valid" @submit.prevent="storeCustomerDetails">
+    <v-container style="height: 100%">
+      <v-form
+        v-model="valid"
+        @submit.prevent="storeCustomerDetails"
+        ref="customerDetailsFormRef"
+        v-if="!loading"
+      >
         <v-container class="name-container">
           <v-text-field
             style="width: 150px"
@@ -30,6 +35,18 @@
         ></v-textarea>
         <v-btn color="primary" type="submit">Next</v-btn>
       </v-form>
+      <v-container
+        v-else
+        class="d-flex justify-center align-center"
+        style="height: 100%"
+      >
+        <v-progress-circular
+          :width="10"
+          :size="80"
+          indeterminate
+          color="blue"
+        ></v-progress-circular>
+      </v-container>
     </v-container>
   </v-card>
 </template>
@@ -40,6 +57,7 @@ export default {
   name: "CustomerDetails",
   data() {
     return {
+      loading: false,
       valid: false,
       firstName: "",
       lastName: "",
@@ -48,11 +66,38 @@ export default {
     };
   },
   props: ["selectedDateTimeSlot"],
+  watch: {
+    valid(newVal) {
+      console.log(newVal, "valid");
+    },
+    firstName() {
+      this.validateForm();
+    },
+    lastName() {
+      this.validateForm();
+    },
+    phoneNumber() {
+      this.validateForm();
+    },
+    address() {
+      this.validateForm();
+    },
+  },
   methods: {
+    validateForm() {
+      this.$nextTick(async () => {
+        this.valid = !!(await this.$refs.customerDetailsFormRef.validate());
+      });
+    },
+    //function to control loading
+    toggleLoading(Isloading) {
+      this.loading = Isloading;
+    },
     storeCustomerDetails() {
       // Store the customers details
       //todo add a feature to store customer addresses in a firestore database
       //todo add check to see if the customer is within the service range
+      console.log(this.valid, "valid details form");
       if (this.valid) {
         let customerDetails = {
           firstName: this.firstName,
@@ -70,6 +115,8 @@ export default {
     async init() {
       //check if the customers details are in the database
 
+      this.loading = true;
+
       let customer = await this.getCustomer();
 
       //if the details exist populate the form
@@ -80,6 +127,10 @@ export default {
         this.address =
           customer?.addressList?.length > 0 ? customer.addressList[0] : "";
       }
+
+      this.loading = false;
+
+      this.valid = this.validateForm();
     },
   },
   computed: {
@@ -103,11 +154,11 @@ export default {
 }
 .service-card {
   overflow: auto;
+  height: 100%;
   max-height: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 .service-form-container {
   overflow: auto;

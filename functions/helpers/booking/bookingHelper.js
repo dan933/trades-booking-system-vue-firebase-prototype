@@ -109,7 +109,9 @@ exports.checkRequestedBookingAvailability = (
 
   functions.logger.log("gapBetween", gapBetween);
 
-  let endHour = startHour + totalHoursRequired + gapBetween;
+  let endHour = startHour + totalHoursRequired;
+
+  functions.logger.log("endHour", endHour);
 
   for (let index = startHour; index < endHour; index++) {
     //if the hour is already booked return false

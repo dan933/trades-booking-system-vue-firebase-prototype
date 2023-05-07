@@ -1,12 +1,12 @@
 <template>
-  <v-container class="border">
+  <v-container class="border payment-page-container">
     <div class="payment-summary-container">
       <h1>Payment</h1>
       <p><strong>Amount Payable:</strong> ${{ amountPayable }}</p>
       <p><strong>Number of Hours:</strong> {{ hoursBooked }}</p>
     </div>
     <!-- <v-form @submit.prevent="submitForm" v-model="validForm"> -->
-    <v-form v-model="validForm">
+    <v-form v-model="validForm" v-if="!loading">
       <v-text-field v-model="cardName" label="Cardholder Name" />
       <v-text-field
         v-model="cardNumber"
@@ -25,6 +25,18 @@
       <v-btn @click="submitForm" color="primary">Pay Now</v-btn>
       <!-- <v-btn type="submit" color="primary">Pay Now</v-btn> -->
     </v-form>
+    <v-container
+      v-else
+      class="d-flex justify-center align-center"
+      style="height: 100%"
+    >
+      <v-progress-circular
+        :width="10"
+        :size="80"
+        indeterminate
+        color="blue"
+      ></v-progress-circular>
+    </v-container>
   </v-container>
 </template>
 
@@ -46,6 +58,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       validForm: false,
       cardNumber: "4545454545454545",
       cardName: "Test Card",
@@ -79,6 +92,15 @@ export default {
     };
   },
   methods: {
+    toggleLoading(IsLoading) {
+      this.loading = IsLoading;
+    },
+    resetForm() {
+      this.cardNumber = "";
+      this.cardName = "";
+      this.expiryDate = "";
+      this.cvv = "";
+    },
     submitForm() {
       // if (this.validForm) {
       const cardDetails = {
@@ -108,7 +130,12 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.payment-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 .payment-summary-container {
   padding: 5px;
   border-radius: 5px;

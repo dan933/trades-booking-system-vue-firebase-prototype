@@ -79,16 +79,6 @@ const getCalendarDatesAvailability = async (orgId) => {
       //get the number of timeslots taken for that day
       let numberOfSlotsTakenForTheDay = Object.keys(schedule.bookedTimes).map(
         (key) => {
-          console.log("key", key);
-          console.log(
-            gapBetweenCheck(+key, gapBetween, schedule.bookedTimes),
-            "gapBetweenCheck(+key, gapBetween, schedule.bookedTimes)"
-          );
-          console.log(
-            !schedule.bookedTimes[+key],
-            "!schedule.bookedTimes[+key]"
-          );
-          console.log(+key < endTime, "+key < endTime");
           if (
             !schedule.bookedTimes[+key] &&
             gapBetweenCheck(+key, gapBetween, schedule.bookedTimes) &&
@@ -106,12 +96,8 @@ const getCalendarDatesAvailability = async (orgId) => {
         (booking) => booking
       );
 
-      console.log("numberOfSlotsTakenForTheDay", numberOfSlotsTakenForTheDay);
-
       //Get the available hours for that day
       let availableHours = endTime - startTime;
-
-      console.log(availableHours, numberOfSlotsTakenForTheDay.length);
 
       //Check if the business is booked out for that day
       let IsBookedOut = numberOfSlotsTakenForTheDay.length >= availableHours;
@@ -122,8 +108,6 @@ const getCalendarDatesAvailability = async (orgId) => {
       }
     }
   });
-
-  // console.log("bookedOutDates", bookedOutDates);
   return {
     bookedOutDates,
     businessClosedDays,
