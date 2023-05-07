@@ -150,7 +150,8 @@ const getTimeSlotsForDate = (
       //add current timeslot to the available timeslots array
       if (
         +key < selectedDateOpeningTimes.end &&
-        !bookingScheduleForSelectedDate.bookedTimes[key]
+        !bookingScheduleForSelectedDate.bookedTimes[key] &&
+        this.gapBetweenCheck(key)
       ) {
         currentTimeSlot.push(+key);
 
@@ -204,6 +205,19 @@ const getTimeSlotsForDate = (
     // ];
 
     return availableTimes;
+
+    //helper gapBetweenCheck
+    //check that the gap between settings have been met
+    function gapBetweenCheck(key) {
+      for (let i = 1; gapBetween >= i; i++) {
+        //if the next timeslot is booked
+        if (bookingScheduleForSelectedDate.bookedTimes[`${+key + i}`]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
   }
 
   //if there is no bookings scheduled for the selected date
