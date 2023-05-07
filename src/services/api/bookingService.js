@@ -54,12 +54,13 @@ const getCalendarDatesAvailability = async (orgId) => {
 
   let businessClosedDays = [];
 
-  //days the business is closed
+  //------------------- Days the business is closed -------------//
   Object.keys(openingTimes).forEach((day) => {
     if (!openingTimes[day].open) {
       businessClosedDays.push(+day);
     }
   });
+  //------------------------------------------------------------//
 
   let bookedOutDates = [];
 
@@ -151,7 +152,7 @@ const getTimeSlotsForDate = (
       if (
         +key < selectedDateOpeningTimes.end &&
         !bookingScheduleForSelectedDate.bookedTimes[key] &&
-        this.gapBetweenCheck(key)
+        gapBetweenCheck(key)
       ) {
         currentTimeSlot.push(+key);
 
@@ -179,6 +180,19 @@ const getTimeSlotsForDate = (
     });
 
     return availableTimes;
+
+    //helper gapBetweenCheck
+    //check that the gap between settings have been met
+    function gapBetweenCheck(key) {
+      for (let i = 1; gapBetween >= i; i++) {
+        //if the next timeslot is booked
+        if (bookingScheduleForSelectedDate.bookedTimes[`${+key + i}`]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
   } else {
     //Number of opperating hours
     const startTime = selectedDateOpeningTimes.start;
@@ -205,19 +219,6 @@ const getTimeSlotsForDate = (
     // ];
 
     return availableTimes;
-
-    //helper gapBetweenCheck
-    //check that the gap between settings have been met
-    function gapBetweenCheck(key) {
-      for (let i = 1; gapBetween >= i; i++) {
-        //if the next timeslot is booked
-        if (bookingScheduleForSelectedDate.bookedTimes[`${+key + i}`]) {
-          return false;
-        }
-      }
-
-      return true;
-    }
   }
 
   //if there is no bookings scheduled for the selected date
