@@ -31,6 +31,10 @@
       "predeploy": []
     }
   ],
-  "extensions": {
-  }
+  "function": {
+    "booking": {
+      "timeout": "60s"
+    }
+  },
+  "extensions": {}
 }

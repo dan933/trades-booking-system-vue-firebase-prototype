@@ -99,7 +99,25 @@ export default {
     ],
   }),
   methods: {
+    storeReviewBookingState() {
+      let bookingObject = {
+        bookingDate: this.bookingDate,
+        timeRange: this.bookingTime,
+        address: this.customerInformation?.addressList[0],
+        selectedServices: this.selectedServicesTable,
+        hoursRequired: this.hoursRequired,
+        subtotal: this.subtotal,
+        gst: this.gst,
+        total: this.total,
+      };
+
+      console.log(bookingObject, "bookingObject");
+
+      this.$store.commit("updateBooking", bookingObject);
+    },
     confirmBooking() {
+      this.storeReviewBookingState();
+
       this.$emit("confirmDetails");
     },
   },
@@ -169,6 +187,12 @@ export default {
 </script>
 
 <style lang="scss">
+.total-container {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
+}
 .time-container {
   display: flex;
   flex-direction: row;

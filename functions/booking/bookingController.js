@@ -1,6 +1,6 @@
 const admin = require("firebase-admin");
 const functions = require("firebase-functions");
-const bookingHlper = require("../helpers/booking/bookingHelper.js");
+const bookingHelper = require("../helpers/booking/bookingHelper.js");
 
 exports.getAvailability = async (req, res) => {
   functions.logger.log("req", req.body);
@@ -80,20 +80,20 @@ exports.book = async (req, res) => {
 
     functions.logger.log("orgAvailabilityDoc", orgAvailabilityDoc.data());
 
-    //Get the gap between settings
+    //Get the gap between settings for the organisation
     const gapBetween = orgAvailabilityDoc.data().gapBetween;
 
     functions.logger.log("gapBetween", gapBetween);
 
     //Creats an array of the days hours to be used to create the bookedSchedule document
-    const newBookedScheduleDoc = bookingHlper.createNewBookedSchedules(
+    const newBookedScheduleDoc = bookingHelper.createNewBookedSchedules(
       orgAvailabilityDoc.data(),
       bookingDate
     );
 
     functions.logger.log("newBookedScheduleDoc", newBookedScheduleDoc);
 
-    //Get the bookedSchedule document for the requested date
+    //Get the bookedSchedule ref document for the requested date
     const bookedScheduleRef = admin
       .firestore()
       .collection("organisations")
@@ -101,102 +101,205 @@ exports.book = async (req, res) => {
       .collection("bookedSchedule")
       .doc(`${bookingDate}`);
 
-    const bookedSchedule = await bookedScheduleRef.get();
+    //------------------------ Run transaction -----------------------//
+    //this makes sure that there are no double bookings
+    let response = await admin.firestore().runTransaction(async (t) => {
+      //Get the bookedSchedule document for the requested date
+      const bookedSchedule = await t.get(bookedScheduleRef);
 
-    //check if bookings already exists for the requested date
-    if (bookedSchedule.exists) {
-      functions.logger.log("bookedSchedule", bookedSchedule.data());
+      functions.logger.log("bookedSchedule", bookedSchedule);
 
-      //check that requested time is not already booked
-      const isAvailable = bookingHlper.checkRequestedBookingAvailability(
-        bookedSchedule.data(),
-        customerServices,
-        startHour,
-        orgAvailabilityDoc.data()
-      );
+      //check if bookings already exists for the requested date
+      if (bookedSchedule.exists) {
+        functions.logger.log("bookedSchedule", bookedSchedule.data());
 
-      functions.logger.log("isAvailable", isAvailable);
+        //check that requested time is not already booked
+        const isAvailable = bookingHelper.checkRequestedBookingAvailability(
+          bookedSchedule.data(),
+          customerServices,
+          startHour,
+          orgAvailabilityDoc.data()
+        );
 
-      //if not available don't allow booking
-      if (!isAvailable) {
-        res.send({
-          message: "Requested time is not available",
-          success: false,
-          status: "error",
-        });
+        functions.logger.log("isAvailable", isAvailable);
 
-        return;
+        //if not available don't allow booking
+        if (!isAvailable) {
+          return {
+            message: "Requested time is not available",
+            success: false,
+            status: "error",
+          };
+        }
+
+        //otherwise update the bookedSchedule document
+        const updatedSchdule = bookingHelper.updateBookedScheduleDocument(
+          bookedSchedule.data(),
+          customerServices,
+          startHour,
+          gapBetween,
+          orgAvailabilityDoc.data()
+        );
+
+        await t.set(bookedScheduleRef, { ...updatedSchdule });
+
+        functions.logger.log("Booking schedule updated", updatedSchdule);
+
+        return {
+          message: "Booking Scheudle Updated",
+          status: "success",
+          success: true,
+          data: updatedSchdule,
+        };
       }
 
-      //otherwise update the bookedSchedule document
-      const updatedSchdule = bookingHlper.updateBookedScheduleDocument(
-        bookedSchedule.data(),
-        customerServices,
-        startHour,
-        gapBetween,
-        orgAvailabilityDoc.data()
-      );
+      //If there is no document for the requested date create one
+      if (!bookedSchedule.exists) {
+        functions.logger.log("bookedSchedule not exist", bookedSchedule);
+        //check that booking times are within opperating hours
+        const isAvailable = bookingHelper.checkRequestedBookingAvailability(
+          newBookedScheduleDoc,
+          customerServices,
+          startHour,
+          orgAvailabilityDoc.data()
+        );
 
-      await bookedScheduleRef.set({ ...updatedSchdule });
+        functions.logger.log("isAvailable", isAvailable);
 
-      functions.logger.log("Booking schedule updated", updatedSchdule);
+        //if not available don't allow booking
+        if (!isAvailable) {
+          return {
+            message: "Requested time is not available",
+            success: false,
+            status: "error",
+          };
+        }
 
-      res.send({
-        message: "Booking Scheudle Updated",
-        status: "success",
-        success: true,
-        data: updatedSchdule,
-      });
+        //update bookedTimes Object with the requested booking
+        const updatedSchdule = bookingHelper.updateBookedScheduleDocument(
+          newBookedScheduleDoc,
+          customerServices,
+          startHour,
+          gapBetween,
+          orgAvailabilityDoc.data()
+        );
 
-      return;
-    }
+        //create the bookedSchedule document
+        await t.set(bookedScheduleRef, { ...updatedSchdule });
 
-    //If there is no document for the requested date create one
-    if (!bookedSchedule.exists) {
-      //check that booking times are within opperating hours
-      const isAvailable = bookingHlper.checkRequestedBookingAvailability(
-        newBookedScheduleDoc,
-        customerServices,
-        startHour,
-        orgAvailabilityDoc.data()
-      );
+        functions.logger.log("New Booking Created", updatedSchdule);
 
-      functions.logger.log("isAvailable", isAvailable);
-
-      //if not available don't allow booking
-      if (!isAvailable) {
-        res.send({
-          message: "Requested time is not available",
-          success: false,
-          status: "error",
-        });
-
-        return;
+        return {
+          message: "New Booking Created",
+          status: "success",
+          success: true,
+          data: updatedSchdule,
+        };
       }
+    });
 
-      //update bookedTimes Object with the requested booking
-      const updatedSchdule = bookingHlper.updateBookedScheduleDocument(
-        newBookedScheduleDoc,
-        customerServices,
-        startHour,
-        gapBetween,
-        orgAvailabilityDoc.data()
-      );
+    functions.logger.log("response", response);
 
-      //create the bookedSchedule document
-      await bookedScheduleRef.set({ ...updatedSchdule });
+    res.send({ ...response });
 
-      functions.logger.log("New Booking Created", updatedSchdule);
+    //----------------------------------------------//
 
-      res.send({
-        message: "New Booking Created",
-        status: "success",
-        success: true,
-        data: updatedSchdule,
-      });
+    // const bookedSchedule = await bookedScheduleRef.get();
 
-      return;
-    }
+    // //check if bookings already exists for the requested date
+    // if (bookedSchedule.exists) {
+    //   functions.logger.log("bookedSchedule", bookedSchedule.data());
+
+    //   //check that requested time is not already booked
+    //   const isAvailable = bookingHelper.checkRequestedBookingAvailability(
+    //     bookedSchedule.data(),
+    //     customerServices,
+    //     startHour,
+    //     orgAvailabilityDoc.data()
+    //   );
+
+    //   functions.logger.log("isAvailable", isAvailable);
+
+    //   //if not available don't allow booking
+    //   if (!isAvailable) {
+    //     res.send({
+    //       message: "Requested time is not available",
+    //       success: false,
+    //       status: "error",
+    //     });
+
+    //     return;
+    //   }
+
+    //   //otherwise update the bookedSchedule document
+    //   const updatedSchdule = bookingHelper.updateBookedScheduleDocument(
+    //     bookedSchedule.data(),
+    //     customerServices,
+    //     startHour,
+    //     gapBetween,
+    //     orgAvailabilityDoc.data()
+    //   );
+
+    //   await bookedScheduleRef.set({ ...updatedSchdule });
+
+    //   functions.logger.log("Booking schedule updated", updatedSchdule);
+
+    //   res.send({
+    //     message: "Booking Scheudle Updated",
+    //     status: "success",
+    //     success: true,
+    //     data: updatedSchdule,
+    //   });
+
+    //   return;
+    // }
+
+    // //If there is no document for the requested date create one
+    // if (!bookedSchedule.exists) {
+    //   //check that booking times are within opperating hours
+    //   const isAvailable = bookingHelper.checkRequestedBookingAvailability(
+    //     newBookedScheduleDoc,
+    //     customerServices,
+    //     startHour,
+    //     orgAvailabilityDoc.data()
+    //   );
+
+    //   functions.logger.log("isAvailable", isAvailable);
+
+    //   //if not available don't allow booking
+    //   if (!isAvailable) {
+    //     res.send({
+    //       message: "Requested time is not available",
+    //       success: false,
+    //       status: "error",
+    //     });
+
+    //     return;
+    //   }
+
+    //   //update bookedTimes Object with the requested booking
+    //   const updatedSchdule = bookingHelper.updateBookedScheduleDocument(
+    //     newBookedScheduleDoc,
+    //     customerServices,
+    //     startHour,
+    //     gapBetween,
+    //     orgAvailabilityDoc.data()
+    //   );
+
+    //   //create the bookedSchedule document
+    //   await bookedScheduleRef.set({ ...updatedSchdule });
+
+    //   functions.logger.log("New Booking Created", updatedSchdule);
+
+    //   res.send({
+    //     message: "New Booking Created",
+    //     status: "success",
+    //     success: true,
+    //     data: updatedSchdule,
+    //   });
+
+    //   return;
+    // }
   } catch (error) {
     functions.logger.log("error", error);
     res.send(error);

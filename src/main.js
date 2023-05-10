@@ -8,9 +8,11 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 //auth needs to be imported here
 import { auth } from "./services/firebase/firebaseConfig.js";
 import "v-calendar/style.css";
+import store from "./store/bookingStore.js";
 
 createApp(App)
   .use(Router)
+  .use(store)
   .use(Vuetify)
   .component("VCalendar", Calendar)
   .component("VDatePicker", DatePicker)
