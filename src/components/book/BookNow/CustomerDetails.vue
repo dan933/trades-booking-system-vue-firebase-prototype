@@ -67,9 +67,6 @@ export default {
   },
   props: ["selectedDateTimeSlot"],
   watch: {
-    valid(newVal) {
-      console.log(newVal, "valid");
-    },
     firstName() {
       this.validateForm();
     },

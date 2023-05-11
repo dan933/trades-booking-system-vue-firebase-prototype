@@ -49,7 +49,7 @@ exports.getAvailability = async (req, res) => {
 
 exports.book = async (req, res) => {
   try {
-    functions.logger.log("request", req.body);
+    functions.logger.log("request", req);
 
     //Get the organisation id from the request
     const orgId = req.params.orgId;
@@ -63,6 +63,9 @@ exports.book = async (req, res) => {
     const customerServices = req.body.services;
 
     functions.logger.log("customerServices", customerServices);
+
+    //Get the customer information
+    const customerInfo = req.body.customerInformation;
 
     //Get the Start Hour
     const startHour = req.body.startHour;
@@ -101,6 +104,34 @@ exports.book = async (req, res) => {
       .collection("bookedSchedule")
       .doc(`${bookingDate}`);
 
+    //Booking ref for the customers booking
+    const bookingRef = admin
+      .firestore()
+      .collection("organisations")
+      .doc(`${orgId}`)
+      .collection("bookings")
+      .doc();
+
+    //booking object to be created if the booking is available
+    const bookingRequest = {
+      bookingId: bookingRef.id,
+      userId: customerInfo.userId,
+      bookingDate: admin.firestore.Timestamp.fromDate(
+        new Date(bookingDate)
+      ).toDate(),
+      startHour,
+      endHour:
+        startHour +
+        customerServices.reduce((acc, service) => {
+          return acc + service.hours;
+        }, 0),
+      services: customerServices,
+      address: customerInfo.addressList[0],
+      phoneNumber: customerInfo.phoneNumber,
+      status: "pending",
+    };
+
+    functions.logger.log("bookingRequest", bookingRequest);
     //------------------------ Run transaction -----------------------//
     //this makes sure that there are no double bookings
     let response = await admin.firestore().runTransaction(async (t) => {
@@ -142,6 +173,7 @@ exports.book = async (req, res) => {
         );
 
         await t.set(bookedScheduleRef, { ...updatedSchdule });
+        await t.create(bookingRef, { ...bookingRequest });
 
         functions.logger.log("Booking schedule updated", updatedSchdule);
 
@@ -186,6 +218,7 @@ exports.book = async (req, res) => {
 
         //create the bookedSchedule document
         await t.set(bookedScheduleRef, { ...updatedSchdule });
+        await t.create(bookingRef, { ...bookingRequest });
 
         functions.logger.log("New Booking Created", updatedSchdule);
 
@@ -200,106 +233,15 @@ exports.book = async (req, res) => {
 
     functions.logger.log("response", response);
 
+    //todo stripe payment here
+
+    //todo if payment is successful update booking with stripe details
+
+    //todo if payment fails delete booking run transaction to delete bookedSchedule and booking
+
     res.send({ ...response });
 
     //----------------------------------------------//
-
-    // const bookedSchedule = await bookedScheduleRef.get();
-
-    // //check if bookings already exists for the requested date
-    // if (bookedSchedule.exists) {
-    //   functions.logger.log("bookedSchedule", bookedSchedule.data());
-
-    //   //check that requested time is not already booked
-    //   const isAvailable = bookingHelper.checkRequestedBookingAvailability(
-    //     bookedSchedule.data(),
-    //     customerServices,
-    //     startHour,
-    //     orgAvailabilityDoc.data()
-    //   );
-
-    //   functions.logger.log("isAvailable", isAvailable);
-
-    //   //if not available don't allow booking
-    //   if (!isAvailable) {
-    //     res.send({
-    //       message: "Requested time is not available",
-    //       success: false,
-    //       status: "error",
-    //     });
-
-    //     return;
-    //   }
-
-    //   //otherwise update the bookedSchedule document
-    //   const updatedSchdule = bookingHelper.updateBookedScheduleDocument(
-    //     bookedSchedule.data(),
-    //     customerServices,
-    //     startHour,
-    //     gapBetween,
-    //     orgAvailabilityDoc.data()
-    //   );
-
-    //   await bookedScheduleRef.set({ ...updatedSchdule });
-
-    //   functions.logger.log("Booking schedule updated", updatedSchdule);
-
-    //   res.send({
-    //     message: "Booking Scheudle Updated",
-    //     status: "success",
-    //     success: true,
-    //     data: updatedSchdule,
-    //   });
-
-    //   return;
-    // }
-
-    // //If there is no document for the requested date create one
-    // if (!bookedSchedule.exists) {
-    //   //check that booking times are within opperating hours
-    //   const isAvailable = bookingHelper.checkRequestedBookingAvailability(
-    //     newBookedScheduleDoc,
-    //     customerServices,
-    //     startHour,
-    //     orgAvailabilityDoc.data()
-    //   );
-
-    //   functions.logger.log("isAvailable", isAvailable);
-
-    //   //if not available don't allow booking
-    //   if (!isAvailable) {
-    //     res.send({
-    //       message: "Requested time is not available",
-    //       success: false,
-    //       status: "error",
-    //     });
-
-    //     return;
-    //   }
-
-    //   //update bookedTimes Object with the requested booking
-    //   const updatedSchdule = bookingHelper.updateBookedScheduleDocument(
-    //     newBookedScheduleDoc,
-    //     customerServices,
-    //     startHour,
-    //     gapBetween,
-    //     orgAvailabilityDoc.data()
-    //   );
-
-    //   //create the bookedSchedule document
-    //   await bookedScheduleRef.set({ ...updatedSchdule });
-
-    //   functions.logger.log("New Booking Created", updatedSchdule);
-
-    //   res.send({
-    //     message: "New Booking Created",
-    //     status: "success",
-    //     success: true,
-    //     data: updatedSchdule,
-    //   });
-
-    //   return;
-    // }
   } catch (error) {
     functions.logger.log("error", error);
     res.send(error);

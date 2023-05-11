@@ -57,7 +57,7 @@
           :selectedServices="selectedServices"
           :customerInformation="customerInformation"
           ref="paymentRef"
-          @storePaymentDetails="storePaymentDetails"
+          @submitBooking="submitBooking"
         ></Payment>
       </v-window-item>
     </v-window>
@@ -187,35 +187,28 @@ export default {
       this.onboarding += 1;
     },
 
-    storePaymentDetails(paymentDetails) {
-      this.paymentDetails = paymentDetails;
+    // storePaymentDetails(paymentDetails) {
+    //   this.paymentDetails = paymentDetails;
 
-      this.submitBooking();
-    },
+    //   this.submitBooking();
+    // },
 
     async submitBooking() {
       const bookingData = {
         customerInformation: this.customerInformation,
         selectedDateTimeSlot: this.selectedDateTimeSlot,
         services: this.selectedServices,
-        paymentDetails: this.paymentDetails,
       };
-
       //Toggle loading  on payment page
       this.$refs.paymentRef.toggleLoading(true);
-
+      //Send to API give orgId and booking data
       const resp = await createBooking(bookingData, this.$route.params.id);
-
       //Stop loading
       this.$refs.paymentRef.toggleLoading(false);
-
       //reset bookNow form
       this.$refs.paymentRef.resetForm();
-
       console.log("resp", resp);
-
       //Navigate to booking confirmation page
-
       //if resp success route to confirmation page
       if (resp.success) {
         //todo add booking id to url that will be retrieved from the db later on

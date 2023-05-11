@@ -116,7 +116,7 @@ export default {
       //payment success then
       //book appointment
 
-      this.$emit("storePaymentDetails", cardDetails);
+      this.$emit("submitBooking", cardDetails);
 
       return cardDetails;
       // }

@@ -39,6 +39,7 @@ const Auth = () => Promise.resolve({
     </v-card>
     <LinkCredentialsDialog
       ref="linkCredentialsDialogRef"
+      @resetSignInResponse="signInResponse = null"
     ></LinkCredentialsDialog>
   </section>
 </template>
@@ -94,11 +95,11 @@ export default {
       //redirect too book happens if the user is already signed in on initial load
       this.signInResponse = await authService.signIn(signInDetails, orgId);
 
-      // //if account exists with different credentials
-      // if (this.signInResponse?.IsUserDifferentCredentials) {
-      //   //open dialog box
-      //   this.$refs.linkCredentialsDialogRef.open(this.signInResponse);
-      // }
+      //if account exists with different credentials
+      if (this.signInResponse?.IsUserDifferentCredentials) {
+        //open dialog box
+        this.$refs.linkCredentialsDialogRef.open(this.signInResponse);
+      }
     },
     async registerEmailUser(registerUser) {
       //stops redirect to booking page
