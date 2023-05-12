@@ -85,8 +85,9 @@
             >
           </div>
         </v-container>
-        <v-btn class="mt-5" @click="addInput">Add Service</v-btn>
+        <v-btn class="mt-5" width="150px" @click="addInput">Add Service</v-btn>
         <v-btn
+          width="150px"
           v-if="atLeastOneValidService"
           elevation="4"
           color="primary"

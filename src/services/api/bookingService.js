@@ -269,6 +269,7 @@ const createBookingPayload = (bookingData) => {
       userId: userId,
     },
     services: payload.services,
+    paymentDetails: bookingData.paymentDetails,
   };
 
   console.log("payload", payload);

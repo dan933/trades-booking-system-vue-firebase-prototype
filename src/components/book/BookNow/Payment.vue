@@ -5,28 +5,31 @@
       <p><strong>Amount Payable:</strong> ${{ amountPayable }}</p>
       <p><strong>Number of Hours:</strong> {{ hoursBooked }}</p>
     </div>
-    <!-- <v-form @submit.prevent="submitForm" v-model="validForm"> -->
-    <v-form v-model="validForm" v-if="!loading">
-      <v-text-field v-model="cardName" label="Cardholder Name" />
-      <v-text-field
-        v-model="cardNumber"
-        label="Card Number"
-        :rules="cardNumberRules"
-      />
-      <div class="expiry-container">
-        <v-text-field
-          v-model="expiryDate"
-          label="Expiration date (MM/YYYY)"
-          :rules="expirationDateRules"
-        />
-        <v-text-field v-model="cvv" label="CVV" :rules="cvvRules" />
-      </div>
 
-      <v-btn @click="submitForm" color="primary">Pay Now</v-btn>
-      <!-- <v-btn type="submit" color="primary">Pay Now</v-btn> -->
-    </v-form>
+    <StripeElements
+      v-show="stripeLoaded && !loading"
+      v-slot="{ elements, instance }"
+      ref="elms"
+      :stripe-key="stripeKey"
+      :instance-options="instanceOptions"
+      :elements-options="elementsOptions"
+    >
+      <StripeElement ref="card" :elements="elements" :options="cardOptions" />
+    </StripeElements>
+    <p v-show="!loading" class="mt-3 text-red">{{ errorMessage }}</p>
+    <v-btn
+      v-show="stripeLoaded && !loading"
+      color="primary"
+      elevation="3"
+      class="mt-4"
+      width="150px"
+      type="button"
+      @click="submitForm"
+      >Pay Now</v-btn
+    >
+
     <v-container
-      v-else
+      v-if="loading"
       class="d-flex justify-center align-center"
       style="height: 100%"
     >
@@ -41,9 +44,17 @@
 </template>
 
 <script>
-export default {
+import { StripeElements, StripeElement } from "vue-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { defineComponent, ref, onBeforeMount } from "vue";
+
+export default defineComponent({
   name: "Payment",
   props: ["selectedDateTimeSlot", "selectedServices", "customerInformation"],
+  components: {
+    StripeElements,
+    StripeElement,
+  },
   computed: {
     amountPayable() {
       return this.selectedServices.reduce((acc, curr) => {
@@ -56,81 +67,103 @@ export default {
       }, 0);
     },
   },
-  data() {
+  setup(props, { emit }) {
+    const stripeKey = ref(import.meta.env.VITE_APP_STRIPE_TEST_PUBLISHABLE_KEY); // test key
+    const instanceOptions = ref({
+      // https://stripe.com/docs/js/initializing#init_stripe_js-options
+    });
+    const elementsOptions = ref({
+      // https://stripe.com/docs/js/elements_object/create#stripe_elements-options
+    });
+    const cardOptions = ref({
+      hidePostalCode: true,
+      // https://stripe.com/docs/stripe.js#element-options
+    });
+    const stripeLoaded = ref(false);
+    const card = ref();
+    const elms = ref();
+    let loading = ref(false);
+    let errorMessage = ref("");
+
+    onBeforeMount(() => {
+      const stripePromise = loadStripe(stripeKey.value);
+      stripePromise.then(() => {
+        stripeLoaded.value = true;
+      });
+    });
+
+    const toggleLoading = (loadingValue) => {
+      console.log("run toggle loading");
+      loading.value = loadingValue;
+    };
+
+    const submitForm = async () => {
+      // Get stripe element
+      const cardElement = card.value.stripeElement;
+
+      loading.value = true;
+
+      // Access instance methods, e.g. createToken()
+      let stripeResponse = await elms.value.instance.createToken(cardElement);
+
+      if (stripeResponse?.token) {
+        emit("submitBooking", stripeResponse);
+      } else {
+        loading.value = false;
+        console.log("stripeResponse", stripeResponse?.error?.message);
+        errorMessage.value = stripeResponse?.error?.message;
+
+        console.log("errorMessage", errorMessage);
+      }
+    };
+
     return {
-      loading: false,
-      validForm: false,
-      cardNumber: "4545454545454545",
-      cardName: "Test Card",
-      expiryDate: "01/2028",
-      cvv: "123",
-      cardNumberRules: [
-        (v) => !!v || "Card number is required",
-        (v) => /^\d{15,16}$/.test(v) || "Card number must be 15 or 16 digits",
-      ],
-      expirationDateRules: [
-        (v) => !!v || "Expiration date is required",
-        (v) => {
-          const match = /^(0[1-9]|1[0-2])\/\d{4}$/.test(v);
-          return match || "Expiration date must be in MM/YYYY format";
-        },
-        (v) => {
-          if (!v) {
-            return true;
-          }
-          const today = new Date();
-          const expirationDate = new Date(`01/${v}`);
-          expirationDate.setMonth(expirationDate.getMonth() + 1);
-          expirationDate.setDate(expirationDate.getDate() - 1);
-          return expirationDate >= today || "Card has expired";
-        },
-      ],
-      cvvRules: [
-        (v) => !!v || "CVV is required",
-        (v) => /^\d{3,4}$/.test(v) || "CVV must be 3 or 4 digits",
-      ],
+      loading,
+      errorMessage,
+      stripeKey,
+      stripeLoaded,
+      instanceOptions,
+      elementsOptions,
+      cardOptions,
+      card,
+      elms,
+      submitForm,
+      toggleLoading,
     };
   },
-  methods: {
-    toggleLoading(IsLoading) {
-      this.loading = IsLoading;
-    },
-    resetForm() {
-      this.cardNumber = "";
-      this.cardName = "";
-      this.expiryDate = "";
-      this.cvv = "";
-    },
-    submitForm() {
-      // if (this.validForm) {
-      const cardDetails = {
-        cardNumber: this.cardNumber,
-        cardName: this.cardName,
-        expiryDate: this.expiryDate,
-        cvv: this.cvv,
-      };
-
-      //todo add stripe token here either get existing customer token or create a new one
-      //check appointment is still available
-      //stripe stuff here
-      //payment success then
-      //book appointment
-
-      this.$emit("submitBooking", cardDetails);
-
-      return cardDetails;
-      // }
-    },
-    paymentError() {
-      //error handling
-    },
-    paymentSuccess() {
-      //book appointment
-    },
-  },
-};
+});
 </script>
+
 <style lang="scss">
+/* Stripe Elements Styles */
+.stripe-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+}
+.StripeElement {
+  box-sizing: border-box;
+  height: 40px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
 .payment-page-container {
   display: flex;
   flex-direction: column;

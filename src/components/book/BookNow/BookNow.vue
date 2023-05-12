@@ -187,17 +187,12 @@ export default {
       this.onboarding += 1;
     },
 
-    // storePaymentDetails(paymentDetails) {
-    //   this.paymentDetails = paymentDetails;
-
-    //   this.submitBooking();
-    // },
-
-    async submitBooking() {
+    async submitBooking(stripeResponse) {
       const bookingData = {
         customerInformation: this.customerInformation,
         selectedDateTimeSlot: this.selectedDateTimeSlot,
         services: this.selectedServices,
+        paymentDetails: stripeResponse,
       };
       //Toggle loading  on payment page
       this.$refs.paymentRef.toggleLoading(true);
@@ -205,8 +200,7 @@ export default {
       const resp = await createBooking(bookingData, this.$route.params.id);
       //Stop loading
       this.$refs.paymentRef.toggleLoading(false);
-      //reset bookNow form
-      this.$refs.paymentRef.resetForm();
+
       console.log("resp", resp);
       //Navigate to booking confirmation page
       //if resp success route to confirmation page
