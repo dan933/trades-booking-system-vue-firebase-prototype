@@ -198,8 +198,6 @@ export default {
       this.$refs.paymentRef.toggleLoading(true);
       //Send to API give orgId and booking data
       const resp = await createBooking(bookingData, this.$route.params.id);
-      //Stop loading
-      this.$refs.paymentRef.toggleLoading(false);
 
       console.log("resp", resp);
       //Navigate to booking confirmation page
@@ -207,8 +205,20 @@ export default {
       if (resp.success) {
         //todo add booking id to url that will be retrieved from the db later on
         this.$router.push(`/org/${this.$route.params.id}/book/confirmation`);
-      } else {
+
+        this.$refs.paymentRef.toggleLoading(false);
+      } else if (resp.code) {
+        //if stripe payment fails or server error
+        this.$refs.paymentRef.updateErrorMessage(resp.message);
+        this.$refs.paymentRef.toggleLoading(false);
+      } else if (resp.message === "Requested time is not available") {
+        this.$refs.paymentRef.toggleLoading(false);
         this.$router.push(`/org/${this.$route.params.id}/book/failed`);
+      } else {
+        this.$refs.paymentRef.updateErrorMessage(
+          "sorry somthing went wrong on our end"
+        );
+        this.$refs.paymentRef.toggleLoading(false);
       }
     },
   },

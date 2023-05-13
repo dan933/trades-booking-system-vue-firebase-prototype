@@ -2,8 +2,6 @@
 //Returns the gap between settings as part of the object
 const functions = require("firebase-functions");
 
-const admin = require("firebase-admin");
-
 exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   //get the day of the week
   let day = new Date(bookingDate).getDay();
@@ -32,7 +30,8 @@ exports.updateBookedScheduleDocument = (
   customerServices,
   startHour,
   gapBetween,
-  orgAvailabilityDoc
+  orgAvailabilityDoc,
+  updateType = "add"
 ) => {
   //get the total hours required
   const totalHoursRequired = customerServices.reduce((acc, service) => {
@@ -43,10 +42,25 @@ exports.updateBookedScheduleDocument = (
 
   functions.logger.log("startHour", startHour);
 
+  functions.logger.log(
+    "updateType line 44 helper update booking schedule",
+    updateType
+  );
+
   let bookedTimes = bookedSchedule.bookedTimes;
+
+  functions.logger.log(
+    "bookedTimes line 53 helper update booking schedule",
+    bookedTimes
+  );
 
   //Get the number of hours required for the booking
   let endHour = startHour + totalHoursRequired + gapBetween;
+
+  functions.logger.log(
+    "endHour line 61 helper update booking schedule",
+    endHour
+  );
 
   //get the day of the week for the requested booking
   let bookedDay = bookedSchedule.bookingScheduleDate;
@@ -58,12 +72,17 @@ exports.updateBookedScheduleDocument = (
 
   let closingTime = orgAvailabilityDoc.openingTimes[bookedDay].end;
 
+  functions.logger.log(
+    "closingTime line 76 helper update booking schedule",
+    closingTime
+  );
+
   for (let index = startHour; index < endHour; index++) {
     if (index >= closingTime) {
       break;
     }
 
-    bookedTimes[index] = true;
+    bookedTimes[index] = updateType === "remove" ? false : true;
   }
 
   bookedSchedule.bookedTimes = bookedTimes;

@@ -97,6 +97,10 @@ export default defineComponent({
       loading.value = loadingValue;
     };
 
+    const updateErrorMessage = (message) => {
+      errorMessage.value = message;
+    };
+
     const submitForm = async () => {
       // Get stripe element
       const cardElement = card.value.stripeElement;
@@ -129,6 +133,7 @@ export default defineComponent({
       elms,
       submitForm,
       toggleLoading,
+      updateErrorMessage,
     };
   },
 });
