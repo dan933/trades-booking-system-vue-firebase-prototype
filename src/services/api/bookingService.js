@@ -187,9 +187,24 @@ const getTimeSlotsForDate = (
       (timeSlot) => timeSlot.length > 0
     );
 
-    availableTimes = availableTimes.map((timeSlot) => {
-      return { time: `${timeSlot[0]}:00`, availableHours: timeSlot.length };
+    availableTimes = availableTimes.flatMap((timeSlot) => {
+      let timeSlotHoursLeft = timeSlot.length + 1;
+
+      //returns an array of available hours for the day
+      let timeSlotHours = timeSlot.map((time) => {
+        timeSlotHoursLeft--;
+        return { time: `${time}:00`, availableHours: timeSlotHoursLeft };
+      });
+
+      return timeSlotHours;
+
+      // return {
+      //   time: `${timeSlot[0]}:00`,
+      //   availableHours: timeSlotHours.length,
+      // };
     });
+
+    console.log("availableTimes", availableTimes);
 
     return availableTimes;
 
