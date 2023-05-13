@@ -223,6 +223,7 @@ export default {
         let selectedDate = newValue;
         selectedDate = this.resetTimeStamp(selectedDate);
         //todo api call to get available timeslots
+        //This should reduce the chance of 2 or more bookings confilicting
         this.availableTimeSlots = getTimeSlotsForDate(
           this.bookingScheduleData,
           selectedDate,
