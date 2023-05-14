@@ -101,19 +101,20 @@
 </template>
 
 <script>
+import { getServices } from "../../../services/api/bookingService";
 export default {
   name: "selectServices",
   data: () => ({
     serviceForm: false,
-    services: [
-      { name: "Cleaning", rate: 25 },
-      { name: "Roofing", rate: 50 },
-      { name: "Gardening", rate: 33 },
-    ],
+    services: [],
     selectedServices: [],
   }),
   props: ["selectedDateTimeSlot"],
   methods: {
+    async init() {
+      const orgId = this.$route.params.id;
+      this.services = await getServices(orgId);
+    },
     reset() {
       this.selectedServices = [];
     },
@@ -165,7 +166,10 @@ export default {
       console.log(this.selectedServices);
     },
   },
-  mounted() {},
+  async mounted() {
+    await this.init();
+    console.log("this.services", this.services.services);
+  },
   computed: {
     remainingHoursAvailable() {
       let remainingHoursAvailable =

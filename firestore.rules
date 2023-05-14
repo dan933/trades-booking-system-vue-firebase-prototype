@@ -16,5 +16,10 @@ service cloud.firestore {
     match /organisations/{organisation}/bookedSchedule/{date} {
       allow read: if request.auth != null;
     }
+
+    //Allow a user to read the services collection
+    match /organisations/{organisation}/availability/services {
+      allow read: if request.auth != null;
+    }
   }
 }

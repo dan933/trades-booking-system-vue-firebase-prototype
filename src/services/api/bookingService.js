@@ -260,6 +260,16 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const getServices = async (orgId) => {
+  const servicesRef = doc(db, `organisations/${orgId}/availability/services`);
+
+  const servicesDoc = (await getDoc(servicesRef)).data();
+
+  const services = servicesDoc.services;
+
+  return services;
+};
+
 //Creates booking payload to be sent to the server
 const createBookingPayload = (bookingData) => {
   console.log(bookingData);
@@ -335,4 +345,9 @@ const gapBetweenCheck = (key, gapBetween, bookedTimes) => {
   return true;
 };
 
-export { getTimeSlotsForDate, getCalendarDatesAvailability, createBooking };
+export {
+  getServices,
+  getTimeSlotsForDate,
+  getCalendarDatesAvailability,
+  createBooking,
+};
