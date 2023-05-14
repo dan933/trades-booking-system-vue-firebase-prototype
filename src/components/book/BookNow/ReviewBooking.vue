@@ -123,10 +123,9 @@ export default {
   },
   computed: {
     subtotal() {
-      let subTotal =
-        this.selectedServices.reduce((acc, curr) => {
-          return (acc += +curr.selection.rate * +curr.hours);
-        }, 0) * 1.1;
+      let subTotal = this.selectedServices.reduce((acc, curr) => {
+        return (acc += +curr.selection.rate * +curr.hours);
+      }, 0);
       let roundedResult = parseFloat(subTotal.toFixed(2));
       return roundedResult;
     },

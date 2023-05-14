@@ -237,24 +237,28 @@ exports.book = async (req, res) => {
 
     //----------------------------- Stripe Payment ---------------------------------//
 
-    //Get the total amount to charge the customer
-    const { stripeTotal } = await bookingHelper.calculateInvoiceTotal(
-      orgId,
-      customerServices
-    );
-
     //Get the stripe payment token
     const paymentToken = req.body?.paymentDetails?.token?.id;
 
     let chargeResponse;
 
     try {
+      //Get the total amount to charge the customer
+      const { stripeTotal } = await bookingHelper.calculateInvoiceTotal(
+        orgId,
+        customerServices
+      );
+
       //Attempt stripe payment
       const charge = await stripe.charges.create({
         amount: stripeTotal,
         currency: "aud",
         source: paymentToken,
-        description: "testing stripe payment",
+        description: `${customerInfo.firstName} ${customerInfo.lastName} - ${customerInfo.userId}`,
+        metadata: {
+          bookingId: bookingRef.id,
+          customerId: customerInfo.userId,
+        },
       });
 
       chargeResponse = charge;
@@ -316,17 +320,20 @@ exports.book = async (req, res) => {
         await t.set(bookedScheduleRef, { ...updatedSchdule });
 
         functions.logger.log(
-          "onPayment Fail update bookedScheduleRef line 300"
+          "onPayment Fail update bookedScheduleRef line 323"
         );
 
         //delete the booking
         await t.delete(bookingRef);
 
-        functions.logger.log("onPayment Fail delete booking line 300");
+        functions.logger.log("onPayment Fail delete booking line 329");
 
         //return error
         return {
-          message: chargeResponse?.raw?.message,
+          message:
+            chargeResponse?.raw?.message ||
+            chargeResponse?.message ||
+            "server error",
           code: chargeResponse.code,
           status: "failed",
           success: false,

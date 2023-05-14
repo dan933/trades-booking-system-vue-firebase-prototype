@@ -168,7 +168,6 @@ export default {
   },
   async mounted() {
     await this.init();
-    console.log("this.services", this.services.services);
   },
   computed: {
     remainingHoursAvailable() {

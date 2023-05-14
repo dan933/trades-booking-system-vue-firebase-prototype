@@ -57,9 +57,20 @@ export default defineComponent({
   },
   computed: {
     amountPayable() {
-      return this.selectedServices.reduce((acc, curr) => {
-        return (acc += curr.selection.rate * curr.hours);
+      // First, calculate the subtotal in cents
+      let subtotal = this.selectedServices.reduce((acc, curr) => {
+        let serviceAmount = Math.round(curr.selection.rate * curr.hours * 100);
+        return (acc += serviceAmount);
       }, 0);
+
+      // Calculate GST in cents
+      let gst = Math.round(subtotal * 0.1);
+
+      // Calculate the total payable amount in cents
+      let totalPayable = subtotal + gst;
+
+      // Convert total payable amount back to dollars for the return value
+      return totalPayable / 100;
     },
     hoursBooked() {
       return this.selectedServices.reduce((acc, curr) => {

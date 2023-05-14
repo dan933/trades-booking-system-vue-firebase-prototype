@@ -164,14 +164,26 @@ exports.calculateInvoiceTotal = async (orgId, customerServices) => {
   const services = servicesDoc.data().services;
 
   const serviceAmounts = customerServices.map((service) => {
-    const matchedService = services.find((s) => s.id === service.id);
+    const matchedService = services.find((s) => s.id === service.selection.id);
+
+    functions.logger.log("matchedService", matchedService);
 
     if (!matchedService) {
       throw new Error(`Service with id ${service.id} not found`);
     }
 
+    if (!matchedService?.rate) {
+      throw new Error(`Service with id ${service.id} has no rate`);
+    }
+
+    if (!service.hours) {
+      throw new Error(`Service with id ${service.id} has no hours`);
+    }
+
     // Convert price to cents to avoid floating point arithmetic
-    let serviceAmount = Math.round(matchedService.price * 100);
+    let serviceAmount = Math.round(matchedService.rate * service.hours * 100);
+
+    functions.logger.log("serviceAmount", serviceAmount);
 
     return serviceAmount;
   });
@@ -188,6 +200,8 @@ exports.calculateInvoiceTotal = async (orgId, customerServices) => {
 
   // Now that all calculations are done, convert the total back to dollars for Stripe
   let stripeTotal = total;
+
+  functions.logger.log("stripeTotal", stripeTotal);
 
   // Convert subtotal, gst, and total back to dollars for the return value
   return {
