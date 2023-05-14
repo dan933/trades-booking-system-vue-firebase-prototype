@@ -237,6 +237,12 @@ exports.book = async (req, res) => {
 
     //----------------------------- Stripe Payment ---------------------------------//
 
+    //Get the total amount to charge the customer
+    const { stripeTotal } = await bookingHelper.calculateInvoiceTotal(
+      orgId,
+      customerServices
+    );
+
     //Get the stripe payment token
     const paymentToken = req.body?.paymentDetails?.token?.id;
 
@@ -245,7 +251,7 @@ exports.book = async (req, res) => {
     try {
       //Attempt stripe payment
       const charge = await stripe.charges.create({
-        amount: 1000,
+        amount: stripeTotal,
         currency: "aud",
         source: paymentToken,
         description: "testing stripe payment",

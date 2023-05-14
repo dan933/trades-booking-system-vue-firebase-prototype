@@ -1,6 +1,5 @@
-//Returns the opperating hours for that day as an array
-//Returns the gap between settings as part of the object
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 
 exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   //get the day of the week
@@ -150,4 +149,51 @@ exports.checkRequestedBookingAvailability = (
   }
 
   return true;
+};
+
+exports.calculateInvoiceTotal = async (orgId, customerServices) => {
+  const servicesRef = admin
+    .firestore()
+    .collection("organisations")
+    .doc(`${orgId}`)
+    .collection("availability")
+    .doc("services");
+
+  const servicesDoc = await servicesRef.get();
+
+  const services = servicesDoc.data().services;
+
+  const serviceAmounts = customerServices.map((service) => {
+    const matchedService = services.find((s) => s.id === service.id);
+
+    if (!matchedService) {
+      throw new Error(`Service with id ${service.id} not found`);
+    }
+
+    // Convert price to cents to avoid floating point arithmetic
+    let serviceAmount = Math.round(matchedService.price * 100);
+
+    return serviceAmount;
+  });
+
+  let subtotal = serviceAmounts.reduce((acc, amount) => {
+    return acc + amount;
+  }, 0);
+
+  // Calculate GST in cents
+  let gst = Math.round(subtotal * 0.1);
+
+  // Calculate total in cents
+  let total = subtotal + gst;
+
+  // Now that all calculations are done, convert the total back to dollars for Stripe
+  let stripeTotal = total;
+
+  // Convert subtotal, gst, and total back to dollars for the return value
+  return {
+    subtotal: subtotal / 100,
+    gst: gst / 100,
+    total: total / 100,
+    stripeTotal,
+  };
 };

@@ -107,7 +107,7 @@ export default {
   data: () => ({
     serviceForm: false,
     services: [],
-    selectedServices: [],
+    selectedServices: [{}],
   }),
   props: ["selectedDateTimeSlot"],
   methods: {
