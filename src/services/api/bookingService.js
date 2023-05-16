@@ -9,6 +9,9 @@ import {
   getDocs,
   query,
   where,
+  orderBy,
+  startAfter,
+  limit,
 } from "firebase/firestore";
 
 //todo add a guest user
@@ -18,6 +21,54 @@ const user = getAuth().currentUser;
 let userId = user.uid;
 
 const db = getFirestore();
+
+console.log("userId", userId);
+
+const getAppointments = async (
+  orgId,
+  lastVisible = null,
+  size,
+  stopCalls = false
+) => {
+  if (stopCalls) return;
+  let appointmentQuery;
+
+  if (lastVisible) {
+    appointmentQuery = query(
+      collection(db, `organisations/${orgId}/bookings`),
+      where("userId", "==", `${userId}`),
+      orderBy("bookingDate", "desc"),
+      startAfter(lastVisible),
+      limit(size || 2)
+    );
+  } else {
+    appointmentQuery = query(
+      collection(db, `organisations/${orgId}/bookings`),
+      where("userId", "==", `${userId}`),
+      orderBy("bookingDate", "desc"),
+      limit(size || 2)
+    );
+  }
+
+  let appointments = await getDocs(appointmentQuery);
+
+  // Get the last visible document
+  let newLastVisible = appointments.docs[appointments.docs.length - 1];
+
+  let stopAPICalls = false;
+  if (lastVisible) {
+    console.log(newLastVisible, lastVisible);
+    stopAPICalls = !newLastVisible;
+  }
+
+  appointments = appointments.docs.map((doc) => doc.data());
+
+  return {
+    appointments,
+    lastVisible: newLastVisible,
+    stopAPICalls,
+  };
+};
 
 const getCalendarDatesAvailability = async (orgId) => {
   //Get the companies availability document
@@ -197,29 +248,11 @@ const getTimeSlotsForDate = (
       });
 
       return timeSlotHours;
-
-      // return {
-      //   time: `${timeSlot[0]}:00`,
-      //   availableHours: timeSlotHours.length,
-      // };
     });
 
     console.log("availableTimes", availableTimes);
 
     return availableTimes;
-
-    // //helper gapBetweenCheck
-    // //check that the gap between settings have been met
-    // function gapBetweenCheck(key) {
-    //   for (let i = 1; gapBetween >= i; i++) {
-    //     //if the next timeslot is booked
-    //     if (bookingScheduleForSelectedDate.bookedTimes[`${+key + i}`]) {
-    //       return false;
-    //     }
-    //   }
-
-    //   return true;
-    // }
   } else {
     //Number of opperating hours
     const startTime = selectedDateOpeningTimes.start;
@@ -235,21 +268,8 @@ const getTimeSlotsForDate = (
       });
     }
 
-    //if there is no booking schedule for the selected date
-    //return one time slot for the day
-    // let availableTimes = [
-    //   {
-    //     time: `${selectedDateOpeningTimes.start}:00`,
-    //     availableHours:
-    //       selectedDateOpeningTimes.end - selectedDateOpeningTimes.start,
-    //   },
-    // ];
-
     return availableTimes;
   }
-
-  //if there is no bookings scheduled for the selected date
-  //return one time slot for the day
 };
 
 const formatDate = (date) => {
@@ -346,6 +366,7 @@ const gapBetweenCheck = (key, gapBetween, bookedTimes) => {
 };
 
 export {
+  getAppointments,
   getServices,
   getTimeSlotsForDate,
   getCalendarDatesAvailability,

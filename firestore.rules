@@ -7,7 +7,7 @@ service cloud.firestore {
     }
 
     //Allow a user to read their booking documents
-    match /organisations/{organisation}/bookings/booking {
+    match /organisations/{organisation}/bookings/{booking} {
       allow read: if request.auth.uid == resource.data.userId;
     }
 
