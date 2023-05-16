@@ -6,6 +6,11 @@ service cloud.firestore {
       allow read, write, update, delete: if request.auth != null && request.auth.uid == user;
     }
 
+    //Allow a user to read their booking documents
+    match /organisations/{organisation}/bookings/booking {
+      allow read: if request.auth.uid == resource.data.userId;
+    }
+
     //Allow a user to read an organisations availability
     //for the selected request date
     match /organisations/{organisation}/availability/opperatingHours {
