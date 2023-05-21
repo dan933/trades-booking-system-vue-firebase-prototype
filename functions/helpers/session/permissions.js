@@ -29,6 +29,8 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     functions.logger.log('Found "__session" cookie', req.cookies.__session);
     // Read the ID Token from cookie.
     idToken = req.cookies.__session;
+
+    //todo add a continue as guest option
   } else {
     // No cookie
     res.status(403).send("Unauthorized");

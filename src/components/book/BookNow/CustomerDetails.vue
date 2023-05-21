@@ -82,8 +82,8 @@ export default {
   },
   methods: {
     validateForm() {
-      this.$nextTick(async () => {
-        this.valid = !!(await this.$refs.customerDetailsFormRef.validate());
+      this.$nextTick(() => {
+        this.valid = !!this.$refs.customerDetailsFormRef.validate();
       });
     },
     //function to control loading
@@ -92,8 +92,6 @@ export default {
     },
     storeCustomerDetails() {
       // Store the customers details
-      //todo add a feature to store customer addresses in a firestore database
-      //todo add check to see if the customer is within the service range
       console.log(this.valid, "valid details form");
       if (this.valid) {
         let customerDetails = {
@@ -107,6 +105,8 @@ export default {
       }
     },
     async getCustomer() {
+      if (this.IsGuest) return null;
+
       return await getCustomerDetails(this.orgId);
     },
     async init() {
@@ -133,6 +133,9 @@ export default {
   computed: {
     orgId() {
       return this.$route.params.id;
+    },
+    IsGuest() {
+      return this.$store.state.IsGuest;
     },
   },
   async mounted() {

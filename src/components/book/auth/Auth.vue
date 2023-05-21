@@ -18,7 +18,7 @@ const Auth = () => Promise.resolve({
       <v-container class="provider-container">
         <v-btn
           @click="() => signIn({ providerName: 'Google' })"
-          class="provider-button"
+          class="provider-button text-subtitle-2"
         >
           <img
             class="google-logo"
@@ -26,14 +26,21 @@ const Auth = () => Promise.resolve({
             alt=""
             srcset=""
           />
-          <span>Continue With Google</span>
+          Continue With Google
         </v-btn>
         <v-btn
           @click="() => signIn({ providerName: 'Facebook' })"
-          class="provider-button"
+          class="provider-button text-subtitle-2"
         >
           <v-icon icon="mdi:mdi-facebook" size="50px" color="blue"></v-icon>
-          <span> Continue With Facebook </span>
+          Continue With Facebook
+        </v-btn>
+        <v-btn
+          @click="() => signIn({ providerName: 'Guest' })"
+          class="provider-button text-subtitle-2"
+        >
+          <v-icon icon="mdi:mdi-account" size="50px" color="black"></v-icon>
+          Continue as Guest
         </v-btn>
       </v-container>
     </v-card>
@@ -95,6 +102,17 @@ export default {
       //redirect too book happens if the user is already signed in on initial load
       this.signInResponse = await authService.signIn(signInDetails, orgId);
 
+      //if the user is a Guest
+      if (this.signInResponse?.IsGuest) {
+        //update store of IsGuest
+        this.$store.commit("setIsGuest", true);
+
+        console.log("this.$store.state.IsGuest", this.$store.state.IsGuest);
+
+        //redirect to booking page
+        this.$router.push(`/org/${orgId}/book`);
+      }
+
       //if account exists with different credentials
       if (this.signInResponse?.IsUserDifferentCredentials) {
         //open dialog box
@@ -132,9 +150,9 @@ export default {
 }
 
 .provider-container {
-  padding: 10px;
+  padding: 15px;
   background-color: lightgrey;
-  height: 200px;
+  height: auto;
   width: 90%;
   min-width: 200px;
   display: flex;
@@ -147,11 +165,13 @@ export default {
 }
 
 .provider-button {
-  font-size: 14px;
-  padding: 30px;
+  padding: 15px;
   width: 332px;
+  height: auto;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .google-logo {
   margin-right: 10px;

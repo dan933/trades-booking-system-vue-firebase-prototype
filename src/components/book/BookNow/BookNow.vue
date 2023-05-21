@@ -153,7 +153,8 @@ export default {
       //are different to this.customerInformation
       if (
         JSON.stringify(this.customerInformation) !==
-        JSON.stringify(customerDetails)
+          JSON.stringify(customerDetails) &&
+        !this.IsGuest
       ) {
         this.$refs.customerDetailsRef.toggleLoading(true);
 
@@ -197,9 +198,11 @@ export default {
       //Toggle loading  on payment page
       this.$refs.paymentRef.toggleLoading(true);
       //Send to API give orgId and booking data
-      const resp = await createBooking(bookingData, this.$route.params.id);
+      const resp = await createBooking(
+        bookingData,
+        this.$route.params.id
+      ).catch((err) => alert(err));
 
-      console.log("resp", resp);
       //Navigate to booking confirmation page
       //if resp success route to confirmation page
       if (resp.success) {
@@ -223,7 +226,11 @@ export default {
     },
   },
   mounted() {},
-  computed: {},
+  computed: {
+    IsGuest() {
+      return this.$store.state.IsGuest;
+    },
+  },
   components: {
     Payment,
     TimeSlots,

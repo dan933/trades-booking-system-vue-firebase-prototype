@@ -53,7 +53,7 @@ export default {
     const isLoading = ref(false);
     const pagination = ref({
       lastVisible: null,
-      size: 2,
+      size: 12,
       stopCalls: false,
     });
 
@@ -108,7 +108,7 @@ export default {
 
 <style lang="scss">
 .appointment-section {
-  overflow: auto;
+  overflow: scroll;
   margin-top: 10px;
   display: block;
   justify-content: center;

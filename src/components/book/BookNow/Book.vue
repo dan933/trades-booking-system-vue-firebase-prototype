@@ -2,9 +2,10 @@ const Book = () => Promise.resolve({
 <template>
   <section class="book-section">
     <v-card elevation="3" class="card">
-      <v-toolbar color="white" :elevation="6">
+      <v-toolbar color="white" :elevation="6" v-if="showNavigation">
         <v-container class="nav-container">
           <v-btn
+            v-if="!$store.state.IsGuest"
             class="menu-button"
             v-bind:active="view === 'appointments'"
             @click="
@@ -27,6 +28,7 @@ const Book = () => Promise.resolve({
         </v-container>
       </v-toolbar>
       <Appointments
+        v-if="!$store.state.IsGuest"
         :class="{ 'view-container': true, hidden: view !== 'appointments' }"
       ></Appointments>
       <BookNow
@@ -44,12 +46,16 @@ export default {
   components: { Appointments, BookNow },
   data() {
     return {
-      view: "appointments",
+      view: "bookNow",
     };
   },
   methods: {},
   mounted() {},
-  computed: {},
+  computed: {
+    showNavigation() {
+      return !this.$store.state.IsGuest;
+    },
+  },
 };
 </script>
 

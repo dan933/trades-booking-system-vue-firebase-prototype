@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    IsGuest: false,
     booking: {
       bookingDate: "",
       timeRange: "",
@@ -23,6 +24,9 @@ export default createStore({
       state.booking.subtotal = payload.subtotal;
       state.booking.gst = payload.gst;
       state.booking.total = payload.total;
+    },
+    setIsGuest(state, payload) {
+      state.IsGuest = payload;
     },
   },
   actions: {

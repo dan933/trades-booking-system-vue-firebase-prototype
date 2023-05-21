@@ -5,6 +5,7 @@ import Contact from "../components/contact/contact.vue";
 import NotFound from "../components/not-found/NotFound.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth } from "firebase/auth";
+import bookingStore from "../store/bookingStore";
 
 const routes = [
   {
@@ -64,13 +65,17 @@ router.beforeEach(async (to, from, next) => {
 
   let IsLoggedIn = !!auth;
 
+  let IsGuest = bookingStore.state.IsGuest;
+
   //The organisation id from the previous page
   let org = from.params.id || to.params.id;
 
   // console.log("org", org);
 
-  if (to.name === "Auth" && IsLoggedIn) next({ path: `/org/${org}/book` });
-  if (to.name === "Book" && !IsLoggedIn) next({ path: `/org/${org}/auth` });
+  if (to.name === "Auth" && (IsLoggedIn || IsGuest))
+    next({ path: `/org/${org}/book` });
+  if (to.name === "Book" && !IsLoggedIn && !IsGuest)
+    next({ path: `/org/${org}/auth` });
   else next();
 });
 

@@ -211,3 +211,5 @@ exports.calculateInvoiceTotal = async (orgId, customerServices) => {
     stripeTotal,
   };
 };
+
+exports.sendBookingConfirmationEmail = async () => {};

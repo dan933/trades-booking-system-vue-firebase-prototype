@@ -6,7 +6,7 @@ const apiUrl = import.meta.env.VITE_APIURL;
 //get user
 const user = getAuth().currentUser;
 
-let userId = user.uid;
+let userId = user?.uid;
 
 const db = getFirestore();
 

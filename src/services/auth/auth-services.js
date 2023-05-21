@@ -71,6 +71,12 @@ var authService = {
         };
       }
 
+      if (providerName === "Guest") {
+        return {
+          IsGuest: true,
+        };
+      }
+
       //get provider
       let provider =
         providerName === "Google"
@@ -237,8 +243,5 @@ var authService = {
     }
   },
 };
-
-//todo wait for popup link to finish then say you are signed
-//todo sign in with email and password and be able to link to existing accounts
 
 export { authService };

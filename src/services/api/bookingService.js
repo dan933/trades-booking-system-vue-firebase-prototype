@@ -18,7 +18,7 @@ import {
 
 //get user
 const user = getAuth().currentUser;
-let userId = user.uid;
+let userId = user?.uid;
 
 const db = getFirestore();
 
@@ -325,29 +325,35 @@ const createBookingPayload = (bookingData) => {
 //Calls api to attempt to create a booking
 const createBooking = async (bookingData, orgId) => {
   try {
-    //get token
-    const token = await getIdToken(user);
-
     let payload = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       mode: "cors",
       body: createBookingPayload(bookingData),
     };
 
+    //If the user is not a guest
+    //add Bearer token
+    let token = null;
+    if (user) {
+      token = await getIdToken(user);
+      this.payload.headers.Authorization = `Bearer ${token}`;
+    } else {
+      //if the user is a guest add guest to the payload
+      payload.headers.Guest = "true";
+    }
+
     console.log("payload", payload);
 
     const resposne = await fetch(`${apiUrl}/booking/${orgId}/book`, payload);
 
-    const bodyResponse = await resposne.json();
+    const bodyResponse = await resposne?.json();
 
     return bodyResponse;
   } catch (error) {
-    console.error(error);
-    return error;
+    throw error.toString();
   }
 };
 

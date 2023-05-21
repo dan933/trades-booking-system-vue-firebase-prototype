@@ -11,20 +11,20 @@ service cloud.firestore {
       allow read: if request.auth.uid == resource.data.userId;
     }
 
-    //Allow a user to read an organisations availability
+    //Allow anyone to read an organisations availability
     //for the selected request date
     match /organisations/{organisation}/availability/opperatingHours {
-      allow read: if request.auth != null;
+      allow read: if true;
     }
-    //Allow a user to read the bookedSchedule collection
+    //Allow anyone to read the bookedSchedule collection
     //for dates in the future
     match /organisations/{organisation}/bookedSchedule/{date} {
-      allow read: if request.auth != null;
+      allow read: if true;
     }
 
-    //Allow a user to read the services collection
+    //Allow anyone read the services collection
     match /organisations/{organisation}/availability/services {
-      allow read: if request.auth != null;
+      allow read: if true;
     }
   }
 }
