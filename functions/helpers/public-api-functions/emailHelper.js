@@ -23,15 +23,17 @@ let generateBookingEmailData = (booking) => {
     </tr>`;
   });
 
-  //todo add totals and think about making this it's own endpoint
-  //In order to speed things up
+  //todo add totals
+
+  let startTime = convertTo12HourTime(booking.startHour);
+  let endTime = convertTo12HourTime(booking.endHour);
 
   let emailHTMl = `<h1 style="font-size: 20px;">Thank you for booking with AJM Home Services</h1>
   <br />
   <p>We have successfully booked your appointment for ${formatDate(
     booking.bookingDate
-  )} from ${booking.startHour} to ${booking.endHour}. Here are the details:</p>
-  <table style="font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; width: 100%; max-width:900px">
+  )} from ${startTime} to ${endTime}. Here are the details:</p>
+  <table style="font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; width: 100%; max-width:900px; margin-left: auto; margin-right: auto;">
   <thead style="background-color: #04AA6D;">
       <tr style="background-color: #f2f2f2;">
           <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #04AA6D; color: white;">Service</th>
@@ -48,6 +50,30 @@ let generateBookingEmailData = (booking) => {
 <p>Your Service Provider AJM Home Services</p>`;
 
   return emailHTMl;
+};
+
+let convertTo12HourTime = (hour) => {
+  // Ensure the hour is within the appropriate range
+  if (hour < 0 || hour > 24) {
+    return "Invalid hour. Please enter a value between 0 and 24.";
+  }
+
+  // Midnight is considered as '12 AM'
+  if (hour == 0) {
+    return "12 AM";
+  }
+
+  // Noon is '12 PM'
+  else if (hour == 12) {
+    return "12 PM";
+  }
+
+  // If the hour is less than 12, it's AM, otherwise it's PM
+  else if (hour < 12) {
+    return hour + " AM";
+  } else {
+    return hour - 12 + " PM";
+  }
 };
 
 exports.createBookingEmail = async (booking) => {
@@ -78,6 +104,10 @@ exports.createBookingEmail = async (booking) => {
       subject: "Booking Confirmation",
       html: emailHtml,
     };
+
+    let startTime = convertTo12HourTime(booking.startHour);
+    let endTime = convertTo12HourTime(booking.endHour);
+
     const mailOptionsForAJM = {
       from: "Ange <ange@ajmhomeservice.com>",
       to: `${process.env.EMAIL}`,
@@ -86,8 +116,8 @@ exports.createBookingEmail = async (booking) => {
                   <p>
                   email: ${booking.email}
                   bookingDate: ${formatDate(booking.bookingDate)}
-                  startHour: ${booking.startHour}
-                  endHour: ${booking.endHour}
+                  startHour: ${startTime}
+                  endHour: ${endTime}
                   </p>
                   `,
     };
