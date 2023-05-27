@@ -3,6 +3,8 @@ import { createStore } from "vuex";
 export default createStore({
   state: {
     IsGuest: false,
+    customer: null,
+    bookingRequest: null,
     booking: {
       bookingDate: "",
       timeRange: "",
@@ -17,7 +19,7 @@ export default createStore({
   mutations: {
     updateBooking(state, payload) {
       state.booking.bookingDate = payload.bookingDate;
-      state.booking.timeRange = payload.time;
+      state.booking.timeRange = payload.timeRange;
       state.booking.address = payload.address;
       state.booking.selectedServices = payload.selectedServices;
       state.booking.hoursRequired = payload.hoursRequired;
@@ -27,6 +29,13 @@ export default createStore({
     },
     setIsGuest(state, payload) {
       state.IsGuest = payload;
+    },
+    setCustomer(state, payload) {
+      state.customer = payload;
+    },
+    //used to send email to company and customer
+    setBookingRequest(state, payload) {
+      state.bookingRequest = payload;
     },
   },
   actions: {

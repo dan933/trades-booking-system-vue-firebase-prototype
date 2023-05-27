@@ -1,8 +1,6 @@
 import { getAuth } from "firebase/auth";
 import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
 
-const apiUrl = import.meta.env.VITE_APIURL;
-
 //get user
 const user = getAuth().currentUser;
 

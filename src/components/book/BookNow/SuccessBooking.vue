@@ -4,9 +4,15 @@ const SuccessBooking = () => Promise.resolve({
     <v-container>
       <h1>Booked</h1>
       <p>
-        Thank You for Booking with us we have sent you a confirmation email with
-        booking details. Todo create a confirmation email template.
+        Thank You {{ customer.firstName }}, for Booking with us we have sent you
+        a confirmation email with booking details. Todo create a confirmation
+        email template.
       </p>
+
+      <br />
+
+      <p><strong>Date: </strong>{{ booking.bookingDate }}</p>
+      <p><strong>Time: </strong>{{ booking.timeRange }}</p>
 
       <v-table fixed-header max-height="300px">
         <thead>
@@ -49,6 +55,7 @@ const SuccessBooking = () => Promise.resolve({
 </template>
 
 <script>
+import { sendBookingConfirmationEmail } from "../../../services/api/bookingService";
 export default {
   name: "SuccessBooking",
   data() {
@@ -58,10 +65,20 @@ export default {
     booking() {
       return this.$store.state.booking;
     },
+    customer() {
+      return this.$store.state.customer;
+    },
   },
-  methods: {},
-  mounted() {
-    console.log("booking", this.booking);
+  methods: {
+    async sendConfirmationEmail() {
+      let bookingData = this.$store.state.bookingRequest;
+      console.log("bookingRequest", bookingData);
+      const orgId = this.$route.params.id;
+      await sendBookingConfirmationEmail(bookingData, orgId);
+    },
+  },
+  async mounted() {
+    await this.sendConfirmationEmail();
   },
 };
 </script>

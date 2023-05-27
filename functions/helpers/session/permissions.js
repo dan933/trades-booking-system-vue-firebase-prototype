@@ -4,6 +4,13 @@ const admin = require("firebase-admin");
 exports.validateFirebaseIdToken = async (req, res, next) => {
   functions.logger.log("Check if request is authorized with Firebase ID token");
   functions.logger.log("req", req);
+  functions.logger.log("req", req.headers.guest);
+
+  if (req.headers.guest && req.headers.guest === "true") {
+    functions.logger.log("Guest User");
+    next();
+    return;
+  }
 
   if (
     (!req.headers.authorization ||
@@ -13,11 +20,12 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     functions.logger.error(
       "No Firebase ID token was passed as a Bearer token in the Authorization header."
     );
-    res.status(403).send("Unauthorized");
+    res.status(403).send({ message: "Unauthorized" });
     return;
   }
 
   let idToken;
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
@@ -33,7 +41,7 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     //todo add a continue as guest option
   } else {
     // No cookie
-    res.status(403).send("Unauthorized");
+    res.status(403).send({ message: "Unauthorized" });
     return;
   }
 
@@ -45,7 +53,7 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     return;
   } catch (error) {
     functions.logger.error("Error while verifying Firebase ID token:", error);
-    res.status(403).send("Unauthorized");
+    res.status(403).send({ message: "Unauthorized" });
     return;
   }
 };

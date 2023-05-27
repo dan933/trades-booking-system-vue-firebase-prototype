@@ -195,6 +195,7 @@ export default {
         services: this.selectedServices,
         paymentDetails: stripeResponse,
       };
+
       //Toggle loading  on payment page
       this.$refs.paymentRef.toggleLoading(true);
       //Send to API give orgId and booking data
@@ -206,7 +207,16 @@ export default {
       //Navigate to booking confirmation page
       //if resp success route to confirmation page
       if (resp.success) {
-        //todo add booking id to url that will be retrieved from the db later on
+        //update customer information
+        this.$store.commit("setCustomer", bookingData.customerInformation);
+
+        //store booking request stored to send email to user and company later
+        this.$store.commit("setBookingRequest", resp.bookingRequest);
+
+        //todo add booking id to url that will be retrieved from the db later on??
+        //still not sure if this is a good idea as it will cause security issues
+
+        //route to confirmation page
         this.$router.push(`/org/${this.$route.params.id}/book/confirmation`);
 
         this.$refs.paymentRef.toggleLoading(false);
@@ -219,7 +229,7 @@ export default {
         this.$router.push(`/org/${this.$route.params.id}/book/failed`);
       } else {
         this.$refs.paymentRef.updateErrorMessage(
-          "sorry somthing went wrong on our end"
+          resp?.message || "Something went wrong"
         );
         this.$refs.paymentRef.toggleLoading(false);
       }

@@ -22,7 +22,7 @@ let userId = user?.uid;
 
 const db = getFirestore();
 
-console.log("userId", userId);
+// console.log("userId", userId);
 
 const getAppointments = async (
   orgId,
@@ -311,11 +311,16 @@ const createBookingPayload = (bookingData) => {
     startHour: startHour,
     customerInformation: {
       ...payload.customerInformation,
-      userId: userId,
     },
     services: payload.services,
     paymentDetails: bookingData.paymentDetails,
   };
+
+  if (userId) {
+    payload.customerInformation.userId = userId;
+  } else {
+    payload.customerInformation.userId = "Guest";
+  }
 
   console.log("payload", payload);
 
@@ -339,7 +344,7 @@ const createBooking = async (bookingData, orgId) => {
     let token = null;
     if (user) {
       token = await getIdToken(user);
-      this.payload.headers.Authorization = `Bearer ${token}`;
+      payload.headers.Authorization = `Bearer ${token}`;
     } else {
       //if the user is a guest add guest to the payload
       payload.headers.Guest = "true";
@@ -353,7 +358,44 @@ const createBooking = async (bookingData, orgId) => {
 
     return bodyResponse;
   } catch (error) {
-    throw error.toString();
+    throw error?.message;
+  }
+};
+
+const sendBookingConfirmationEmail = async (bookingData, orgId) => {
+  try {
+    let payload = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify({ bookingRequest: bookingData }),
+    };
+
+    //If the user is not a guest
+    //add Bearer token
+    let token = null;
+    if (user) {
+      token = await getIdToken(user);
+      payload.headers.Authorization = `Bearer ${token}`;
+    } else {
+      //if the user is a guest add guest to the payload
+      payload.headers.Guest = "true";
+    }
+
+    console.log("payload send email", payload);
+
+    const resposne = await fetch(
+      `${apiUrl}/booking/${orgId}/send-confirmation-email`,
+      payload
+    );
+
+    const bodyResponse = await resposne?.json();
+
+    return bodyResponse;
+  } catch (error) {
+    throw error?.message;
   }
 };
 
@@ -377,4 +419,5 @@ export {
   getTimeSlotsForDate,
   getCalendarDatesAvailability,
   createBooking,
+  sendBookingConfirmationEmail,
 };

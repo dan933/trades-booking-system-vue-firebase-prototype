@@ -28,12 +28,19 @@
           type="tel"
           :rules="[(v) => !!v || 'Phone number is required']"
         ></v-text-field>
+        <v-text-field
+          v-if="IsGuest"
+          v-model="email"
+          label="Email"
+          type="email"
+          :rules="emailRules"
+        ></v-text-field>
         <v-textarea
           v-model="address"
           label="Address"
           :rules="[(v) => !!v || 'Address is required']"
         ></v-textarea>
-        <v-btn color="primary" type="submit">Next</v-btn>
+        <v-btn color="primary mt-4" type="submit">Next</v-btn>
       </v-form>
       <v-container
         v-else
@@ -53,16 +60,25 @@
 
 <script>
 import { getCustomerDetails } from "../../../services/api/customerService.js";
+import { getAuth } from "firebase/auth";
 export default {
   name: "CustomerDetails",
   data() {
     return {
       loading: false,
-      valid: false,
+      valid: true,
       firstName: "",
       lastName: "",
       phoneNumber: "",
       address: "",
+      email: "",
+      emailRules: [
+        (v) => !!v || "Email is required",
+        (v) =>
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+            v
+          ) || "Email must be valid",
+      ],
     };
   },
   props: ["selectedDateTimeSlot"],
@@ -92,15 +108,16 @@ export default {
     },
     storeCustomerDetails() {
       // Store the customers details
-      console.log(this.valid, "valid details form");
       if (this.valid) {
         let customerDetails = {
           firstName: this.firstName,
           lastName: this.lastName,
+          email: this.email || this.currentUser?.email,
           phoneNumber: this.phoneNumber,
           addressList: [this.address],
         };
 
+        console.log("line 120", customerDetails);
         this.$emit("storeCustomerDetails", customerDetails);
       }
     },
@@ -116,6 +133,8 @@ export default {
 
       let customer = await this.getCustomer();
 
+      console.log(customer, "customer details");
+
       //if the details exist populate the form
       if (customer) {
         this.firstName = customer?.firstName || "";
@@ -123,11 +142,11 @@ export default {
         this.phoneNumber = customer?.phoneNumber || "";
         this.address =
           customer?.addressList?.length > 0 ? customer.addressList[0] : "";
+
+        this.valid = this.validateForm();
       }
 
       this.loading = false;
-
-      this.valid = this.validateForm();
     },
   },
   computed: {
@@ -136,6 +155,11 @@ export default {
     },
     IsGuest() {
       return this.$store.state.IsGuest;
+    },
+    currentUser() {
+      let user = getAuth().currentUser;
+      console.log(user, "user");
+      return user;
     },
   },
   async mounted() {

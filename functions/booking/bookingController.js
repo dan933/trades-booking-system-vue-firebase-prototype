@@ -1,7 +1,7 @@
 const admin = require("firebase-admin");
 const functions = require("firebase-functions");
 const bookingHelper = require("../helpers/booking/bookingHelper.js");
-const { error } = require("firebase-functions/logger");
+const emailHelper = require("../helpers/public-api-functions/emailHelper.js");
 const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 
 exports.getAvailability = async (req, res) => {
@@ -65,6 +65,8 @@ exports.book = async (req, res) => {
     //Get the customer information
     const customerInfo = req.body.customerInformation;
 
+    functions.logger.log("customerInfo", customerInfo);
+
     //Get the Start Hour
     const startHour = req.body.startHour;
 
@@ -126,6 +128,9 @@ exports.book = async (req, res) => {
       services: customerServices,
       address: customerInfo.addressList[0],
       phoneNumber: customerInfo.phoneNumber,
+      email: customerInfo.email,
+      firstName: customerInfo.firstName,
+      lastName: customerInfo.lastName,
       status: "pending",
     };
 
@@ -257,7 +262,7 @@ exports.book = async (req, res) => {
         description: `${customerInfo.firstName} ${customerInfo.lastName} - ${customerInfo.userId}`,
         metadata: {
           bookingId: bookingRef.id,
-          customerId: customerInfo.userId,
+          customerId: customerInfo?.userId,
         },
       });
 
@@ -341,14 +346,78 @@ exports.book = async (req, res) => {
       });
     functions.logger.log("updatedBookingResponse", updatedBookingResponse);
 
-    //send booking confirmation email
-
-    if (updatedBookingResponse.success) {
-    }
-
-    res.send({ ...updatedBookingResponse });
+    res.send({ ...updatedBookingResponse, bookingRequest: bookingRequest });
     return;
     //----------------------------------------------//
+  } catch (error) {
+    functions.logger.log("error", error);
+    functions.logger.log("error", error?.raw?.message);
+
+    res.send({
+      code: error?.raw?.message,
+      status: "Server error",
+      success: false,
+    });
+    return;
+  }
+};
+
+exports.sendBookingConfirmationEmail = async (req, res) => {
+  try {
+    const bookingRequest = req.body?.bookingRequest;
+    const bookingId = req.body?.bookingRequest?.bookingId;
+
+    //Get the orgId from the request
+    const orgId = req.params.orgId;
+
+    functions.logger.log(
+      "bookingRequest",
+      bookingId,
+      bookingId,
+      "orgId:",
+      orgId
+    );
+
+    if (!bookingId || !bookingRequest) {
+      res.send({
+        message: "Incorrect Parameters",
+        success: false,
+        status: "error",
+      });
+      return;
+    }
+
+    //Get booking document
+    const bookingRef = admin
+      .firestore()
+      .collection("organisations")
+      .doc(`${orgId}`)
+      .collection("bookings")
+      .doc(`${bookingId}`);
+
+    const bookingDoc = await bookingRef.get();
+
+    if (!bookingDoc.exists || bookingDoc.data()?.emailSent) {
+      res.send({
+        message: "Booking not found",
+        success: false,
+        status: "error",
+      });
+      return;
+    }
+
+    const emailResponse = await emailHelper.createBookingEmail(bookingRequest);
+
+    if (!emailResponse.success) {
+      res.send({ ...emailResponse });
+      return;
+    }
+
+    //update the booking document to show that the email has been sent
+    await bookingRef.update({ emailSent: true });
+
+    res.send({ ...emailResponse });
+    return;
   } catch (error) {
     functions.logger.log("error", error);
     functions.logger.log("error", error?.raw?.message);

@@ -8,32 +8,26 @@ const cookieParser = require("cookie-parser")();
 const cors = require("cors")({ origin: true });
 const bodyParser = require("body-parser");
 
-const bookingApi = express();
+const emailAPI = express();
 
 //---------------------------------------------------------//
-
 //----------------------- Permissions -----------------------------------------//
+// A user must be logged in
 const {
   validateFirebaseIdToken,
 } = require("../helpers/session/permissions.js");
-
 //-----------------------------------------------------------------------------//
 
-const bookingController = require("./bookingController.js");
+const emailController = require("./emailController.js");
 
-bookingApi.use(cors);
-bookingApi.use(cookieParser);
-bookingApi.use(validateFirebaseIdToken);
-bookingApi.use(bodyParser.json());
+emailAPI.use(cors);
+emailAPI.use(validateFirebaseIdToken);
+emailAPI.use(cookieParser);
+emailAPI.use(bodyParser.json());
 
 //---------------- Controllers ---------------------------------------//
-bookingApi.post("/:orgId/book", bookingController.book);
+emailAPI.post("/send-booking-email", emailController.sendBookingConfirmation);
 
-bookingApi.post(
-  "/:orgId/send-confirmation-email",
-  bookingController.sendBookingConfirmationEmail
-);
-
-exports.bookingApi = functions
+exports.emailAPI = functions
   .region("australia-southeast1")
-  .https.onRequest(bookingApi);
+  .https.onRequest(emailAPI);
