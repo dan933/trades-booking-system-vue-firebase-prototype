@@ -23,7 +23,29 @@ let generateBookingEmailData = (booking) => {
     </tr>`;
   });
 
-  //todo add totals
+  let total = serviceData.reduce((total, service) => {
+    return total + service.hours * service.rate;
+  }, 0);
+
+  let gst = total * 0.1;
+  let grandTotal = total + gst;
+
+  let totalsHtml = `<tr>
+  <td style="padding:8px"></td>
+  <td style="border: 1px solid #ddd; padding: 8px;"><strong>Total</strong></td>
+  <td style="border: 1px solid #ddd; padding: 8px;">$ ${total}</td>
+  </tr>
+  <tr>
+  <td style="padding:8px"></td>
+  <td style="border: 1px solid #ddd; padding: 8px;"><strong>GST</strong></td>
+  <td style="border: 1px solid #ddd; padding: 8px;">$ ${gst}</td>
+  </tr>
+  <tr>
+  <td style="padding:8px"></td>
+  <td style="border: 1px solid #ddd; padding: 8px;"><strong>Grand Total</strong></td>
+  <td style="border: 1px solid #ddd; padding: 8px;">$ ${grandTotal}</td>
+  </tr>`;
+  serviceHtml += totalsHtml;
 
   let startTime = convertTo12HourTime(booking.startHour);
   let endTime = convertTo12HourTime(booking.endHour);
@@ -60,19 +82,19 @@ let convertTo12HourTime = (hour) => {
 
   // Midnight is considered as '12 AM'
   if (hour == 0) {
-    return "12 AM";
+    return "12:00 AM";
   }
 
   // Noon is '12 PM'
   else if (hour == 12) {
-    return "12 PM";
+    return "12:00 PM";
   }
 
   // If the hour is less than 12, it's AM, otherwise it's PM
   else if (hour < 12) {
     return hour + " AM";
   } else {
-    return hour - 12 + " PM";
+    return hour - 12 + ":00 PM";
   }
 };
 

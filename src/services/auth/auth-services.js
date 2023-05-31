@@ -237,6 +237,12 @@ var authService = {
           message: "Password Incorrect",
         };
       }
+
+      if (error?.code === "auth/email-already-in-use") {
+        return {
+          IsSuccess: true,
+        };
+      }
       console.log(error.code, "line 218");
       console.log(error.message, "line 218");
       console.log(error, "line 218");

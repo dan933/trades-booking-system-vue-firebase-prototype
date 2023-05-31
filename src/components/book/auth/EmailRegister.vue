@@ -3,7 +3,11 @@
     <v-card class="mx-auto" min-width="150">
       <h1 class="card-title">Register</h1>
       <v-card-text>
-        <v-form @submit.prevent="register" v-model="registrationForm">
+        <v-form
+          @submit.prevent="register"
+          v-model="registrationForm"
+          ref="registrationFormRef"
+        >
           <v-text-field
             class="mb-2"
             v-model="userRegister.email"
@@ -90,7 +94,13 @@ export default {
     switchForm(selectedForm) {
       this.$emit("switchForm", selectedForm);
     },
+    validateForm() {
+      this.$nextTick(() => {
+        this.registrationForm = !!this.$refs.registrationFormRef.validate();
+      });
+    },
     register() {
+      console.log(this.registrationForm);
       if (this.registrationForm) {
         let newUser = {
           email: this.userRegister.email,
@@ -99,6 +109,18 @@ export default {
 
         this.$emit("registerEmailUser", newUser);
       }
+    },
+  },
+  mounted() {
+    // Validate the form as soon as the component is mounted
+    this.validateForm();
+  },
+  watch: {
+    userRegister: {
+      handler() {
+        this.validateForm();
+      },
+      deep: true,
     },
   },
 };

@@ -163,10 +163,16 @@ export default {
 
       console.log("totalHours", totalHours);
 
-      let startTime = this.selectedDateTimeSlot.date.toLocaleTimeString();
+      let startTime = this.selectedDateTimeSlot.date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
       let endTime = new Date(this.selectedDateTimeSlot?.date);
       endTime.setHours(this.selectedDateTimeSlot.date.getHours() + totalHours);
-      endTime = endTime.toLocaleTimeString();
+      endTime = endTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
       return `${startTime} - ${endTime}`;
     },

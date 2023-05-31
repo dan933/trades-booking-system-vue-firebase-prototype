@@ -115,7 +115,8 @@ export default {
     },
     closeDialog() {
       this.dialog = false;
-      this.$router.push("/book");
+      const orgId = this.$route.params.id;
+      this.$router.push(`/org/${orgId}/book`);
     },
     signedInMessage() {
       let message = {};
@@ -146,14 +147,18 @@ export default {
         this.signInResponse
       );
 
+      console.log(response, "line 142");
+
       if (response?.IsSameToExistingEmailSignIn) {
         this.IsSignedIn = true;
       } else {
         this.dialog = false;
-        this.$router.push("/book");
+        const orgId = this.$route.params.id;
+        this.$router.push(`/org/${orgId}/book`);
       }
     },
     async linkAccounts() {
+      const orgId = this.$route.params.id;
       if (this.user && this.loginForm) {
         this.signInResponse = {
           user: this.user,
@@ -169,14 +174,14 @@ export default {
         }
 
         if (response?.IsSuccess) {
-          this.$router.push("/book");
+          this.$router.push(`/org/${orgId}/book`);
         }
       }
 
       const response = await authService.linkAccounts(this.signInResponse);
 
       if (response?.IsSuccess) {
-        this.$router.push("/book");
+        this.$router.push(`/org/${orgId}/book`);
       }
     },
   },
