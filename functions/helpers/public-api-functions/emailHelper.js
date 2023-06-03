@@ -92,7 +92,7 @@ let convertTo12HourTime = (hour) => {
 
   // If the hour is less than 12, it's AM, otherwise it's PM
   else if (hour < 12) {
-    return hour + " AM";
+    return hour + ":00 AM";
   } else {
     return hour - 12 + ":00 PM";
   }
