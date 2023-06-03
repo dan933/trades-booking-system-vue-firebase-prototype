@@ -13,10 +13,10 @@
           You already have an account with
           {{ signedInMessage().provider }} please sign in.
         </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" block @click="signInWithExistingAccount"
-            >Sign in with {{ signedInMessage().button }}</v-btn
-          >
+        <v-card-actions class="flex-column">
+          <v-btn color="primary" block @click="signInWithExistingAccount">
+            Sign in with {{ signedInMessage().button }}
+          </v-btn>
           <v-btn color="primary" block @click="dialog = false"
             >Close Dialog</v-btn
           >
