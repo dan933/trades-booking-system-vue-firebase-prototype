@@ -4,20 +4,26 @@
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <form class="login-container">
+      <form [formGroup]="loginForm" class="login-container" (ngSubmit)="login($event)">
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput type="email" required>
+          <input autocomplete="emil" matInput type="email" formControlName="email" required>
         </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput [type]="hide ? 'password' : 'text'" required>
-          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+          <input autocomplete="current-password" formControlName="password" matInput [type]="hide ? 'password' : 'text'"
+            required>
+          <button mat-icon-button matSuffix (click)="toggleHide($event)" [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide">
             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
         </mat-form-field>
-        <button mat-raised-button color="primary">Submit</button>
+        <div *ngIf="loginForm.errors" style="color:red; margin-bottom: 10px;">
+          {{this.loginForm.errors && this.loginForm.errors['incorrect'] ? 'Invalid email or password' : 'Too many
+          attempts'}}
+        </div>
+        <a href="#" (click)="forgotPassword">Forgot password?</a>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading">Login</button>
       </form>
     </mat-card-content>
   </mat-card>

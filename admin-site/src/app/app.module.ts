@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './shared/auth/auth.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 //Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
+
 
 
 //Firebase
@@ -46,7 +48,8 @@ import { HomeComponent } from './components/home/home.component';
     MatIconModule,
     MatMenuModule,
     MatCardModule,
-    MatGridListModule
+    MatGridListModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
