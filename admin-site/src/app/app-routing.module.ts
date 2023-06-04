@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from './shared/auth/auth.component';
 import { authGuard } from './services/auth.guard';
-import { HomeComponent } from './components/home/home.component';
+import { ScheduleComponent } from './components/schedule/schedule.component';
 
 const routes: Routes = [
   {
-    path: 'home',
-    component: HomeComponent,
+    path: 'schedule',
+    component: ScheduleComponent,
     canActivate: [authGuard]
   },
   {
@@ -16,7 +16,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    component: AuthComponent,
+    component: ScheduleComponent,
     canActivate: [authGuard]
   },
 ];

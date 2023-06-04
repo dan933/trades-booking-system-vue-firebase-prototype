@@ -44,9 +44,10 @@ export class AuthComponent implements OnInit {
         console.log(this.loginForm.value['email'], this.loginForm.value['password'])
         //reset errors
         this.loginForm.setErrors(null);
+        this.loading = false;
 
         //Navigate to home page
-        this.router.navigate(['/home']);
+        this.router.navigate(['/schedule']);
 
       }).catch((error) => {
         console.log(error?.message, error?.code);
@@ -55,7 +56,7 @@ export class AuthComponent implements OnInit {
         } else {
           this.loginForm.setErrors({ 'failedAttempts': true });
         }
-         console.log(this.loginForm.errors?.['incorrect'])
+        this.loading = false;
       });
     }
 
