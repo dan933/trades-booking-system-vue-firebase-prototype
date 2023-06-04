@@ -21,7 +21,7 @@
     },
     {
       "target": "admin-ajhomeservices",
-      "public": "admin-site/dist",
+      "public": "admin-site/dist/admin-site",
       "ignore": [
         "firebase.json",
         "**/.*",

@@ -1,0 +1,18 @@
+<mat-toolbar color="primary">
+  <mat-toolbar *ngIf="isUserLoggedIn" color="primary">
+    <!-- put company name here -->
+    <button mat-button routerLink="/schedule">Schedule</button>
+    <button mat-button routerLink="/customers">customers</button>
+    <button mat-button routerLink="/settings">settings</button>
+    <span class="spacer"></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Settings</button>
+      <button mat-menu-item>Profile</button>
+    </mat-menu>
+  </mat-toolbar>
+  <mat-toolbar *ngIf="!isUserLoggedIn" color="primary">
+    <span>Admin Dashboard</span>
+  </mat-toolbar>
