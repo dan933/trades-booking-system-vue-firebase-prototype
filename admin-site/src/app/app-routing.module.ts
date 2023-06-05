@@ -11,6 +11,11 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'settings',
+    loadChildren: () => import('./components/organisation-settings/organisation-settings.module').then(m => m.OrganisationSettingsModule),
+    canActivate: [authGuard]
+  },
+  {
     path: 'auth',
     component: AuthComponent
   },

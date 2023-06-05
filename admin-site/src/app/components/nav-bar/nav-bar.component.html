@@ -1,5 +1,8 @@
 <mat-toolbar color="primary">
-  <mat-toolbar *ngIf="isUserLoggedIn" color="primary">
+  <mat-toolbar-row>
+    <span>Your Application Title</span>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="isUserLoggedIn" color="primary">
     <!-- put company name here -->
     <button mat-button routerLink="/schedule">Schedule</button>
     <button mat-button routerLink="/customers">customers</button>
@@ -12,7 +15,7 @@
       <button mat-menu-item>Settings</button>
       <button mat-menu-item>Profile</button>
     </mat-menu> -->
-  </mat-toolbar>
-  <mat-toolbar *ngIf="!isUserLoggedIn" color="primary">
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="!isUserLoggedIn" color="primary">
     <span>Admin Dashboard</span>
-  </mat-toolbar>
+  </mat-toolbar-row>

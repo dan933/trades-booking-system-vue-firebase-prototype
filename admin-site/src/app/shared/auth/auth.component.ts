@@ -22,13 +22,13 @@ export class AuthComponent implements OnInit, OnDestroy {
     public router: Router,
     private fb: FormBuilder
   ) {
-        this.idTokenSubscription = this.idToken$.subscribe((token: string | null) => {
+    this.idTokenSubscription = this.idToken$.subscribe((token: string | null) => {
       //handle idToken changes here. Note, that user will be null if there is no currently logged in user.
       if (token) {
-        //If user is logged in, navigate to home page
-        this.router.navigate(['/schedule']);
+      //If user is logged in, navigate to home page
+      this.router.navigate(['/schedule']);
       }
-  })
+    })
 
   }
   ngOnDestroy(): void {
