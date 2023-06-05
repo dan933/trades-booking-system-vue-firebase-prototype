@@ -42,6 +42,7 @@ exports.getAvailability = async (req, res) => {
 
   functions.logger.log("bookings", bookings);
 
+  //todo maybe add a return
   res.send(bookings);
 };
 
