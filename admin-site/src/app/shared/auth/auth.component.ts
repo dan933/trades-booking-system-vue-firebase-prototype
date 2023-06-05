@@ -1,16 +1,18 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Auth, idToken, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   private auth: Auth = inject(Auth);
-  // public signIn: typeof signInWithEmailAndPassword = inject(signInWithEmailAndPassword);
+  idToken$ = idToken(this.auth);
+  idTokenSubscription: Subscription;
   hide = true;
   loginForm: FormGroup = new FormGroup({});
   loading = false;
@@ -20,8 +22,17 @@ export class AuthComponent implements OnInit {
     public router: Router,
     private fb: FormBuilder
   ) {
-    console.log(this.auth);
+        this.idTokenSubscription = this.idToken$.subscribe((token: string | null) => {
+      //handle idToken changes here. Note, that user will be null if there is no currently logged in user.
+      if (token) {
+        //If user is logged in, navigate to home page
+        this.router.navigate(['/schedule']);
+      }
+  })
 
+  }
+  ngOnDestroy(): void {
+    this.idTokenSubscription.unsubscribe();
   }
   ngOnInit(): void {
     this.loginForm = this.fb.group({

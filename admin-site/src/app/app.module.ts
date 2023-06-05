@@ -26,13 +26,15 @@ import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { ScheduleComponent } from './components/schedule/schedule.component';
+import { OrganisationSettingsComponent } from './components/organisation-settings/organisation-settings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavBarComponent,
     AuthComponent,
-    ScheduleComponent
+    ScheduleComponent,
+    OrganisationSettingsComponent
   ],
   imports: [
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
