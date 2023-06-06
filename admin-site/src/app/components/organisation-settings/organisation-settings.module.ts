@@ -5,7 +5,8 @@ import { OrganisationSettingsComponent } from './organisation-settings.component
 
 // Define your routes
 const routes: Routes = [
-  { path: '', component: OrganisationSettingsComponent },
+  { path: 'opperating', component: OrganisationSettingsComponent },
+  { path: 'services', component: OrganisationSettingsComponent },
 ];
 
 

@@ -1,20 +1,23 @@
 <mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <span>Your Application Title</span>
+  <mat-toolbar-row *ngIf="isUserLoggedIn">
+    <span>{{orgName}}</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="signOut()">
+      <mat-icon>logout</mat-icon>
+    </button>
   </mat-toolbar-row>
   <mat-toolbar-row *ngIf="isUserLoggedIn" color="primary">
     <!-- put company name here -->
     <button mat-button routerLink="/schedule">Schedule</button>
     <button mat-button routerLink="/customers">customers</button>
-    <button mat-button routerLink="/settings">settings</button>
     <span class="spacer"></span>
-    <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>more_vert</mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>settings</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Settings</button>
-      <button mat-menu-item>Profile</button>
-    </mat-menu> -->
+      <button mat-menu-item routerLink="/settings/opperating">Opperating Settings</button>
+      <button mat-menu-item>Service Settings</button>
+    </mat-menu>
   </mat-toolbar-row>
   <mat-toolbar-row *ngIf="!isUserLoggedIn" color="primary">
     <span>Admin Dashboard</span>

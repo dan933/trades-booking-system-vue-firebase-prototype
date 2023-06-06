@@ -27,9 +27,26 @@ export class OrganisationService {
     //get the organisation from firestore
     let org = doc(this.firestore, `organisations/${orgId}`);
     let orgData = (await getDoc(org)).data();
-    console.log(orgData);
 
-    return orgId;
+    return orgData;
 
   }
+
+  //get org settings
+  async getOrganisationSettings() {
+    let userToken = await this.auth.currentUser?.getIdTokenResult()
+    let orgId = userToken?.claims['org'];
+
+    //get the organisation from firestore
+    let orgSettings = doc(this.firestore, `organisations/${orgId}/availability/opperatingHours`);
+    let orgSettingsData = (await getDoc(orgSettings)).data();
+
+    return orgSettingsData;
+  }
+
+  //format data for user
+
+  //update org settings
+
+  //add and update services
 }
