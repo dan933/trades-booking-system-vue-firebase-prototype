@@ -30,6 +30,7 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { ScheduleComponent } from './components/schedule/schedule.component';
 import { OrganisationSettingsComponent } from './components/organisation-settings/organisation-settings.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { OrganisationSettingsComponent } from './components/organisation-setting
     ReactiveFormsModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

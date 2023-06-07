@@ -19,6 +19,12 @@
   }
 }
 
+.day-card{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+}
 
 .column-container{
   display: flex;

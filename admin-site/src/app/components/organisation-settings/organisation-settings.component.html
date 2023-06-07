@@ -26,10 +26,11 @@
   </form>
   <form class="settings-form" [formGroup]="openingHoursForm">
     <div class="opening-hours-container" formArrayName="openingTimes">
-      <div *ngFor="let dayControl of openingTimes.controls; let i = index" [formGroupName]="i">
-        <mat-checkbox formControlName="checked">{{dayControl.value.dayName}}</mat-checkbox>
+      <div class="day-card" *ngFor="let dayControl of openingTimes.controls; let i = index" [formGroupName]="i">
 
-        <mat-form-field>
+        <mat-checkbox style="margin-right:10px" formControlName="checked">{{dayControl.value.dayName}}</mat-checkbox>
+
+        <mat-form-field style="margin-bottom: 20px; width: 120px;">
           <mat-label>From</mat-label>
           <mat-select formControlName="from">
             <mat-option *ngFor="let option of timeOptions" [value]="option">
@@ -38,15 +39,17 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field style="margin-bottom: 20px; width: 120px;">
           <mat-label>To</mat-label>
           <mat-select formControlName="to">
             <mat-option *ngFor="let option of timeOptions" [value]="option">
               {{option.label}}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="dayControl.hasError('timeInvalid')">Invalid time</mat-error>
+          <mat-hint *ngIf="dayControl.hasError('timeInvalid')" style="color:red;">*Invalid Time</mat-hint>
         </mat-form-field>
+
+
 
       </div>
     </div>
