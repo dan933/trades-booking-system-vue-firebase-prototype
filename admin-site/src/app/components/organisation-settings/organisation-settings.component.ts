@@ -33,14 +33,7 @@ export class OrganisationSettingsComponent implements OnInit {
 
   timeKey = [...Array(24).keys()];
 
-  timeFromOptions:opperationTime[] = this.timeKey.map((hour: number) => {
-    return {
-      value: hour,
-      label: this.convertToAMPM(hour)
-    }
-  })
-
-  timeToOptions:opperationTime[] = this.timeKey.map((hour: number) => {
+  timeOptions:opperationTime[] = this.timeKey.map((hour: number) => {
     return {
       value: hour,
       label: this.convertToAMPM(hour)
@@ -66,17 +59,15 @@ export class OrganisationSettingsComponent implements OnInit {
       this.filteredFromTimeOptions[index] = control.get('from').valueChanges.pipe(
         startWith(''),
         map((value:opperationTime) => {
-          console.log("value", value)
           const name = typeof value === 'string' ? value : value?.label;
-          return name ? this._filter(name as string) : this.timeFromOptions.slice();
+          return name ? this._filter(name as string) : this.timeOptions.slice();
         }),
       );
       this.filteredToTimeOptions[index] = control.get('to').valueChanges.pipe(
         startWith(''),
         map((value:opperationTime) => {
-          console.log("value", value)
           const name = typeof value === 'string' ? value : value?.label;
-          return name ? this._filter(name as string) : this.timeToOptions.slice();
+          return name ? this._filter(name as string) : this.timeOptions.slice();
         }),
       );
     });
@@ -175,7 +166,6 @@ export class OrganisationSettingsComponent implements OnInit {
   // }
 
   convertToAMPM(time: any){
-    console.log(time)
     if (time === 0 || time === 24) {
       return '12:00 AM';
     } else if (time < 12) {
@@ -187,7 +177,10 @@ export class OrganisationSettingsComponent implements OnInit {
     }
   }
 
-  displayTime(time: any) {
+  displayTimeFrom(time: any) {
+    return time ? time.label : '';
+  }
+  displayTimeTo(time: any) {
     return time ? time.label : '';
   }
 
@@ -195,13 +188,9 @@ export class OrganisationSettingsComponent implements OnInit {
 
     const filterValue = name.toLowerCase();
 
-    return this.timeFromOptions.filter(option => option.label.toLowerCase().includes(filterValue));
-  }
-  private _filterTo(name: string): any[] {
+    console.log(this.timeOptions.filter(option => option.label.toLowerCase().includes(filterValue)));
 
-    const filterValue = name.toLowerCase();
-
-    return this.timeFromOptions.filter(option => option.label.toLowerCase().includes(filterValue));
+    return this.timeOptions.filter(option => option.label.toLowerCase().includes(filterValue));
   }
 
 }
