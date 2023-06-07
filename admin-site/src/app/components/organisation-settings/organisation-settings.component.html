@@ -32,11 +32,23 @@
           <mat-label>From</mat-label>
           <input type="text" matInput formControlName="from" [matAutocomplete]="auto">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTime">
-            <mat-option *ngFor="let option of filteredOptions[i]  | async" [value]="option">
+            <mat-option *ngFor="let option of filteredFromTimeOptions[i]  | async" [value]="option">
               {{option.label}}
             </mat-option>
           </mat-autocomplete>
+
         </mat-form-field>
+        <mat-form-field>
+          <mat-label>To</mat-label>
+          <input type="text" matInput formControlName="to" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTime">
+            <mat-option *ngFor="let option of filteredToTimeOptions[i]  | async" [value]="option">
+              {{option.label}}
+            </mat-option>
+          </mat-autocomplete>
+
+        </mat-form-field>
+        <mat-error *ngIf="dayControl.hasError('timeInvalid')">Invalid time</mat-error>
 
       </div>
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, map, range, startWith } from 'rxjs';
 import { OrganisationService } from 'src/app/services/organisation/organisation.service';
 
@@ -17,7 +17,8 @@ export class OrganisationSettingsComponent implements OnInit {
 
   timeSpanForm: FormGroup = new FormGroup({});
   openingHoursForm: FormGroup = new FormGroup({});
-  filteredOptions: Observable<opperationTime[]>[] =[];
+  filteredFromTimeOptions: Observable<opperationTime[]>[] =[];
+  filteredToTimeOptions: Observable<opperationTime[]>[] =[];
 
   dayKeys = [1, 2, 3, 4, 5, 6, 0]
   days:any = {
@@ -32,7 +33,14 @@ export class OrganisationSettingsComponent implements OnInit {
 
   timeKey = [...Array(24).keys()];
 
-  timeOptions:opperationTime[] = this.timeKey.map((hour: number) => {
+  timeFromOptions:opperationTime[] = this.timeKey.map((hour: number) => {
+    return {
+      value: hour,
+      label: this.convertToAMPM(hour)
+    }
+  })
+
+  timeToOptions:opperationTime[] = this.timeKey.map((hour: number) => {
     return {
       value: hour,
       label: this.convertToAMPM(hour)
@@ -55,12 +63,20 @@ export class OrganisationSettingsComponent implements OnInit {
     this.createForms();
 
     this.openingTimes.controls.forEach((control: any, index: number) => {
-      this.filteredOptions[index] = control.get('from').valueChanges.pipe(
+      this.filteredFromTimeOptions[index] = control.get('from').valueChanges.pipe(
         startWith(''),
         map((value:opperationTime) => {
           console.log("value", value)
           const name = typeof value === 'string' ? value : value?.label;
-          return name ? this._filter(name as string) : this.timeOptions.slice();
+          return name ? this._filter(name as string) : this.timeFromOptions.slice();
+        }),
+      );
+      this.filteredToTimeOptions[index] = control.get('to').valueChanges.pipe(
+        startWith(''),
+        map((value:opperationTime) => {
+          console.log("value", value)
+          const name = typeof value === 'string' ? value : value?.label;
+          return name ? this._filter(name as string) : this.timeToOptions.slice();
         }),
       );
     });
@@ -71,6 +87,25 @@ export class OrganisationSettingsComponent implements OnInit {
 
   }
   //Helper functions
+
+  timeValidator(): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      let from = group.get('from')?.value;
+      let to = group.get('to')?.value;
+      let checked = group.get('checked')?.value;
+
+      if(checked && (from.value === '' || to.value === '')) {
+        return { 'timeInvalid': true };
+      }
+
+      if(from.value >= to.value && checked) {
+        return { 'timeInvalid': true };
+      }
+
+      return null;
+    };
+  }
+
   numericOnly(event: KeyboardEvent): boolean {
     const char = event.key;
     const regex = new RegExp('[0-9]', 'g');
@@ -96,9 +131,10 @@ export class OrganisationSettingsComponent implements OnInit {
           checked: [false],
           from: [''],
           to: [''],
-        })
+        }, { validators: this.timeValidator() })  // add the validator here
       }))
     });
+
   }
 
   createForms() {
@@ -159,7 +195,13 @@ export class OrganisationSettingsComponent implements OnInit {
 
     const filterValue = name.toLowerCase();
 
-    return this.timeOptions.filter(option => option.label.toLowerCase().includes(filterValue));
+    return this.timeFromOptions.filter(option => option.label.toLowerCase().includes(filterValue));
+  }
+  private _filterTo(name: string): any[] {
+
+    const filterValue = name.toLowerCase();
+
+    return this.timeFromOptions.filter(option => option.label.toLowerCase().includes(filterValue));
   }
 
 }
