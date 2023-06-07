@@ -28,30 +28,27 @@
     <div class="opening-hours-container" formArrayName="openingTimes">
       <div *ngFor="let dayControl of openingTimes.controls; let i = index" [formGroupName]="i">
         <mat-checkbox formControlName="checked">{{dayControl.value.dayName}}</mat-checkbox>
+
         <mat-form-field>
           <mat-label>From</mat-label>
-          <input type="text" matInput formControlName="from" [matAutocomplete]="autoFrom">
-          <mat-autocomplete #autoFrom="matAutocomplete" [displayWith]="displayTimeFrom">
-            <mat-option *ngFor="let option of filteredFromTimeOptions[i]  | async" [value]="option">
+          <mat-select formControlName="from">
+            <mat-option *ngFor="let option of timeOptions" [value]="option">
               {{option.label}}
             </mat-option>
-          </mat-autocomplete>
+          </mat-select>
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>To</mat-label>
-          <input type="text" matInput formControlName="to" [matAutocomplete]="autoTo">
-          <mat-autocomplete #autoTo="matAutocomplete" [displayWith]="displayTimeTo">
-            <mat-option *ngFor="let option of filteredToTimeOptions[i]  | async" [value]="option">
+          <mat-select formControlName="to">
+            <mat-option *ngFor="let option of timeOptions" [value]="option">
               {{option.label}}
             </mat-option>
-          </mat-autocomplete>
-
+          </mat-select>
+          <mat-error *ngIf="dayControl.hasError('timeInvalid')">Invalid time</mat-error>
         </mat-form-field>
-        <mat-error *ngIf="dayControl.hasError('timeInvalid')">Invalid time</mat-error>
 
       </div>
-
     </div>
   </form>
   <button mat-raised-button color="primary" type="submit">Save</button>

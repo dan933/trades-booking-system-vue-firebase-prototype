@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Observable, map, range, startWith } from 'rxjs';
 import { OrganisationService } from 'src/app/services/organisation/organisation.service';
 
 export interface opperationTime {
@@ -17,8 +16,6 @@ export class OrganisationSettingsComponent implements OnInit {
 
   timeSpanForm: FormGroup = new FormGroup({});
   openingHoursForm: FormGroup = new FormGroup({});
-  filteredFromTimeOptions: Observable<opperationTime[]>[] =[];
-  filteredToTimeOptions: Observable<opperationTime[]>[] =[];
 
   dayKeys = [1, 2, 3, 4, 5, 6, 0]
   days:any = {
@@ -44,40 +41,19 @@ export class OrganisationSettingsComponent implements OnInit {
     return this.openingHoursForm.get('openingTimes') as FormArray;
   }
 
-
-
-
   constructor(
     private organisationService: OrganisationService,
     private fb: FormBuilder
   ) {
   }
+
   ngOnInit(): void {
     this.createForms();
-
-    this.openingTimes.controls.forEach((control: any, index: number) => {
-      this.filteredFromTimeOptions[index] = control.get('from').valueChanges.pipe(
-        startWith(''),
-        map((value:opperationTime) => {
-          const name = typeof value === 'string' ? value : value?.label;
-          return name ? this._filter(name as string) : this.timeOptions.slice();
-        }),
-      );
-      this.filteredToTimeOptions[index] = control.get('to').valueChanges.pipe(
-        startWith(''),
-        map((value:opperationTime) => {
-          const name = typeof value === 'string' ? value : value?.label;
-          return name ? this._filter(name as string) : this.timeOptions.slice();
-        }),
-      );
-    });
   }
 
   saveSettings(event: Event) {
     event.preventDefault();
-
   }
-  //Helper functions
 
   timeValidator(): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
@@ -85,7 +61,7 @@ export class OrganisationSettingsComponent implements OnInit {
       let to = group.get('to')?.value;
       let checked = group.get('checked')?.value;
 
-      if(checked && (from.value === '' || to.value === '')) {
+      if(checked && (!from || !to)) {
         return { 'timeInvalid': true };
       }
 
@@ -125,45 +101,12 @@ export class OrganisationSettingsComponent implements OnInit {
         }, { validators: this.timeValidator() })  // add the validator here
       }))
     });
-
   }
 
   createForms() {
     this.createTimeSpanForm();
     this.createOpeningHoursForm();
   }
-
-  // formatApiSettingsRequest() {
-
-  //   let dayValues: any = {
-  //     Sun: 0,
-  //     Mon: 1,
-  //     Tue: 2,
-  //     Wed: 3,
-  //     Thur: 4,
-  //     Fri: 5,
-  //     Sat: 6
-  //   }
-
-  //   let oppeningTimes = this.settingsForm.value.days.reduce((acc: any, current: any) => {
-  //     let day = dayValues[current.name];
-
-  //     acc[day] = {
-  //       start: parseInt(current.from.split(':')[0]) || 9,
-  //       end: parseInt(current.to.split(':')[0]) || 16,
-  //       open: current.checked
-  //     };
-
-  //     return acc;
-  //   }, {});
-
-  //   return {
-  //     oppeningTimes,
-  //     bookMonthsAheadLimit: this.settingsForm.value.bookMonthsAheadLimit,
-  //     gapBetweenAppointments: this.settingsForm.value.gapBetweenAppointments
-  //   };
-
-  // }
 
   convertToAMPM(time: any){
     if (time === 0 || time === 24) {
@@ -176,21 +119,4 @@ export class OrganisationSettingsComponent implements OnInit {
       return (time - 12) + ':00 PM';
     }
   }
-
-  displayTimeFrom(time: any) {
-    return time ? time.label : '';
-  }
-  displayTimeTo(time: any) {
-    return time ? time.label : '';
-  }
-
-  private _filter(name: string): any[] {
-
-    const filterValue = name.toLowerCase();
-
-    console.log(this.timeOptions.filter(option => option.label.toLowerCase().includes(filterValue)));
-
-    return this.timeOptions.filter(option => option.label.toLowerCase().includes(filterValue));
-  }
-
 }
