@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { OrganisationService } from 'src/app/services/organisation/organisation.service';
+import { IOpperatingHours, IOppeningTimeDay  } from 'src/app/models/IOpperatingHours';
 
 export interface opperationTime {
   value: number;
@@ -16,6 +17,8 @@ export class OrganisationSettingsComponent implements OnInit {
 
   timeSpanForm: FormGroup = new FormGroup({});
   openingHoursForm: FormGroup = new FormGroup({});
+  opperatingHoursData: IOpperatingHours = {} as IOpperatingHours;
+
 
   dayKeys = [1, 2, 3, 4, 5, 6, 0]
   days:any = {
@@ -49,10 +52,13 @@ export class OrganisationSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForms();
+    this.updateForms();
   }
 
   saveSettings(event: Event) {
     event.preventDefault();
+    console.log(this.timeSpanForm.value);
+    console.log(this.openingHoursForm.value);
   }
 
   timeValidator(): ValidatorFn {
@@ -73,6 +79,13 @@ export class OrganisationSettingsComponent implements OnInit {
     };
   }
 
+  //Get the opperating hours data from firestore
+  async getOpperatingHours() {
+    this.opperatingHoursData = await this.organisationService.getOrganisationSettings() as IOpperatingHours;
+    console.log(this.opperatingHoursData);
+  }
+
+  //Helper functions
   numericOnly(event: KeyboardEvent): boolean {
     const char = event.key;
     const regex = new RegExp('[0-9]', 'g');
@@ -82,7 +95,7 @@ export class OrganisationSettingsComponent implements OnInit {
     return true;
   }
 
-  createTimeSpanForm() {
+  async createTimeSpanForm() {
     this.timeSpanForm = this.fb.group({
       gapBetweenAppointments:['',[ Validators.required, Validators.min(1)]],
       bookMonthsAheadLimit:['',[ Validators.required, Validators.min(1)]],
@@ -103,10 +116,51 @@ export class OrganisationSettingsComponent implements OnInit {
     });
   }
 
+
+
   createForms() {
     this.createTimeSpanForm();
     this.createOpeningHoursForm();
   }
+
+  //If data doc in firestore exists update the form with the data
+  async updateForms() {
+    await this.getOpperatingHours();
+
+    if (this.opperatingHoursData?.gapBetween && this.opperatingHoursData?.bookMonthsAheadLimit) {
+      this.timeSpanForm.patchValue({
+        gapBetweenAppointments: this.opperatingHoursData.gapBetween,
+        bookMonthsAheadLimit: this.opperatingHoursData.bookMonthsAheadLimit
+      });
+
+    }
+
+    if (this.opperatingHoursData?.openingTimes) {
+
+      const openingTimesControl = this.openingHoursForm.get('openingTimes') as FormArray;
+
+      Object.keys(this.opperatingHoursData.openingTimes).forEach((day: string, index: number) => {
+        const dayFormGroup = openingTimesControl.at(index) as FormGroup;
+
+        let currentDay = this.opperatingHoursData.openingTimes[+day];
+
+        dayFormGroup.patchValue({
+          checked: !!currentDay?.open,
+          from: {value: 9, label: this.convertToAMPM(9)},
+          to:  {value: 9, label: this.convertToAMPM(9)},
+
+        });
+
+        // dayFormGroup.patchValue({
+        //   checked: currentDay?.open,
+        //   from: currentDay?.start || 9,
+        //   to: currentDay?.end || 16,
+
+        // });
+      });
+    }
+
+    }
 
   convertToAMPM(time: any){
     if (time === 0 || time === 24) {
