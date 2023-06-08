@@ -55,3 +55,12 @@
   // align-items: center;
   flex-wrap: nowrap;
 }
+
+.error-container {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.error-container.invisible {
+  opacity: 0;
+}

@@ -15,12 +15,13 @@ export interface opperationTime {
 })
 export class OrganisationSettingsComponent implements OnInit {
 
+  errorMessage: string = '';
   timeSpanForm: FormGroup = new FormGroup({});
   openingHoursForm: FormGroup = new FormGroup({});
   opperatingHoursData: IOpperatingHours = {} as IOpperatingHours;
 
 
-  dayKeys = [1, 2, 3, 4, 5, 6, 0]
+  dayKeys = [0, 1, 2, 3, 4, 5, 6]
   days:any = {
     0: 'Sun',
     1: 'Mon',
@@ -57,8 +58,20 @@ export class OrganisationSettingsComponent implements OnInit {
 
   saveSettings(event: Event) {
     event.preventDefault();
+
+    //check if forms are valid
+    if (this.timeSpanForm.invalid || this.openingHoursForm.invalid) {
+      this.errorMessage = 'Please correct Times';
+      return;
+    }
+
+    this.errorMessage = '';
+
     console.log(this.timeSpanForm.value);
     console.log(this.openingHoursForm.value);
+
+    //format data for firestore
+    let payload = this.formatOpperatingHours(this.timeSpanForm.value, this.openingHoursForm.value);
   }
 
   timeValidator(): ValidatorFn {
@@ -109,15 +122,14 @@ export class OrganisationSettingsComponent implements OnInit {
           dayName: [this.days[day]],
           day: [day],
           checked: [false],
-          from: [''],
-          to: [''],
-        }, { validators: this.timeValidator() })  // add the validator here
+          from: [this.timeOptions[0]], // set initial object instance
+          to: [this.timeOptions[0]], // set initial object instance
+        }, { validators: this.timeValidator() })
       }))
     });
   }
 
-
-
+  //Create the forms
   createForms() {
     this.createTimeSpanForm();
     this.createOpeningHoursForm();
@@ -146,17 +158,9 @@ export class OrganisationSettingsComponent implements OnInit {
 
         dayFormGroup.patchValue({
           checked: !!currentDay?.open,
-          from: {value: 9, label: this.convertToAMPM(9)},
-          to:  {value: 9, label: this.convertToAMPM(9)},
-
+          from: this.timeOptions.find(option => option.value === (currentDay?.start || 9)), // find the corresponding object instance
+          to: this.timeOptions.find(option => option.value === (currentDay?.end || 16)), // find the corresponding object instance
         });
-
-        // dayFormGroup.patchValue({
-        //   checked: currentDay?.open,
-        //   from: currentDay?.start || 9,
-        //   to: currentDay?.end || 16,
-
-        // });
       });
     }
 
@@ -173,4 +177,31 @@ export class OrganisationSettingsComponent implements OnInit {
       return (time - 12) + ':00 PM';
     }
   }
+
+  formatOpperatingHours(gapSettings:any, opperatingHours:any) {
+    console.log(gapSettings);
+    console.log("opperatingHours", opperatingHours);
+
+    const opperatingHoursData: any = opperatingHours.openingTimes.reduce((acc: any, curr: any) => {
+      console.log("curr", curr)
+      acc[curr.day] = {
+        end: curr?.to?.value || 16,
+        start: curr?.from?.value || 9,
+        open: curr.checked || false
+      }
+
+      return acc;
+
+    }, {})
+
+    let formattedData = {
+      gapBetween: gapSettings?.gapBetweenAppointments || 1,
+      bookMonthsAheadLimit: gapSettings?.bookMonthsAheadLimit || 1,
+      opperatingTimes: opperatingHoursData
+    }
+
+    return formattedData;
+
+  }
 }
+

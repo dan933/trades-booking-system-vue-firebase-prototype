@@ -48,11 +48,14 @@
           </mat-select>
           <mat-hint *ngIf="dayControl.hasError('timeInvalid')" style="color:red;">*Invalid Time</mat-hint>
         </mat-form-field>
-
-
-
       </div>
     </div>
   </form>
+
+  <mat-card class="error-container" [ngClass]="{'visible': errorMessage, 'invisible': !errorMessage}"
+    style="background-color:red; color: white; margin-bottom:10px;">
+    <mat-card-content>{{errorMessage}}</mat-card-content>
+  </mat-card>
+
   <button mat-raised-button color="primary" (click)="saveSettings($event)">Save</button>
 </div>
