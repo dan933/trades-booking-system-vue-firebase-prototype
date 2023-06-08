@@ -56,7 +56,7 @@ export class OrganisationSettingsComponent implements OnInit {
     this.updateForms();
   }
 
-  saveSettings(event: Event) {
+  async saveSettings(event: Event) {
     event.preventDefault();
 
     //check if forms are valid
@@ -71,7 +71,7 @@ export class OrganisationSettingsComponent implements OnInit {
     console.log(this.openingHoursForm.value);
 
     //format data for firestore
-    let payload = this.formatOpperatingHours(this.timeSpanForm.value, this.openingHoursForm.value);
+    let response = await this.organisationService.updateOpperatingHours(this.timeSpanForm.value, this.openingHoursForm.value);
   }
 
   timeValidator(): ValidatorFn {
@@ -176,32 +176,6 @@ export class OrganisationSettingsComponent implements OnInit {
     } else {
       return (time - 12) + ':00 PM';
     }
-  }
-
-  formatOpperatingHours(gapSettings:any, opperatingHours:any) {
-    console.log(gapSettings);
-    console.log("opperatingHours", opperatingHours);
-
-    const opperatingHoursData: any = opperatingHours.openingTimes.reduce((acc: any, curr: any) => {
-      console.log("curr", curr)
-      acc[curr.day] = {
-        end: curr?.to?.value || 16,
-        start: curr?.from?.value || 9,
-        open: curr.checked || false
-      }
-
-      return acc;
-
-    }, {})
-
-    let formattedData = {
-      gapBetween: gapSettings?.gapBetweenAppointments || 1,
-      bookMonthsAheadLimit: gapSettings?.bookMonthsAheadLimit || 1,
-      opperatingTimes: opperatingHoursData
-    }
-
-    return formattedData;
-
   }
 }
 

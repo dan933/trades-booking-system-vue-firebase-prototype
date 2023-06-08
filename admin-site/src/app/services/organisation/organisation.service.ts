@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth, idToken } from '@angular/fire/auth';
-import { Firestore, collection, doc, getDoc } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
+import { Firestore, collection, doc, getDoc, updateDoc, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -45,8 +44,55 @@ export class OrganisationService {
   }
 
   //format data for user
+  formatOpperatingHours(gapSettings:any, opperatingHours:any) {
+    console.log(gapSettings);
+    console.log("opperatingHours", opperatingHours);
+
+    const opperatingHoursData: any = opperatingHours.openingTimes.reduce((acc: any, curr: any) => {
+      console.log("curr", curr)
+      acc[curr.day] = {
+        end: curr?.to?.value || 16,
+        start: curr?.from?.value || 9,
+        open: curr.checked || false
+      }
+
+      return acc;
+
+    }, {})
+
+    let formattedData = {
+      gapBetween: gapSettings?.gapBetweenAppointments || 1,
+      bookMonthsAheadLimit: gapSettings?.bookMonthsAheadLimit || 1,
+      openingTimes: opperatingHoursData
+    }
+
+    return formattedData;
+
+  }
 
   //update org settings
+  async updateOpperatingHours(gapSettings: any, opperatingHours: any) {
+
+    let payload = this.formatOpperatingHours(gapSettings, opperatingHours);
+
+    //get user claims
+    let userToken = await this.auth.currentUser?.getIdTokenResult()
+    let orgId = userToken?.claims['org'];
+
+    console.log("payload", payload);
+
+    try {
+      await setDoc(doc(this.firestore, `organisations/${orgId}/availability/opperatingHours`), {
+        ...payload
+      }).then((resp) => console.log("resp", resp))
+
+    } catch (error) {
+     console.log("error", error)
+    }
+
+  }
+
+
 
   //add and update services
 }
