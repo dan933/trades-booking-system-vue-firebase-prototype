@@ -28,15 +28,14 @@ adminApi.use(validateFirebaseAdminIdToken);
 adminApi.use(bodyParser.json());
 
 //---------------- Controllers ---------------------------------------//
-
-adminApi.get("/test", validateSuperUser, adminController.test);
-
 //Used to set claims for an admin user
 adminApi.post(
   "/set-admin-permissions",
   validateSuperUser,
   adminController.setAdminUserPermissions
 );
+
+adminApi.post("/reschedule-booking", adminController.rescheduleBooking);
 
 exports.adminApi = functions
   .region("australia-southeast1")

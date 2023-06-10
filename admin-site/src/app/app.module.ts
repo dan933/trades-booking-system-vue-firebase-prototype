@@ -28,7 +28,6 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
-import { ScheduleComponent } from './components/schedule/schedule.component';
 import { OrganisationSettingsComponent } from './components/organisation-settings/organisation-settings.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -37,7 +36,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     AppComponent,
     NavBarComponent,
     AuthComponent,
-    ScheduleComponent,
     OrganisationSettingsComponent
   ],
   imports: [

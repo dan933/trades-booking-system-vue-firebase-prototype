@@ -13,6 +13,7 @@ export class OrganisationService {
   }
 
   async getOrganisation() {
+    console.log(this.auth.currentUser)
     let userToken = await this.auth.currentUser?.getIdTokenResult()
     let orgId = userToken?.claims['org'];
 

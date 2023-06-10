@@ -76,12 +76,21 @@ exports.validateFirebaseAdminIdToken = async (req, res, next) => {
   let idToken;
 
   if (
+    req.headers.admin &&
+    req.headers.admin === "true" &&
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    await checkSuperUser(req, res, next);
+    return;
+  } else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
     functions.logger.log('Found "Authorization" header');
     // Read the ID Token from the Authorization header.
     idToken = req.headers.authorization.split("Bearer ")[1];
+    // functions.logger.log("line 85 idtoken", idToken);
   } else if (req.cookies) {
     functions.logger.log('Found "__session" cookie', req.cookies.__session);
     // Read the ID Token from cookie.
@@ -89,16 +98,6 @@ exports.validateFirebaseAdminIdToken = async (req, res, next) => {
   } else {
     // No cookie
     res.status(403).send({ message: "Unauthorized" });
-    return;
-  }
-
-  if (
-    req.headers.admin &&
-    req.headers.admin === "true" &&
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer ")
-  ) {
-    checkSuperUser(req, res, next);
     return;
   }
 
@@ -117,7 +116,6 @@ exports.validateFirebaseAdminIdToken = async (req, res, next) => {
 
 exports.validateSuperUser = async (req, res, next) => {
   checkSuperUser(req, res, next);
-  res.status(403).send({ message: "Unauthorized" });
   return;
 };
 
@@ -130,11 +128,11 @@ function superUserTokenCheck(token) {
   return false;
 }
 
-function checkSuperUser(req, res, next) {
+async function checkSuperUser(req, res, next) {
   //check if the user is a super admin
   //Ability to set admin permissions and claims
 
-  idToken = req.headers.authorization.split("Bearer ")[1];
+  let idToken = req.headers.authorization.split("Bearer ")[1];
   functions.logger.log("Admin Token", idToken);
   const IsSuperUser = superUserTokenCheck(idToken);
 
