@@ -1,6 +1,6 @@
 <div class="settings-page-container">
   <h1>Opperating Settings</h1>
-  <form class="settings-form" [formGroup]="timeSpanForm">
+  <form *ngIf="!loading" class="settings-form" [formGroup]="timeSpanForm">
     <div class="row-container">
 
       <mat-form-field style="width:250px;">
@@ -24,7 +24,7 @@
       </mat-form-field>
     </div>
   </form>
-  <form class="settings-form" [formGroup]="openingHoursForm">
+  <form *ngIf="!loading" class="settings-form" [formGroup]="openingHoursForm">
     <div class="opening-hours-container" formArrayName="openingTimes">
       <div class="day-card" *ngFor="let dayControl of openingTimes.controls; let i = index" [formGroupName]="i">
 
@@ -50,12 +50,14 @@
         </mat-form-field>
       </div>
     </div>
+    <mat-card class="error-container" [ngClass]="{'visible': errorMessage, 'invisible': !errorMessage}"
+      style="background-color:red; color: white; margin-bottom:10px; margin-left: auto;margin-right: auto; width: 200px; ">
+      <mat-card-content>{{errorMessage}}</mat-card-content>
+    </mat-card>
+    <button mat-raised-button color="primary" style="margin-left: auto;margin-right: auto; width: 200px;"
+      (click)="saveSettings($event)">Save</button>
   </form>
-
-  <mat-card class="error-container" [ngClass]="{'visible': errorMessage, 'invisible': !errorMessage}"
-    style="background-color:red; color: white; margin-bottom:10px;">
-    <mat-card-content>{{errorMessage}}</mat-card-content>
-  </mat-card>
-
-  <button mat-raised-button color="primary" (click)="saveSettings($event)">Save</button>
+  <ng-container *ngIf="loading" class="loading-settings-container">
+    <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
+  </ng-container>
 </div>

@@ -83,12 +83,19 @@ export class OrganisationService {
     console.log("payload", payload);
 
     try {
-      await setDoc(doc(this.firestore, `organisations/${orgId}/availability/opperatingHours`), {
+      await setDoc(doc(this.firestore, `organisations/${orgId}/availability/opperatingHour`), {
         ...payload
-      }).then((resp) => console.log("resp", resp))
+      });
+
+      return {
+        success: true
+      }
 
     } catch (error) {
-     console.log("error", error)
+
+      return {
+        success: false,
+      }
     }
 
   }

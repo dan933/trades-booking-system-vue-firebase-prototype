@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { OrganisationService } from 'src/app/services/organisation/organisation.service';
 import { IOpperatingHours, IOppeningTimeDay  } from 'src/app/models/IOpperatingHours';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface opperationTime {
   value: number;
@@ -19,9 +20,10 @@ export class OrganisationSettingsComponent implements OnInit {
   timeSpanForm: FormGroup = new FormGroup({});
   openingHoursForm: FormGroup = new FormGroup({});
   opperatingHoursData: IOpperatingHours = {} as IOpperatingHours;
+  loading: boolean = false;
 
 
-  dayKeys = [0, 1, 2, 3, 4, 5, 6]
+  dayKeys = [1, 2, 3, 4, 5, 6, 0]
   days:any = {
     0: 'Sun',
     1: 'Mon',
@@ -47,8 +49,10 @@ export class OrganisationSettingsComponent implements OnInit {
 
   constructor(
     private organisationService: OrganisationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private _snackBar: MatSnackBar
   ) {
+
   }
 
   ngOnInit(): void {
@@ -65,6 +69,7 @@ export class OrganisationSettingsComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.errorMessage = '';
 
     console.log(this.timeSpanForm.value);
@@ -72,6 +77,14 @@ export class OrganisationSettingsComponent implements OnInit {
 
     //format data for firestore
     let response = await this.organisationService.updateOpperatingHours(this.timeSpanForm.value, this.openingHoursForm.value);
+
+    if (response.success) {
+      this.openSnackBar('Settings Saved', 'Close');
+    } else {
+      this.openSnackBar('Error Saving Settings', 'Close');
+    }
+
+    this.loading = false;
   }
 
   timeValidator(): ValidatorFn {
@@ -90,6 +103,10 @@ export class OrganisationSettingsComponent implements OnInit {
 
       return null;
     };
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action);
   }
 
   //Get the opperating hours data from firestore
@@ -137,7 +154,9 @@ export class OrganisationSettingsComponent implements OnInit {
 
   //If data doc in firestore exists update the form with the data
   async updateForms() {
+    this.loading = true;
     await this.getOpperatingHours();
+    this.loading = false;
 
     if (this.opperatingHoursData?.gapBetween && this.opperatingHoursData?.bookMonthsAheadLimit) {
       this.timeSpanForm.patchValue({

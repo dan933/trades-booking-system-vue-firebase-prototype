@@ -24,13 +24,21 @@
     <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
     <ng-container matColumnDef="expandedDetail">
       <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
-        <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <div class="example-element-diagram">
-            <div class="example-element-position"> {{element.name}} </div>
-          </div>
-          <div class="example-element-description">
-            {{element.description}}
-            <span class="example-element-description-attribution"> -- Wikipedia </span>
+        <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+          <div class="expand-flex-column">
+            <div>
+              <p><strong>Address:</strong> {{element.address}}</p>
+              <p><strong>Email:</strong> {{element.email}}</p>
+              <p><strong>Phone:</strong> {{element.phoneNumber}}</p>
+            </div>
+            <div>
+              <p *ngFor="let service; let i=index of element.services">
+                <span><strong>Service:</strong> {{
+                  service.selection.name }},
+                  <strong>Hours:</strong> {{
+                  service.hours }}{{element.services.length - 1 !== i ? ',': ''}} </span>
+              </p>
+            </div>
           </div>
         </div>
       </td>
