@@ -15,8 +15,10 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 let angularMaterials = [
+  MatDatepickerModule,
   MatButtonModule,
   MatInputModule,
   MatToolbarModule,

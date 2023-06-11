@@ -8,6 +8,26 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { NgFor, NgIf } from '@angular/common';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import * as moment from 'moment';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 
 export interface scheduleDescription {
@@ -21,6 +41,7 @@ export interface scheduleDescription {
   styleUrls: ['./schedule.component.scss'],
   standalone: true,
   imports: [
+    MatSlideToggleModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
@@ -29,7 +50,18 @@ export interface scheduleDescription {
     NgFor,
     MatButtonModule,
     NgIf,
-    MatIconModule
+    MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ],
   animations: [
     trigger('detailExpand', [
@@ -40,6 +72,10 @@ export interface scheduleDescription {
   ],
 })
 export class ScheduleComponent {
+
+  scheduleDate = new FormControl(moment());
+
+  @ViewChild(MatDatepicker) datepicker: MatDatepicker<Date> | undefined;
 
   displayedColumns: string[] = [
     'customerName',
@@ -63,7 +99,7 @@ export class ScheduleComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private scheduleService: ScheduleService
+    private scheduleService: ScheduleService,
   ) {
   }
 
@@ -72,8 +108,10 @@ export class ScheduleComponent {
   }
 
   async updateTable() {
+    let selectedDate = this.scheduleDate.value?.toDate();
+    console.log(selectedDate);
     //get the schedule from the schedule service
-    let schedule = await this.scheduleService.getSchedule()
+    let schedule = await this.scheduleService.getSchedule(selectedDate)
 
     this.dataSource = new MatTableDataSource(schedule);
     this.dataSource.sort = this.sort;
@@ -90,5 +128,9 @@ export class ScheduleComponent {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  async getScheduleDate() {
+    this.updateTable();
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Firestore, collection, getDocs } from '@angular/fire/firestore';
+import { Firestore, Timestamp, collection, getDocs, query, where, getFirestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class ScheduleService {
 
   constructor() { }
 
-  async getSchedule() {
+  async getSchedule(date?: Date) {
     let userToken = await this.auth.currentUser?.getIdTokenResult()
     let orgId = userToken?.claims['org'];
 
@@ -20,9 +20,22 @@ export class ScheduleService {
     }
 
     //get the organisation from firestore
-    let bookings = collection(this.firestore, `organisations/${orgId}/bookings`);
+    let bookingsRef:any = collection(this.firestore, `organisations/${orgId}/bookings`);
 
-    let bookingsData = (await getDocs(bookings)).docs.map((doc: any) => {
+    // Add where clause to filter by date if date parameter is provided
+    if (date) {
+      let startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      let endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      bookingsRef = query(
+        collection(this.firestore, `organisations/${orgId}/bookings`),
+        where('bookingDate', '>=', startOfDay),
+        where('bookingDate', '<=', endOfDay)
+      );
+    }
+
+    let bookingsData = (await getDocs(bookingsRef)).docs.map((doc: any) => {
 
       let bookingData = doc.data();
 
@@ -32,15 +45,15 @@ export class ScheduleService {
         customerName: `${bookingData.firstName} ${bookingData.lastName}`,
         startTime: this.convertTo12HourFormat(bookingData.startHour),
         endTime: this.convertTo12HourFormat(bookingData.endHour),
-        bookingDateString:bookingData.bookingDate.toDate().toLocaleDateString()
+        bookingDateString: bookingData.bookingDate.toDate().toLocaleDateString()
       }
     });
 
     console.log(bookingsData, "bookingsData");
 
     return bookingsData;
-
   }
+
 
   convertTo12HourFormat(hour:number) {
     // Handle invalid input

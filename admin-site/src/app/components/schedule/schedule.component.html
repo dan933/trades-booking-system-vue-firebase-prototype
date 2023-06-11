@@ -1,9 +1,21 @@
-<mat-form-field>
-  <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-</mat-form-field>
+<div class="mat-elevation-z8" style="padding: 10px;">
+  <div class="row-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput outlined (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Schedule Date</mat-label>
+      <input matInput [matDatepicker]="picker" [formControl]="scheduleDate" (dateChange)="getScheduleDate()">
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-slide-toggle color="primary" style="margin-top: auto; margin-bottom: 40px;">All
+      Dates</mat-slide-toggle>
 
-<div class="mat-elevation-z8">
+  </div>
+
   <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
 
     <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
