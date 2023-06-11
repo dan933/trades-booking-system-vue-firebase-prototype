@@ -11,7 +11,8 @@
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    <mat-slide-toggle color="primary" style="margin-top: auto; margin-bottom: 40px;">All
+    <mat-slide-toggle (change)="getScheduleAllDates($event)" color="primary"
+      style="margin-top: auto; margin-bottom: 40px;">All
       Dates</mat-slide-toggle>
 
   </div>

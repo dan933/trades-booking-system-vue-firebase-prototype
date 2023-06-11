@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth, idToken } from '@angular/fire/auth';
-import { Firestore, collection, doc, getDoc, updateDoc, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDoc, updateDoc, setDoc, DocumentReference, addDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,8 @@ export class OrganisationService {
   private firestore: Firestore = inject(Firestore);
   private auth: Auth = inject(Auth);
 
-  constructor() {
-  }
+  constructor() { }
+
 
   async getOrganisation() {
     console.log(this.auth.currentUser)
@@ -119,6 +119,22 @@ export class OrganisationService {
     let userToken = await this.auth.currentUser?.getIdTokenResult()
     let orgId = userToken?.claims['org'];
 
+
+
+    //if services do not have an Id then add one
+    services = services.map((service: any) => {
+      if (!service.id) {
+
+        let newDocId = doc(collection(this.firestore, `organisations/${orgId}/availability`)).id;
+
+        service.id = newDocId;
+      }
+
+      return service;
+    });
+
+    console.log("services", services)
+
     try {
       await setDoc(doc(this.firestore, `organisations/${orgId}/availability/services`), {
         services:services
@@ -129,6 +145,7 @@ export class OrganisationService {
       }
 
     } catch (error) {
+      console.log(error)
 
       return {
         success: false,

@@ -30,6 +30,7 @@ export class ServicesSettingsComponent implements OnInit {
       this.servicesData = await this.organisationService.getServices() || [];
       const servicesFGs = this.servicesData.map((service:any) =>
         this.fb.group({
+          id: [service.id],
           name: [service.name, [Validators.required, Validators.min(1)]],
           rate: [service.rate, [Validators.required, Validators.min(1)]],
         })

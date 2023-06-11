@@ -130,6 +130,26 @@ export class ScheduleComponent {
     }
   }
 
+  async getScheduleAllDates(event: any) {
+    let isChecked = event.checked;
+
+    if (isChecked) {
+      this.scheduleDate.setValue(null);
+      console.log(this.scheduleDate.value);
+      let schedule = await this.scheduleService.getSchedule()
+      this.dataSource = new MatTableDataSource(schedule);
+      this.dataSource.sort = this.sort;
+
+    } else {
+      this.scheduleDate.setValue(moment());
+      console.log(this.scheduleDate.value);
+      this.updateTable();
+
+    }
+
+
+  }
+
   async getScheduleDate() {
     this.updateTable();
   }
