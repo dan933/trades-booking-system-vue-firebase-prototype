@@ -1,0 +1,21 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ServicesSettingsComponent } from './services-settings.component';
+
+describe('ServicesSettingsComponent', () => {
+  let component: ServicesSettingsComponent;
+  let fixture: ComponentFixture<ServicesSettingsComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [ServicesSettingsComponent]
+    });
+    fixture = TestBed.createComponent(ServicesSettingsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

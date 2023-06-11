@@ -25,7 +25,7 @@
     </div>
   </form>
   <form *ngIf="!loading" class="settings-form" [formGroup]="openingHoursForm">
-    <div class="opening-hours-container" formArrayName="openingTimes">
+    <div formArrayName="openingTimes">
       <div class="day-card" *ngFor="let dayControl of openingTimes.controls; let i = index" [formGroupName]="i">
 
         <mat-checkbox style="margin-right:10px" formControlName="checked">{{dayControl.value.dayName}}</mat-checkbox>
@@ -51,10 +51,10 @@
       </div>
     </div>
     <mat-card class="error-container" [ngClass]="{'visible': errorMessage, 'invisible': !errorMessage}"
-      style="background-color:red; color: white; margin-bottom:10px; margin-left: auto;margin-right: auto; width: 200px; ">
+      style="background-color:red; color: white; margin-bottom:10px; margin-left: 100px;margin-right: auto; width: 200px; ">
       <mat-card-content>{{errorMessage}}</mat-card-content>
     </mat-card>
-    <button mat-raised-button color="primary" style="margin-left: auto;margin-right: auto; width: 200px;"
+    <button mat-raised-button color="primary" style="margin-left: 100px;margin-right: auto; width: 200px;"
       (click)="saveSettings($event)">Save</button>
   </form>
   <ng-container *ngIf="loading" class="loading-settings-container">

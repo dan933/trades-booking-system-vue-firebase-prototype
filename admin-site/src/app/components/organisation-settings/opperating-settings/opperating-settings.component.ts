@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { OrganisationService } from 'src/app/services/organisation/organisation.service';
-import { IOpperatingHours, IOppeningTimeDay  } from 'src/app/models/IOpperatingHours';
+import { IOpperatingHours  } from 'src/app/models/IOpperatingHours';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface opperationTime {
@@ -10,12 +10,11 @@ export interface opperationTime {
 }
 
 @Component({
-  selector: 'app-organisation-settings',
-  templateUrl: './organisation-settings.component.html',
-  styleUrls: ['./organisation-settings.component.scss']
+  selector: 'app-opperating-settings',
+  templateUrl: './opperating-settings.component.html',
+  styleUrls: ['./opperating-settings.component.scss']
 })
-export class OrganisationSettingsComponent implements OnInit {
-
+export class OpperatingSettingsComponent implements OnInit {
   errorMessage: string = '';
   timeSpanForm: FormGroup = new FormGroup({});
   openingHoursForm: FormGroup = new FormGroup({});
@@ -196,5 +195,5 @@ export class OrganisationSettingsComponent implements OnInit {
       return (time - 12) + ':00 PM';
     }
   }
-}
 
+}

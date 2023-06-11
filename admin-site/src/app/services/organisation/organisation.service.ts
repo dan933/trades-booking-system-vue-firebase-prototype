@@ -100,7 +100,39 @@ export class OrganisationService {
 
   }
 
+  //get services
+  async getServices() {
+    //get user claims
+    let userToken = await this.auth.currentUser?.getIdTokenResult()
+    let orgId = userToken?.claims['org'];
 
+    //get the organisation from firestore
+    let services = doc(this.firestore, `organisations/${orgId}/availability/services`);
+    let servicesData = (await getDoc(services)).data();
+    servicesData = servicesData ? servicesData['services'] : [];
+    return servicesData;
+  }
 
   //add and update services
+  async updateServices(services: any) {
+    //get user claims
+    let userToken = await this.auth.currentUser?.getIdTokenResult()
+    let orgId = userToken?.claims['org'];
+
+    try {
+      await setDoc(doc(this.firestore, `organisations/${orgId}/availability/services`), {
+        services:services
+      });
+
+      return {
+        success: true
+      }
+
+    } catch (error) {
+
+      return {
+        success: false,
+      }
+    }
+  }
 }

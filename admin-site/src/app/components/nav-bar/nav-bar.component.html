@@ -16,7 +16,7 @@
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item routerLink="/settings/opperating">Opperating Settings</button>
-      <button mat-menu-item>Service Settings</button>
+      <button mat-menu-item routerLink="/settings/services">Service Settings</button>
     </mat-menu>
   </mat-toolbar-row>
   <mat-toolbar-row *ngIf="!isUserLoggedIn" color="primary">

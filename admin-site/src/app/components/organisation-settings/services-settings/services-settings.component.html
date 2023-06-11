@@ -1,0 +1,29 @@
+<div class="service-settings-container">
+  <h1>Services</h1>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <!-- Use your preferred spinner component here -->
+  </div>
+  <div *ngIf="!loading">
+    <form [formGroup]="servicesForm">
+      <div formArrayName="services" class="services-form">
+        <div *ngFor="let service of servicesData; let i = index" [formGroupName]="i">
+          <mat-form-field class="example-full-width">
+            <mat-label>Service Name</mat-label>
+            <input matInput formControlName="name" placeholder="Service Name">
+          </mat-form-field>
+          <mat-form-field class="example-full-width">
+            <mat-label>Rate</mat-label>
+            <input matInput formControlName="rate" placeholder="Rate" type="number">
+          </mat-form-field>
+          <button mat-icon-button (click)="removeService(i)">
+            <mat-icon color="warn">delete</mat-icon>
+          </button>
+        </div>
+        <span style="color:red">{{errorMessage}}</span>
+        <button mat-raised-button color="primary" style="width: 200px;" (click)="addService()">Add</button>
+        <button mat-raised-button color="primary" style="width: 200px;" (click)="saveServices($event)">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
