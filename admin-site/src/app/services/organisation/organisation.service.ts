@@ -119,7 +119,7 @@ export class OrganisationService {
     let userToken = await this.auth.currentUser?.getIdTokenResult()
     let orgId = userToken?.claims['org'];
 
-
+    console.log("services", services)
 
     //if services do not have an Id then add one
     services = services.map((service: any) => {
@@ -133,7 +133,7 @@ export class OrganisationService {
       return service;
     });
 
-    console.log("services", services)
+
 
     try {
       await setDoc(doc(this.firestore, `organisations/${orgId}/availability/services`), {
@@ -141,6 +141,7 @@ export class OrganisationService {
       });
 
       return {
+        data: services,
         success: true
       }
 

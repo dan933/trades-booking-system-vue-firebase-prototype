@@ -48,13 +48,14 @@ export class ServicesSettingsComponent implements OnInit {
 
 
   addService() {
-    let newService = { rate: 0, name: '' };
+    let newService = {id:'', rate: 0, name: '' };
 
     this.servicesData.push(newService);
 
     const servicesArray = this.servicesForm.get('services') as FormArray;
     servicesArray.push(
       this.fb.group({
+        id: [newService.id],
         name: [newService.name, [Validators.required, Validators.min(1)]],
         rate: [newService.rate, [Validators.required, Validators.min(1)]],
       })
@@ -82,6 +83,21 @@ export class ServicesSettingsComponent implements OnInit {
     let response = await this.organisationService.updateServices(this.servicesForm.value.services);
 
     if (response.success) {
+
+      let savedData = response.data;
+
+      const servicesFGs = savedData.map((service:any) =>
+      this.fb.group({
+        id: [service.id],
+        name: [service.name, [Validators.required, Validators.min(1)]],
+        rate: [service.rate, [Validators.required, Validators.min(1)]],
+      })
+      );
+
+    this.servicesForm = this.fb.group({
+      services: this.fb.array(servicesFGs)
+    });
+
       this.openSnackBar('Saved', 'Close');
       return;
     }
