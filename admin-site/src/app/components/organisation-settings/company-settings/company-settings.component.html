@@ -1,0 +1,32 @@
+<div class="flex-column-center">
+  <h1>Company Settings</h1>
+  <form class="flex-column-center" (ngSubmit)="save()" [formGroup]="companySettingsForm">
+    <div class="flex-row-center">
+      <mat-form-field style="width:250px;">
+        <mat-label>Company Name</mat-label>
+        <!-- <input matInput type="email" formControlName="gapBetweenAppointments"> -->
+        <input matInput type="text" formControlName="name">
+      </mat-form-field>
+      <mat-form-field style="width:250px;">
+        <mat-label>Company Email</mat-label>
+        <!-- <input matInput type="email" formControlName="gapBetweenAppointments"> -->
+        <input matInput type="email" autocomplete="email" formControlName="email">
+      </mat-form-field>
+    </div>
+    <div class="flex-row-center">
+      <mat-form-field style="width:250px;">
+        <mat-label>Company Number</mat-label>
+        <!-- <input matInput type="email" formControlName="gapBetweenAppointments"> -->
+        <input matInput type="text" autocomplete="tel" formControlName="number">
+      </mat-form-field>
+      <mat-form-field style="width:250px;">
+        <mat-label>ABN</mat-label>
+        <!-- <input matInput type="email" formControlName="gapBetweenAppointments"> -->
+        <input matInput type="text" formControlName="ABN">
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" type="submit" style="width: 200px;">
+      Save
+    </button>
+  </form>
+</div>

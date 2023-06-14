@@ -5,17 +5,21 @@ import { Routes, RouterModule } from '@angular/router'; // Import Routes and Rou
 import { OpperatingSettingsComponent } from './opperating-settings/opperating-settings.component';
 import { AngularMaterialsModule } from 'src/app/angular-materials/angular-materials.module';
 import { ServicesSettingsComponent } from './services-settings/services-settings.component';
+import { CompanySettingsComponent } from './company-settings/company-settings.component';
 // Define your routes
 const routes: Routes = [
-  { path: 'opperating', component: OpperatingSettingsComponent },
+  {
+    path: 'opperating', component: OpperatingSettingsComponent  },
   { path: 'services', component: ServicesSettingsComponent },
+  { path: 'company', component: CompanySettingsComponent }
 ];
 
 
 @NgModule({
   declarations: [
     OpperatingSettingsComponent,
-    ServicesSettingsComponent
+    ServicesSettingsComponent,
+    CompanySettingsComponent
   ],
   imports: [
     CommonModule,

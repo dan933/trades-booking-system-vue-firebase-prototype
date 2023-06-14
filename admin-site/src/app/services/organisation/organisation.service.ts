@@ -32,7 +32,34 @@ export class OrganisationService {
 
   }
 
-  //get org settings
+  async updateOrganisation(orgData: any) {
+    let userToken = await this.auth.currentUser?.getIdTokenResult()
+    let orgId = userToken?.claims['org'];
+
+    if (!orgId) {
+      return {
+        error: "No organisation found",
+        success: false
+      }
+    }
+
+    try {
+      await setDoc(doc(this.firestore, `organisations/${orgId}`), orgData, { merge: true });
+
+      return {
+        success: true
+      }
+    } catch (error) {
+      return {
+        error: error,
+        success: false
+      }
+    }
+  }
+
+
+
+  //get org settings opperating hours
   async getOrganisationSettings() {
     let userToken = await this.auth.currentUser?.getIdTokenResult()
     let orgId = userToken?.claims['org'];

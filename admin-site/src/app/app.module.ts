@@ -16,12 +16,14 @@ import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { DialogScheduleDetailsComponent } from './components/schedule/dialog-schedule-details/dialog-schedule-details.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavBarComponent,
     AuthComponent,
+    DialogScheduleDetailsComponent,
   ],
   imports: [
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),

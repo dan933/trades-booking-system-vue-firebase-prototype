@@ -43,9 +43,12 @@
               <p><strong>Address:</strong> {{element.address}}</p>
               <p><strong>Email:</strong> {{element.email}}</p>
               <p><strong>Phone:</strong> {{element.phoneNumber}}</p>
+              <button mat-raised-button color="primary" style="width: 100px; padding: 5px; margin:5px;"
+                (click)="openDialog(element)">open
+                booking</button>
             </div>
             <div>
-              <p *ngFor="let service; let i=index of element.services">
+              <p *ngFor=" let service; let i=index of element.services">
                 <span><strong>Service:</strong> {{
                   service.selection.name }},
                   <strong>Hours:</strong> {{

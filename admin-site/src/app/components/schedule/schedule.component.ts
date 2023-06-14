@@ -15,6 +15,8 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import * as moment from 'moment';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogScheduleDetailsComponent } from './dialog-schedule-details/dialog-schedule-details.component';
 
 
 export const MY_FORMATS = {
@@ -46,7 +48,6 @@ export interface scheduleDescription {
     MatInputModule,
     MatTableModule,
     MatSortModule,
-    MatTableModule,
     NgFor,
     MatButtonModule,
     NgIf,
@@ -81,7 +82,8 @@ export class ScheduleComponent {
     'customerName',
     'bookingDateString',
     'startTime',
-    'endTime'
+    'endTime',
+    'status'
     ];
 
   headers:any = {
@@ -100,6 +102,7 @@ export class ScheduleComponent {
 
   constructor(
     private scheduleService: ScheduleService,
+    public dialog: MatDialog
   ) {
   }
 
@@ -115,15 +118,52 @@ export class ScheduleComponent {
 
     this.dataSource = new MatTableDataSource(schedule);
     this.dataSource.sort = this.sort;
+  }
 
+  openDialog(schedule: any) {
+
+    let dialogData = this.generateDialogData(schedule);
+
+    this.dialog.open(DialogScheduleDetailsComponent, {
+      width: '350px',
+      maxHeight: '100vh',
+      data: { dialogData, schedule }
+    });
   }
 
   ngAfterViewInit() {
   }
 
+  //used for schedule details dialog
+  //generates the services table data
+  generateDialogData(schedule: any) {
+    let services = schedule.services;
+
+    let grandTotal = 0;
+    let servicesTableData = services.map((service: any) => {
+      let total = service.hours * service.selection.rate;
+
+      grandTotal += total;
+
+      return {
+        serviceName: service.selection.name,
+        hours: service.hours,
+        rate: service.selection.rate,
+        total: total
+      }
+    });
+
+    return {servicesTableData, grandTotal};
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const accumulativeString = data.customerName + data.bookingDateString + data.startTime + data.endTime + data.status;
+      return accumulativeString.toLowerCase().includes(filter.trim().toLowerCase());
+    };
+
+    this.dataSource.filter = filterValue;
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
