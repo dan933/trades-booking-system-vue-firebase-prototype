@@ -110,7 +110,7 @@ export class OrganisationService {
     console.log("payload", payload);
 
     try {
-      await setDoc(doc(this.firestore, `organisations/${orgId}/availability/opperatingHour`), {
+      await setDoc(doc(this.firestore, `organisations/${orgId}/availability/opperatingHours`), {
         ...payload
       });
 

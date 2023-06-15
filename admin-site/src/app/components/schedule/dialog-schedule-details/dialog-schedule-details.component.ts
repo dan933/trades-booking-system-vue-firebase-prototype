@@ -17,6 +17,7 @@ export class DialogScheduleDetailsComponent {
   refund() {
     //start loading
     //api call here
+    console.log("data", this.data.schedule.id)
     this.loading = true;
     setTimeout(() => {
       console.log("refund")

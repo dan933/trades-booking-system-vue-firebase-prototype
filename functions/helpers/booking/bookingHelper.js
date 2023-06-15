@@ -23,6 +23,63 @@ exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   return { bookedTimes, bookingScheduleDate: new Date(bookingDate) };
 };
 
+exports.getBookingById = async (orgId, bookingId) => {
+  try {
+    const bookingDoc = await admin
+      .firestore()
+      .collection("organisations")
+      .doc(orgId)
+      .collection("bookings")
+      .doc(bookingId)
+      .get();
+
+    return bookingDoc.data();
+  } catch (error) {
+    functions.logger.error("Error while getting booking:", error);
+    return null;
+  }
+};
+
+exports.updateBookingPaymentStatus = (orgId, bookingId, status, refundId) => {
+  try {
+    const bookingDoc = admin
+      .firestore()
+      .collection("organisations")
+      .doc(orgId)
+      .collection("bookings")
+      .doc(bookingId);
+
+    return bookingDoc.update({ status, refundId });
+  } catch (error) {
+    functions.logger.error("Error while updating booking:", error);
+    return null;
+  }
+};
+
+exports.removeBookingFromSchedule = async (
+  bookedSchedule,
+  customerServices,
+  startHour
+) => {
+  //get the total hours required
+  const totalHoursRequired = customerServices.reduce((acc, service) => {
+    return acc + service.hours;
+  }, 0);
+
+  let bookedTimes = bookedSchedule.bookedTimes;
+
+  //Get the number of hours required for the booking
+  let endHour = startHour + totalHoursRequired + gapBetween;
+
+  for (let index = startHour; index < endHour; index++) {
+    bookedTimes[index] = false;
+  }
+
+  bookedSchedule.bookedTimes = bookedTimes;
+
+  return bookedSchedule;
+};
+
 //Updates the booking schedule with the requested booking
 exports.updateBookedScheduleDocument = (
   bookedSchedule,
@@ -37,29 +94,10 @@ exports.updateBookedScheduleDocument = (
     return acc + service.hours;
   }, 0);
 
-  functions.logger.log("totalHoursRequired", totalHoursRequired);
-
-  functions.logger.log("startHour", startHour);
-
-  functions.logger.log(
-    "updateType line 44 helper update booking schedule",
-    updateType
-  );
-
   let bookedTimes = bookedSchedule.bookedTimes;
-
-  functions.logger.log(
-    "bookedTimes line 53 helper update booking schedule",
-    bookedTimes
-  );
 
   //Get the number of hours required for the booking
   let endHour = startHour + totalHoursRequired + gapBetween;
-
-  functions.logger.log(
-    "endHour line 61 helper update booking schedule",
-    endHour
-  );
 
   //get the day of the week for the requested booking
   let bookedDay = bookedSchedule.bookingScheduleDate;
@@ -67,16 +105,9 @@ exports.updateBookedScheduleDocument = (
     ? bookedDay.toDate().getDay()
     : bookedDay.getDay();
 
-  functions.logger.log("bookedDay", bookedDay);
-
   let closingTime = orgAvailabilityDoc.openingTimes[bookedDay].end;
 
-  functions.logger.log(
-    "closingTime line 76 helper update booking schedule",
-    closingTime
-  );
-
-  for (let index = startHour; index < endHour; index++) {
+  for (let index = startHour; index <= endHour; index++) {
     if (index >= closingTime) {
       break;
     }
@@ -85,8 +116,6 @@ exports.updateBookedScheduleDocument = (
   }
 
   bookedSchedule.bookedTimes = bookedTimes;
-
-  functions.logger.log("bookedSchedule", bookedSchedule);
 
   return bookedSchedule;
 };

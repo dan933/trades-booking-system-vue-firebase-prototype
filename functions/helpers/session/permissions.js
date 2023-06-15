@@ -37,8 +37,6 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     functions.logger.log('Found "__session" cookie', req.cookies.__session);
     // Read the ID Token from cookie.
     idToken = req.cookies.__session;
-
-    //todo add a continue as guest option
   } else {
     // No cookie
     res.status(403).send({ message: "Unauthorized" });
@@ -50,7 +48,6 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     functions.logger.log("ID Token correctly decoded", decodedIdToken);
     req.user = decodedIdToken;
     next();
-    return;
   } catch (error) {
     functions.logger.error("Error while verifying Firebase ID token:", error);
     res.status(403).send({ message: "Unauthorized" });
@@ -101,17 +98,19 @@ exports.validateFirebaseAdminIdToken = async (req, res, next) => {
     return;
   }
 
-  try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    functions.logger.log("ID Token correctly decoded", decodedIdToken);
-    req.user = decodedIdToken;
-    next();
-    return;
-  } catch (error) {
-    functions.logger.error("Error while verifying Firebase ID token:", error);
-    res.status(403).send({ message: "Unauthorized" });
-    return;
-  }
+  admin
+    .auth()
+    .verifyIdToken(idToken)
+    .then((token) => {
+      functions.logger.log("ID Token correctly decoded", token);
+      req.user = token;
+      return next();
+    })
+    .catch((error) => {
+      functions.logger.error("Error while verifying Firebase ID token:", error);
+      res.status(403).send({ message: "Unauthorized" });
+      return;
+    });
 };
 
 exports.validateSuperUser = async (req, res, next) => {

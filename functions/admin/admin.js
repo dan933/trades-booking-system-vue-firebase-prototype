@@ -35,7 +35,7 @@ adminApi.post(
   adminController.setAdminUserPermissions
 );
 
-adminApi.post("/reschedule-booking", adminController.rescheduleBooking);
+adminApi.post("/refund-booking", adminController.refundBooking);
 
 exports.adminApi = functions
   .region("australia-southeast1")
