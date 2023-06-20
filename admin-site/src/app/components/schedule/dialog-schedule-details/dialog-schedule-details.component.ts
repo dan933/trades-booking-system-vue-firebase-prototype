@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { BookingService } from 'src/app/services/booking/booking.service';
 @Component({
   selector: 'app-dialog-schedule-details',
   templateUrl: './dialog-schedule-details.component.html',
@@ -11,20 +12,21 @@ export class DialogScheduleDetailsComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DialogScheduleDetailsComponent>,
+    private bookingService: BookingService,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) { }
 
-  refund() {
+  async refund() {
     //start loading
     //api call here
-    console.log("data", this.data.schedule.id)
+    let bookingId = this.data.schedule.id;
     this.loading = true;
-    setTimeout(() => {
-      console.log("refund")
-      //stop loading
-      this.loading = false;
+    let refundResponse = await this.bookingService.refundBooking(bookingId);
+    this.loading = false;
 
-    }, 5000);
+    console.log(refundResponse);
+
+    // this.dialogRef.close(refundResponse);
 
     // this.dialogRef.close();
 

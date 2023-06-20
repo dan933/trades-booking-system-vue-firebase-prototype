@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const functions = require("firebase-functions");
 
 let generateBookingEmailData = (booking) => {
   //Number of hours category, hours, price, ect
@@ -98,8 +99,16 @@ let convertTo12HourTime = (hour) => {
   }
 };
 
-exports.createBookingEmail = async (booking) => {
+exports.createBookingEmail = async (booking, orgDoc) => {
   try {
+    //Get org email
+    const orgEmail = orgDoc?.email;
+
+    functions.logger.log("Org Email", orgEmail);
+
+    //validate org email
+    let IsValidOrgEmail = validateEmail(orgEmail);
+
     //validate email
     let IsValidEmail = validateEmail(booking.email);
 
@@ -127,6 +136,14 @@ exports.createBookingEmail = async (booking) => {
       html: emailHtml,
     };
 
+    await transporter.sendMail(mailOptions).catch((error) => {
+      return {
+        message: "An error occured could not send email to website uer",
+        success: false,
+        error: error,
+      };
+    });
+
     let startTime = convertTo12HourTime(booking.startHour);
     let endTime = convertTo12HourTime(booking.endHour);
 
@@ -143,13 +160,13 @@ exports.createBookingEmail = async (booking) => {
                   </p>
                   `,
     };
-    await transporter.sendMail(mailOptions).catch((error) => {
+
+    if (!IsValidOrgEmail)
       return {
-        message: "An error occured could not send email to website uer",
+        message: "Email not valid could not send email to owner",
         success: false,
-        error: error,
       };
-    });
+
     await transporter.sendMail(mailOptionsForAJM).catch((error) => {
       return {
         message: "An error occured could not send email to owner",
@@ -160,6 +177,70 @@ exports.createBookingEmail = async (booking) => {
 
     return {
       message: "Email sent to user and website owner",
+      success: true,
+    };
+  } catch (error) {
+    functions.logger.error("Email Error", error);
+    return {
+      message: "Error Email Function",
+      error: error,
+      success: false,
+    };
+  }
+};
+
+exports.sendCancelBookingEmail = async (booking, refund) => {
+  try {
+    //validate email
+    let IsValidEmail = validateEmail(booking.email);
+
+    if (!IsValidEmail) {
+      return {
+        message: "Invalid Email Address",
+        success: false,
+      };
+    }
+
+    const bookingDate = formatDate(booking.bookingDate);
+    const startTime = convertTo12HourTime(booking.startHour);
+    const endTime = convertTo12HourTime(booking.endHour);
+    const refundAmount = refund.toLocaleString("en-AU", {
+      style: "currency",
+      currency: "AUD",
+    });
+    const name = booking.firstName;
+
+    //create transporter
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: `${process.env.EMAIL}`,
+        pass: `${process.env.PASSWORD}`,
+      },
+    });
+
+    const mailOptions = {
+      from: "Ange <ange@ajmhomeservice.com>",
+      to: booking.email,
+      subject: `Booking Cancellation ${bookingDate}`,
+      html: `<p>Hi ${name},</p>
+      <p>Unfortunatley we are unable to make your appointment for ${bookingDate} from ${startTime} to ${endTime}.</p>
+      <p>We have refunded you ${refundAmount}</p>
+      <p>Please contact us if you have any questions or changes.</p>
+      <p>From,</p>
+      <p>Your Service Provider AJM Home Services</p>`,
+    };
+
+    await transporter.sendMail(mailOptions).catch((error) => {
+      return {
+        message: "An error occured could not send email to website uer",
+        success: false,
+        error: error,
+      };
+    });
+
+    return {
+      message: "Email sent to customer",
       success: true,
     };
   } catch (error) {
@@ -184,7 +265,9 @@ let validateEmail = (email) => {
 };
 
 function formatDate(date) {
-  const d = new Date(date);
+  functions.logger.log("Date", date);
+  functions.logger.log("Date Type", typeof date);
+  const d = date?.toDate ? date?.toDate() : new Date(date);
   let day = d.getDate();
   let month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
   const year = d.getFullYear();

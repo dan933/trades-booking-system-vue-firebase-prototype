@@ -398,7 +398,7 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
 
     const bookingDoc = await bookingRef.get();
 
-    if (!bookingDoc.exists || bookingDoc.data()?.emailSent) {
+    if (!bookingDoc.exists) {
       res.send({
         message: "Booking not found",
         success: false,
@@ -407,7 +407,15 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
       return;
     }
 
-    const emailResponse = await emailHelper.createBookingEmail(bookingRequest);
+    //Get the organisation document
+    const orgRef = admin.firestore().collection("organisations").doc(orgId);
+
+    const orgDoc = (await orgRef.get()).data();
+
+    const emailResponse = await emailHelper.createBookingEmail(
+      bookingRequest,
+      orgDoc
+    );
 
     if (!emailResponse.success) {
       res.send({ ...emailResponse });

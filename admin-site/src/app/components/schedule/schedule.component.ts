@@ -129,6 +129,11 @@ export class ScheduleComponent {
       maxHeight: '100vh',
       data: { dialogData, schedule }
     });
+
+    this.dialog.afterAllClosed.subscribe(() => {
+      //todo snack bar
+      this.updateTable();
+    });
   }
 
   ngAfterViewInit() {

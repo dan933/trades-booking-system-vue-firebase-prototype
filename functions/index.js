@@ -10,11 +10,6 @@ exports.submitContactForm = contact.submitContactForm;
 
 //-----------------------------------------------------------------------//
 
-//--------------------- Email API Functions -----------------------//
-const email = require("./public-api-functions/email.js");
-
-exports.email = email.emailAPI;
-
 //--------------------- Booking API Functions -----------------------//
 const booking = require("./booking/booking.js");
 

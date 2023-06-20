@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 const functions = require("firebase-functions");
 const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 const bookingHelper = require("../helpers/booking/bookingHelper.js");
+const emailHelper = require("../helpers/public-api-functions/emailHelper.js");
 
 exports.test = (req, res) => {
   res.send("Hello from the Admin API");
@@ -185,7 +186,19 @@ exports.refundBooking = async (req, res) => {
         };
       });
 
-    res.status(200).send({ ...removedBookedScheduleResponse });
+    //Email customer about refund
+    const refundAmount = refund?.amount / 100;
+
+    const emailResponse = await emailHelper.sendCancelBookingEmail(
+      booking,
+      refundAmount
+    );
+    functions.logger.log("emailResponse", emailResponse);
+
+    res.status(200).send({
+      ...removedBookedScheduleResponse,
+      cancelationEmailSent: emailResponse?.success || false,
+    });
   } catch (error) {
     res.status(500).send({ error: error?.message || "" });
     return;

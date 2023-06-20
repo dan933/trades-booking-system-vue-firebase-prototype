@@ -27,7 +27,7 @@ adminApi.use(cookieParser);
 adminApi.use(validateFirebaseAdminIdToken);
 adminApi.use(bodyParser.json());
 
-//---------------- Controllers ---------------------------------------//
+//---------------- Controllers -------------------------//
 //Used to set claims for an admin user
 adminApi.post(
   "/set-admin-permissions",
@@ -35,7 +35,14 @@ adminApi.post(
   adminController.setAdminUserPermissions
 );
 
+//------------ Refund and Cancel the customers booking ---------//
 adminApi.post("/refund-booking", adminController.refundBooking);
+
+//------------------ Send a booking cancellation email ----------------//
+// adminApi.post(
+//   "/send-cancellation-email",
+//   adminController.sendCancellationEmail
+// );
 
 exports.adminApi = functions
   .region("australia-southeast1")

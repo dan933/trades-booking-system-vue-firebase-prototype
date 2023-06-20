@@ -5,8 +5,7 @@ const SuccessBooking = () => Promise.resolve({
       <h1>Booked</h1>
       <p>
         Thank You {{ customer.firstName }}, for Booking with us we have sent you
-        a confirmation email with booking details. Todo create a confirmation
-        email template.
+        a confirmation email with booking details.
       </p>
 
       <br />
