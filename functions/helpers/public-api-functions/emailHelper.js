@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
 const functions = require("firebase-functions");
 
 let generateBookingEmailData = (booking) => {
-  //Number of hours category, hours, price, ect
   let serviceData = booking.services.map((service) => {
     return {
       name: service.selection.name,
@@ -20,7 +19,7 @@ let generateBookingEmailData = (booking) => {
     serviceHtml += `<tr style="background-color: ${color}">
     <td style="border: 1px solid #ddd; padding: 8px;">${service.name}</td>
     <td style="border: 1px solid #ddd; padding: 8px;">${service.hours}</td>
-    <td style="border: 1px solid #ddd; padding: 8px;">$ ${service.rate}</td>
+    <td style="border: 1px solid #ddd; padding: 8px;">${service.rate}</td>
     </tr>`;
   });
 
@@ -31,20 +30,31 @@ let generateBookingEmailData = (booking) => {
   let gst = total * 0.1;
   let grandTotal = total + gst;
 
+  let formatter = new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+  });
+
   let totalsHtml = `<tr>
   <td style="padding:8px"></td>
   <td style="border: 1px solid #ddd; padding: 8px;"><strong>Total</strong></td>
-  <td style="border: 1px solid #ddd; padding: 8px;">$ ${total}</td>
+  <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
+    total
+  )}</td>
   </tr>
   <tr>
   <td style="padding:8px"></td>
   <td style="border: 1px solid #ddd; padding: 8px;"><strong>GST</strong></td>
-  <td style="border: 1px solid #ddd; padding: 8px;">$ ${gst}</td>
+  <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
+    gst
+  )}</td>
   </tr>
   <tr>
   <td style="padding:8px"></td>
   <td style="border: 1px solid #ddd; padding: 8px;"><strong>Grand Total</strong></td>
-  <td style="border: 1px solid #ddd; padding: 8px;">$ ${grandTotal}</td>
+  <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
+    grandTotal
+  )}</td>
   </tr>`;
   serviceHtml += totalsHtml;
 
@@ -136,6 +146,14 @@ exports.createBookingEmail = async (booking, orgDoc) => {
       html: emailHtml,
     };
 
+    if (!IsValidOrgEmail) {
+      return {
+        message: "An error occured could not send email to website uer",
+        success: false,
+        error: error,
+      };
+    }
+
     await transporter.sendMail(mailOptions).catch((error) => {
       return {
         message: "An error occured could not send email to website uer",
@@ -149,7 +167,7 @@ exports.createBookingEmail = async (booking, orgDoc) => {
 
     const mailOptionsForAJM = {
       from: "Ange <ange@ajmhomeservice.com>",
-      to: `${process.env.EMAIL}`,
+      to: `${orgEmail}`,
       subject: `New booking from ${booking.firstName}`,
       html: `<p>You have a new booking from ${booking.firstName}</p>
                   <p>
