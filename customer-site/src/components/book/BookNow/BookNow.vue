@@ -45,6 +45,7 @@
       >
         <ReviewBooking
           @confirmDetails="confirmDetails"
+          :orgDoc="orgDoc"
           :selectedDateTimeSlot="selectedDateTimeSlot"
           :selectedServices="selectedServices"
           :customerInformation="customerInformation"
@@ -53,6 +54,7 @@
       </v-window-item>
       <v-window-item :key="`payment`" :value="4" class="window-container">
         <Payment
+          :orgDoc="orgDoc"
           :selectedDateTimeSlot="selectedDateTimeSlot"
           :selectedServices="selectedServices"
           :customerInformation="customerInformation"
@@ -136,10 +138,12 @@ import ReviewBooking from "./ReviewBooking.vue";
 import Payment from "./Payment.vue";
 import { updateCustomerDetails } from "../../../services/api/customerService.js";
 import { createBooking } from "../../../services/api/bookingService";
+import { getOrganisationDoc } from "../../../services/api/organisationServices.js";
 
 export default {
   name: "BookNow",
   data: () => ({
+    orgDoc: null,
     selectedDate: null,
     onboarding: 0,
     selectedDateTimeSlot: null,
@@ -235,7 +239,10 @@ export default {
       }
     },
   },
-  mounted() {},
+  async mounted() {
+    let orgId = this.$route.params.id;
+    this.orgDoc = await getOrganisationDoc(orgId);
+  },
   computed: {
     IsGuest() {
       return this.$store.state.IsGuest;

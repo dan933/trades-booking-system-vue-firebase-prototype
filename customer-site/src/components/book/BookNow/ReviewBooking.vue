@@ -45,7 +45,7 @@
         <strong>Subtotal:</strong>
         $ {{ `${subtotal.toFixed(2)}` }}
       </p>
-      <p>
+      <p v-if="orgDoc?.gst">
         <strong>GST:</strong>
         $ {{ `${gst.toFixed(2)}` }}
       </p>
@@ -63,7 +63,12 @@
 <script>
 export default {
   name: "ReviewBooking",
-  props: ["selectedDateTimeSlot", "selectedServices", "customerInformation"],
+  props: [
+    "selectedDateTimeSlot",
+    "selectedServices",
+    "customerInformation",
+    "orgDoc",
+  ],
   data: () => ({
     headers: [
       {
@@ -94,8 +99,6 @@ export default {
         key: "subTotal",
         value: "subtotal",
       },
-      //maybe gst later
-      //maybe grand total later
     ],
   }),
   methods: {
@@ -130,6 +133,9 @@ export default {
       return roundedResult;
     },
     gst() {
+      //if the org is not registered for gst return 0
+      if (!this.orgDoc?.gst) return 0;
+
       let gst = this.subtotal * 0.1;
       let roundedResult = parseFloat(gst.toFixed(2));
       return roundedResult;

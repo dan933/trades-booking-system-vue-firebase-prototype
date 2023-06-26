@@ -12,7 +12,8 @@ export class CompanySettingsComponent implements OnInit {
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     number: ['', [Validators.required, Validators.pattern("^[0-9\+\s]*$")]],
-    ABN: ['', [Validators.required, Validators.pattern("^[0-9\s]*$")]]
+    ABN: ['', [Validators.required, Validators.pattern("^[0-9\s]*$")]],
+    gst: [false, [Validators.required]],
   });
 
   constructor(
@@ -33,7 +34,8 @@ export class CompanySettingsComponent implements OnInit {
       name: orgSettings.name,
       email: orgSettings.email,
       number: orgSettings.number,
-      ABN: orgSettings.ABN
+      ABN: orgSettings.ABN,
+      gst: orgSettings.gst ? orgSettings.gst : false,
     });
 
   }

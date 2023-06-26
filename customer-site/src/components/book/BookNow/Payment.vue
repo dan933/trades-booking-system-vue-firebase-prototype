@@ -50,7 +50,12 @@ import { defineComponent, ref, onBeforeMount } from "vue";
 
 export default defineComponent({
   name: "Payment",
-  props: ["selectedDateTimeSlot", "selectedServices", "customerInformation"],
+  props: [
+    "selectedDateTimeSlot",
+    "selectedServices",
+    "customerInformation",
+    "orgDoc",
+  ],
   components: {
     StripeElements,
     StripeElement,
@@ -64,7 +69,7 @@ export default defineComponent({
       }, 0);
 
       // Calculate GST in cents
-      let gst = Math.round(subtotal * 0.1);
+      let gst = this.orgDoc?.gst ? Math.round(subtotal * 0.1) : 0;
 
       // Calculate the total payable amount in cents
       let totalPayable = subtotal + gst;
