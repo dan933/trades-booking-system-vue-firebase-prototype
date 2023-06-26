@@ -39,7 +39,8 @@
     <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
   </mat-card-content>
   <mat-card-actions style="display: flex; flex-wrap: wrap; column-gap: 10px;">
-    <button *ngIf="viewType === 'overview'" mat-button (click)="viewType = 'refund'">Refund</button>
+    <button *ngIf="viewType === 'overview' && data.schedule.status !== 'refunded' " mat-button
+      (click)="viewType = 'refund'">Refund</button>
     <button *ngIf="viewType === 'refund'" mat-button (click)="refund()">Confirm</button>
     <button mat-button (click)="dialogRef.close()">Close</button>
   </mat-card-actions>

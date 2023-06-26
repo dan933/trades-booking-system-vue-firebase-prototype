@@ -21,14 +21,17 @@ export class DialogScheduleDetailsComponent {
     //api call here
     let bookingId = this.data.schedule.id;
     this.loading = true;
-    let refundResponse = await this.bookingService.refundBooking(bookingId);
-    this.loading = false;
 
-    console.log(refundResponse);
+    await this.bookingService.refundBooking(bookingId).then((resp) => {
 
-    // this.dialogRef.close(refundResponse);
+      console.log(resp, "line 27")
 
-    // this.dialogRef.close();
+      this.dialogRef.close(resp);
+      this.loading = false;
+    }).catch((err) => {
+      this.dialogRef.close(err);
+      this.loading = false;
+    });
 
   }
 

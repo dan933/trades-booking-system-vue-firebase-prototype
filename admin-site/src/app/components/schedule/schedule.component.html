@@ -40,9 +40,22 @@
         <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           <div class="expand-flex-column">
             <div>
-              <p><strong>Address:</strong> {{element.address}}</p>
+              <p><strong>Address:</strong> {{element.address}}
+              </p>
               <p><strong>Email:</strong> {{element.email}}</p>
-              <p><strong>Phone:</strong> {{element.phoneNumber}}</p>
+              <p class="">
+                <strong>Phone: </strong><a [href]="'tel:'+element.phoneNumber">{{element.phoneNumber}}</a>
+              </p>
+              <button mat-raised-button color="primary" style="width: auto; margin:5px;"
+                (click)="navigateToMaps(element.address)">
+                Navigate
+                <mat-icon>near_me</mat-icon>
+              </button>
+              <button mat-raised-button color="primary" style="width: auto; margin:5px;"
+                (click)="callPhone(element.phoneNumber)">
+                Call
+                <mat-icon>phone</mat-icon>
+              </button>
               <button mat-raised-button color="primary" style="width: 100px; padding: 5px; margin:5px;"
                 (click)="openDialog(element)">open
                 booking</button>

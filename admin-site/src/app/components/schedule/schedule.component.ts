@@ -15,8 +15,10 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import * as moment from 'moment';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogScheduleDetailsComponent } from './dialog-schedule-details/dialog-schedule-details.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 
 export const MY_FORMATS = {
@@ -97,17 +99,44 @@ export class ScheduleComponent {
   dataSource!: MatTableDataSource<any>;
   expandedElement: any;
 
+  dialogSubscription: Subscription | undefined;
+  dialogRef!: MatDialogRef<DialogScheduleDetailsComponent>;
+
+  mapsAddress: string = "";
+
 
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
+    private _snackBar: MatSnackBar,
     private scheduleService: ScheduleService,
     public dialog: MatDialog
   ) {
   }
 
+  //used to navigate to google maps
+  get mapsLink(): string {
+    // encode the address to safely insert it into the URL
+    let encodedAddress = encodeURIComponent(this.mapsAddress);
+    return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+  }
+
+  callPhone(phoneNumber: string) {
+    window.open(`tel:${phoneNumber}`);
+  }
+
+  navigateToMaps(address: string) {
+    this.mapsAddress = address;
+    window.open(this.mapsLink, "_blank");
+
+  }
+
   ngOnInit() {
     this.updateTable();
+  }
+
+  ngOnDestroy() {
+    this.dialogSubscription?.unsubscribe();
   }
 
   async updateTable() {
@@ -120,18 +149,28 @@ export class ScheduleComponent {
     this.dataSource.sort = this.sort;
   }
 
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 3000
+    });
+  }
+
   openDialog(schedule: any) {
 
     let dialogData = this.generateDialogData(schedule);
 
-    this.dialog.open(DialogScheduleDetailsComponent, {
+    this.dialogRef = this.dialog.open(DialogScheduleDetailsComponent, {
       width: '350px',
       maxHeight: '100vh',
       data: { dialogData, schedule }
     });
 
-    this.dialog.afterAllClosed.subscribe(() => {
-      //todo snack bar
+    this.dialogSubscription = this.dialogRef.afterClosed().subscribe((resp) => {
+
+      let snackBarMessage = resp?.success ? "Refund successful" : "somthing went wrong";
+
+      this.openSnackBar(snackBarMessage, "Close");
+
       this.updateTable();
     });
   }
