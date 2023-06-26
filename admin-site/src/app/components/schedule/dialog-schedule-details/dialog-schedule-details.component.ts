@@ -18,7 +18,6 @@ export class DialogScheduleDetailsComponent {
 
   async refund() {
     //start loading
-    //api call here
     let bookingId = this.data.schedule.id;
     this.loading = true;
 

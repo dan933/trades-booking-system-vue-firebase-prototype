@@ -56,9 +56,9 @@
                 Call
                 <mat-icon>phone</mat-icon>
               </button>
-              <button mat-raised-button color="primary" style="width: 100px; padding: 5px; margin:5px;"
-                (click)="openDialog(element)">open
-                booking</button>
+              <button mat-raised-button color="primary" style="width: auto; margin:5px;" (click)="openDialog(element)">
+                <mat-icon>open_in_new</mat-icon> open booking
+              </button>
             </div>
             <div>
               <p *ngFor=" let service; let i=index of element.services">

@@ -167,6 +167,8 @@ export class ScheduleComponent {
 
     this.dialogSubscription = this.dialogRef.afterClosed().subscribe((resp) => {
 
+      if(!resp) return;
+
       let snackBarMessage = resp?.success ? "Refund successful" : "somthing went wrong";
 
       this.openSnackBar(snackBarMessage, "Close");
