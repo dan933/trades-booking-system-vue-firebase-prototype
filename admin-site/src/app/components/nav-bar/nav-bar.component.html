@@ -11,14 +11,16 @@
     <button mat-button routerLink="/schedule">Schedule</button>
     <!-- <button mat-button routerLink="/customers">customers</button> -->
     <span class="spacer"></span>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>settings</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item routerLink="/settings/opperating">Opperating Settings</button>
-      <button mat-menu-item routerLink="/settings/services">Service Settings</button>
-      <button mat-menu-item routerLink="/settings/company">Company Settings</button>
-    </mat-menu>
+    <div style="display: inline-block;">
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" xPosition="before" yPosition="below">
+        <button mat-menu-item routerLink="/settings/opperating">Opperating Settings</button>
+        <button mat-menu-item routerLink="/settings/services">Service Settings</button>
+        <button mat-menu-item routerLink="/settings/company">Company Settings</button>
+      </mat-menu>
+    </div>
   </mat-toolbar-row>
   <mat-toolbar-row *ngIf="!isUserLoggedIn" color="primary">
     <span>Admin Dashboard</span>

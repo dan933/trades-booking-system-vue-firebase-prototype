@@ -2,3 +2,15 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// In styles.scss or styles.css
+.cdk-overlay-pane {
+  @media only screen and (max-width: 600px) {
+    top: 70px !important;
+    left: auto !important;
+    right: 0 !important;
+    height: max-content !important;
+    width: max-content !important; // adjust as necessary
+  }
+}
+
