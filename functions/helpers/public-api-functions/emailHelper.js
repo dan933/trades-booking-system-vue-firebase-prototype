@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const functions = require("firebase-functions");
 
-let generateBookingEmailData = (booking) => {
+let generateBookingEmailData = (booking, gstEnabled) => {
   let serviceData = booking.services.map((service) => {
     return {
       name: service.selection.name,
@@ -27,7 +27,7 @@ let generateBookingEmailData = (booking) => {
     return total + service.hours * service.rate;
   }, 0);
 
-  let gst = total * 0.1;
+  let gst = gstEnabled ? total * 0.1 : 0;
   let grandTotal = total + gst;
 
   let formatter = new Intl.NumberFormat("en-AU", {
@@ -35,28 +35,38 @@ let generateBookingEmailData = (booking) => {
     currency: "AUD",
   });
 
-  let totalsHtml = `<tr>
-  <td style="padding:8px"></td>
-  <td style="border: 1px solid #ddd; padding: 8px;"><strong>Total</strong></td>
-  <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
-    total
-  )}</td>
-  </tr>
+  let totalsHtml = `
   <tr>
-  <td style="padding:8px"></td>
-  <td style="border: 1px solid #ddd; padding: 8px;"><strong>GST</strong></td>
-  <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
-    gst
-  )}</td>
-  </tr>
-  <tr>
-  <td style="padding:8px"></td>
-  <td style="border: 1px solid #ddd; padding: 8px;"><strong>Grand Total</strong></td>
-  <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
-    grandTotal
-  )}</td>
+    <td style="padding:8px"></td>
+    <td style="border: 1px solid #ddd; padding: 8px;">
+      <strong>Total</strong>
+    </td>
+    <td style="border: 1px solid #ddd; padding: 8px;">
+      ${formatter.format(total)}
+    </td>
   </tr>`;
+
   serviceHtml += totalsHtml;
+  let gstHtml = "";
+  if (gstEnabled) {
+    gstHtml = `
+    <tr>
+      <td style="padding:8px"></td>
+      <td style="border: 1px solid #ddd; padding: 8px;"><strong>GST</strong></td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
+        gst
+      )}</td>
+    </tr>
+    <tr>
+      <td style="padding:8px"></td>
+      <td style="border: 1px solid #ddd; padding: 8px;"><strong>Grand Total</strong></td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${formatter.format(
+        grandTotal
+      )}</td>
+    </tr>`;
+  }
+
+  serviceHtml += gstHtml;
 
   let startTime = convertTo12HourTime(booking.startHour);
   let endTime = convertTo12HourTime(booking.endHour);
@@ -114,6 +124,8 @@ exports.createBookingEmail = async (booking, orgDoc) => {
     //Get org email
     const orgEmail = orgDoc?.email;
 
+    const gstEnabled = !!orgDoc?.gst;
+
     functions.logger.log("Org Email", orgEmail);
 
     //validate org email
@@ -129,7 +141,7 @@ exports.createBookingEmail = async (booking, orgDoc) => {
       };
 
     //Create Email html
-    let emailHtml = generateBookingEmailData(booking);
+    let emailHtml = generateBookingEmailData(booking, gstEnabled);
 
     //create transporter
     let transporter = nodemailer.createTransport({

@@ -417,7 +417,7 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
       orgDoc
     );
 
-    if (!emailResponse.success) {
+    if (!emailResponse?.success) {
       res.send({ ...emailResponse });
       return;
     }
