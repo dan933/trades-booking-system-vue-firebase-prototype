@@ -5,8 +5,8 @@
   "targets": {
     "ajhomeservices-a31dd": {
       "hosting": {
-        "ajhomeservices": [
-          "ajhomeservices"
+        "ajhomeservices-a31dd": [
+          "ajhomeservices-a31dd"
         ],
         "admin-ajhomeservices": [
           "admin-ajhomeservices"

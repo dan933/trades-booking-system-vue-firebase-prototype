@@ -5,7 +5,7 @@
   },
   "hosting": [
     {
-      "target": "ajhomeservices",
+      "target": "ajhomeservices-a31dd",
       "public": "customer-site/dist",
       "ignore": [
         "firebase.json",
