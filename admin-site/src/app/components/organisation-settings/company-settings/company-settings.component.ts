@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { OrganisationService } from 'src/app/services/organisation/organisation.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-company-settings',
@@ -18,12 +19,17 @@ export class CompanySettingsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private organisationService: OrganisationService
+    private organisationService: OrganisationService,
+    private _snackBar: MatSnackBar
   ) {
 
   }
   ngOnInit(): void {
     this.getOrgSettings();
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action);
   }
 
   async getOrgSettings() {
@@ -47,7 +53,13 @@ export class CompanySettingsComponent implements OnInit {
       return;
     }
 
-    await this.organisationService.updateOrganisation(this.companySettingsForm.value);
+    await this.organisationService.updateOrganisation(this.companySettingsForm.value).then((res) => {
+      console.log(res);
+      this.openSnackBar('Saved', 'Close');
+    }).catch((err) => {
+      console.log(err);
+      this.openSnackBar('Error', 'Close');
+    });
   }
 
 
