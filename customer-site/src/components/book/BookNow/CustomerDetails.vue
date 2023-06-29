@@ -35,6 +35,16 @@
           type="email"
           :rules="emailRules"
         ></v-text-field>
+        <!-- maps api address search -->
+        <div class="auto-search-wrapper">
+          <input
+            type="text"
+            autocomplete="off"
+            id="search"
+            class="full-width"
+            placeholder="enter the city name"
+          />
+        </div>
         <v-textarea
           v-model="address"
           label="Address"
@@ -97,6 +107,51 @@ export default {
     },
   },
   methods: {
+    initAutocomplete() {
+      new Autocomplete("search", {
+        selectFirst: true,
+        howManyCharacters: 2,
+        onSearch: ({ currentValue }) => {
+          const api = `https://nominatim.openstreetmap.org/search?q=${encodeURI(
+            currentValue
+          )}&format=geojson&addressdetails=1&countrycodes=AU&state=Victoria`;
+
+          return new Promise((resolve) => {
+            fetch(api)
+              .then((response) => response.json())
+              .then((data) => {
+                resolve(data.features);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          });
+        },
+        onResults: ({ currentValue, matches, template }) => {
+          const regex = new RegExp(currentValue, "gi");
+
+          return matches === 0
+            ? template
+            : matches
+                .map((element) => {
+                  return `
+                  <li class="loupe">
+                    <p>
+                      ${element.properties.display_name.replace(
+                        regex,
+                        (str) => `<b>${str}</b>`
+                      )}
+                    </p>
+                  </li> `;
+                })
+                .join("");
+        },
+        onSubmit: ({ object }) => {
+          // Store the selected address in the Vue data property
+          this.address = object.properties.display_name;
+        },
+      });
+    },
     validateForm() {
       this.$nextTick(() => {
         this.valid = !!this.$refs.customerDetailsFormRef.validate();
@@ -164,6 +219,9 @@ export default {
   },
   async mounted() {
     await this.init();
+    this.$nextTick(() => {
+      this.initAutocomplete();
+    });
   },
 };
 </script>
