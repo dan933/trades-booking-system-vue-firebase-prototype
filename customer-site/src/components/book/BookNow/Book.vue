@@ -76,12 +76,12 @@ export default {
   max-width: 800px;
   width: 90%;
   height: 100%;
-  max-height: 700px;
+  max-height: 730px;
 }
 
 .card {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   margin-top: 5px;
   display: flex;
   flex-direction: column;

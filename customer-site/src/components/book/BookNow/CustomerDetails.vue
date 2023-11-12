@@ -8,7 +8,7 @@
         ref="customerDetailsFormRef"
         v-if="!loading"
       >
-        <v-container class="name-container">
+        <v-container class="detail-container">
           <v-text-field
             style="width: 150px"
             v-model="firstName"
@@ -35,11 +35,45 @@
           type="email"
           :rules="emailRules"
         ></v-text-field>
-        <v-textarea
+        <!-- new address format -->
+        <!-- seperate inputs for street address, suburb, state and postcode -->
+        <v-container fluid style="padding: 0px">
+          <v-textarea
+            name="input-2-1"
+            rows="1"
+            variant="filled"
+            :model-value="address"
+            label="Street Address"
+            autocomplete="street-address"
+            :rules="[(v) => !!v || 'Street Address is required']"
+            auto-grow
+          ></v-textarea>
+        </v-container>
+        <v-container class="detail-container">
+          <v-text-field
+            style="width: 150px"
+            label="Suburb"
+            type="suburb"
+            :rules="[(v) => !!v || 'Suburb is required']"
+          ></v-text-field>
+          <v-autocomplete
+            style="width: 200px; height: 50px"
+            label="State"
+            autocomplete="country-name"
+            :items="['VIC', 'NSW', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']"
+          ></v-autocomplete>
+        </v-container>
+        <v-text-field
+          style="width: 150px; margin-top: 20px"
+          label="Postcode"
+          autocomplete="postal-code"
+          :rules="[(v) => !!v || 'Postcode is required']"
+        ></v-text-field>
+        <!-- <v-textarea
           v-model="address"
           label="Address"
           :rules="[(v) => !!v || 'Address is required']"
-        ></v-textarea>
+        ></v-textarea> -->
         <v-btn color="primary mt-4" type="submit">Next</v-btn>
       </v-form>
       <v-container
@@ -169,7 +203,7 @@ export default {
 </script>
 
 <style lang="scss">
-.name-container {
+.detail-container {
   display: flex;
   flex-wrap: wrap;
   column-gap: 3px;

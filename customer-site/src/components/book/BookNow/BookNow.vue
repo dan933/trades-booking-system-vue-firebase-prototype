@@ -268,7 +268,7 @@ export default {
   align-items: center;
   flex-direction: column;
   width: 90%;
-  max-height: 700px;
+  // max-height: 700px;
   margin: 10px;
   margin-top: 20px;
   padding: 5px;
