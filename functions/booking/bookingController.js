@@ -40,7 +40,7 @@ exports.getAvailability = async (req, res) => {
   //get the bookings for that day
   let bookings = bookingsSnapshot.docs.map((doc) => doc.data());
 
-  functions.logger.log("bookings", bookings);
+  logger.log("bookings", bookings);
 
   //todo maybe add a return
   res.send(bookings);
@@ -48,7 +48,7 @@ exports.getAvailability = async (req, res) => {
 
 exports.book = async (req, res) => {
   try {
-    functions.logger.log("request", req);
+    logger.log("request", req);
 
     //Get the organisation id from the request
     const orgId = req.params.orgId;
@@ -56,17 +56,17 @@ exports.book = async (req, res) => {
     //Get the bookingDate
     const bookingDate = req.body.bookingDate;
 
-    functions.logger.log("bookingDate", bookingDate);
+    logger.log("bookingDate", bookingDate);
 
     //Get the Customer services required
     const customerServices = req.body.services;
 
-    functions.logger.log("customerServices", customerServices);
+    logger.log("customerServices", customerServices);
 
     //Get the customer information
     const customerInfo = req.body.customerInformation;
 
-    functions.logger.log("customerInfo", customerInfo);
+    logger.log("customerInfo", customerInfo);
 
     //Get the Start Hour
     const startHour = req.body.startHour;
@@ -82,12 +82,12 @@ exports.book = async (req, res) => {
     //Get the organisation availability details
     const orgAvailabilityDoc = await orgAvailabilityRef.get();
 
-    functions.logger.log("orgAvailabilityDoc", orgAvailabilityDoc.data());
+    logger.log("orgAvailabilityDoc", orgAvailabilityDoc.data());
 
     //Get the gap between settings for the organisation
     const gapBetween = orgAvailabilityDoc.data().gapBetween;
 
-    functions.logger.log("gapBetween", gapBetween);
+    logger.log("gapBetween", gapBetween);
 
     //Creats an array of the days hours to be used to create the bookedSchedule document
     const newBookedScheduleDoc = bookingHelper.createNewBookedSchedules(
@@ -95,7 +95,7 @@ exports.book = async (req, res) => {
       bookingDate
     );
 
-    functions.logger.log("newBookedScheduleDoc", newBookedScheduleDoc);
+    logger.log("newBookedScheduleDoc", newBookedScheduleDoc);
 
     //Get the bookedSchedule ref document for the requested date
     const bookedScheduleRef = admin
@@ -135,18 +135,18 @@ exports.book = async (req, res) => {
       status: "pending",
     };
 
-    functions.logger.log("bookingRequest", bookingRequest);
+    logger.log("bookingRequest", bookingRequest);
     //------------------------ Run transaction -----------------------//
     //this makes sure that there are no double bookings
     let holdTimeSlot = await admin.firestore().runTransaction(async (t) => {
       //Get the bookedSchedule document for the requested date
       const bookedSchedule = await t.get(bookedScheduleRef);
 
-      functions.logger.log("bookedSchedule", bookedSchedule);
+      logger.log("bookedSchedule", bookedSchedule);
 
       //check if booking already exists for the requested date
       if (bookedSchedule.exists) {
-        functions.logger.log("bookedSchedule", bookedSchedule.data());
+        logger.log("bookedSchedule", bookedSchedule.data());
 
         //check that requested time is not already booked
         const isAvailable = bookingHelper.checkRequestedBookingAvailability(
@@ -156,7 +156,7 @@ exports.book = async (req, res) => {
           orgAvailabilityDoc.data()
         );
 
-        functions.logger.log("isAvailable", isAvailable);
+        logger.log("isAvailable", isAvailable);
 
         //if not available don't allow booking
         if (!isAvailable) {
@@ -179,7 +179,7 @@ exports.book = async (req, res) => {
         await t.set(bookedScheduleRef, { ...updatedSchdule });
         await t.create(bookingRef, { ...bookingRequest });
 
-        functions.logger.log("Booking schedule updated", updatedSchdule);
+        logger.log("Booking schedule updated", updatedSchdule);
 
         return {
           message: "Booking Scheudle Updated",
@@ -190,7 +190,7 @@ exports.book = async (req, res) => {
 
       //If there is no document for the requested date create one
       if (!bookedSchedule.exists) {
-        functions.logger.log("bookedSchedule not exist", bookedSchedule);
+        logger.log("bookedSchedule not exist", bookedSchedule);
         //check that booking times are within opperating hours
         const isAvailable = bookingHelper.checkRequestedBookingAvailability(
           newBookedScheduleDoc,
@@ -199,7 +199,7 @@ exports.book = async (req, res) => {
           orgAvailabilityDoc.data()
         );
 
-        functions.logger.log("isAvailable", isAvailable);
+        logger.log("isAvailable", isAvailable);
 
         //if not available don't allow booking
         if (!isAvailable) {
@@ -223,7 +223,7 @@ exports.book = async (req, res) => {
         await t.set(bookedScheduleRef, { ...updatedSchdule });
         await t.create(bookingRef, { ...bookingRequest });
 
-        functions.logger.log("New Booking Created", updatedSchdule);
+        logger.log("New Booking Created", updatedSchdule);
 
         return {
           message: "New Booking Created",
@@ -233,7 +233,7 @@ exports.book = async (req, res) => {
       }
     });
 
-    functions.logger.log("holdTimeSlot", holdTimeSlot);
+    logger.log("holdTimeSlot", holdTimeSlot);
 
     //If the timeslot is not available return message to user
     if (!holdTimeSlot.success) {
@@ -269,16 +269,16 @@ exports.book = async (req, res) => {
 
       chargeResponse = charge;
 
-      functions.logger.log("charge", charge);
-      functions.logger.log("chargeResponse", chargeResponse);
-      functions.logger.log("chargeResponse captured", chargeResponse?.captured);
+      logger.log("charge", charge);
+      logger.log("chargeResponse", chargeResponse);
+      logger.log("chargeResponse captured", chargeResponse?.captured);
     } catch (error) {
       chargeResponse = error;
     }
 
     //----------------------------------------------------//
 
-    functions.logger.log("after stripe Payment");
+    logger.log("after stripe Payment");
 
     //------ Run transaction to update the booking status to booked or failed ---//
     const updatedBookingResponse = await admin
@@ -287,7 +287,7 @@ exports.book = async (req, res) => {
         //Get the bookedSchedule document for the requested date
         const bookedSchedule = await t.get(bookedScheduleRef);
 
-        functions.logger.log("bookedSchedule", bookedSchedule);
+        logger.log("bookedSchedule", bookedSchedule);
 
         //if the payment is a success
         if (chargeResponse?.captured) {
@@ -297,7 +297,7 @@ exports.book = async (req, res) => {
             stripeChargeId: chargeResponse.id,
           });
 
-          functions.logger.log("onPayment success update booking line 286");
+          logger.log("onPayment success update booking line 286");
 
           return {
             message: "Booking Successful",
@@ -308,7 +308,7 @@ exports.book = async (req, res) => {
 
         //if something went wrong with the payment
 
-        functions.logger.log("bookedSchedule line 237", bookedSchedule);
+        logger.log("bookedSchedule line 237", bookedSchedule);
 
         //update the booking schedule by removing the reserved timeslot
         //remove the booking from the bookedSchedule document
@@ -321,18 +321,16 @@ exports.book = async (req, res) => {
           "remove"
         );
 
-        functions.logger.log("updatedSchdule line 296", updatedSchdule);
+        logger.log("updatedSchdule line 296", updatedSchdule);
 
         await t.set(bookedScheduleRef, { ...updatedSchdule });
 
-        functions.logger.log(
-          "onPayment Fail update bookedScheduleRef line 323"
-        );
+        logger.log("onPayment Fail update bookedScheduleRef line 323");
 
         //delete the booking
         await t.delete(bookingRef);
 
-        functions.logger.log("onPayment Fail delete booking line 329");
+        logger.log("onPayment Fail delete booking line 329");
 
         //return error
         return {
@@ -345,14 +343,14 @@ exports.book = async (req, res) => {
           success: false,
         };
       });
-    functions.logger.log("updatedBookingResponse", updatedBookingResponse);
+    logger.log("updatedBookingResponse", updatedBookingResponse);
 
     res.send({ ...updatedBookingResponse, bookingRequest: bookingRequest });
     return;
     //----------------------------------------------//
   } catch (error) {
-    functions.logger.log("error", error);
-    functions.logger.log("error", error?.raw?.message);
+    logger.log("error", error);
+    logger.log("error", error?.raw?.message);
 
     res.send({
       code: error?.raw?.message,
@@ -371,13 +369,7 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
     //Get the orgId from the request
     const orgId = req.params.orgId;
 
-    functions.logger.log(
-      "bookingRequest",
-      bookingId,
-      bookingId,
-      "orgId:",
-      orgId
-    );
+    logger.log("bookingRequest", bookingId, bookingId, "orgId:", orgId);
 
     if (!bookingId || !bookingRequest) {
       res.send({
@@ -428,8 +420,8 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
     res.send({ ...emailResponse });
     return;
   } catch (error) {
-    functions.logger.log("error", error);
-    functions.logger.log("error", error?.raw?.message);
+    logger.log("error", error);
+    logger.log("error", error?.raw?.message);
 
     res.send({
       code: error?.raw?.message,

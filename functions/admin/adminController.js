@@ -36,7 +36,7 @@ exports.refundBooking = async (req, res) => {
       return;
     }
 
-    functions.logger.log("orgId", orgId);
+    logger.log("orgId", orgId);
 
     //Get booking id from request
     let bookingId = req?.body?.bookingId;
@@ -46,7 +46,7 @@ exports.refundBooking = async (req, res) => {
       return;
     }
 
-    functions.logger.log("Refunding booking:", bookingId);
+    logger.log("Refunding booking:", bookingId);
 
     //get booking from db
     const booking = await bookingHelper.getBookingById(orgId, bookingId);
@@ -73,12 +73,12 @@ exports.refundBooking = async (req, res) => {
       return;
     }
 
-    functions.logger.log("orgAvailabilityDoc", orgAvailabilityDoc.data());
+    logger.log("orgAvailabilityDoc", orgAvailabilityDoc.data());
 
     //Get the gap between settings for the organisation
     const gapBetween = orgAvailabilityDoc.data().gapBetween;
 
-    functions.logger.log("gapBetween", gapBetween);
+    logger.log("gapBetween", gapBetween);
 
     //get stripe charge id from booking
     const stripeChargeId = booking?.stripeChargeId;
@@ -95,7 +95,7 @@ exports.refundBooking = async (req, res) => {
         charge: stripeChargeId,
       });
     } catch (error) {
-      functions.logger.error("Error while refunding booking:", error);
+      logger.error("Error while refunding booking:", error);
       res.status(500).send({ error: error?.message || "" });
       return;
     }
@@ -120,7 +120,7 @@ exports.refundBooking = async (req, res) => {
       .toISOString()
       .split("T")[0];
 
-    functions.logger.log("bookingDate", bookingDate);
+    logger.log("bookingDate", bookingDate);
 
     //create bookedschedule reference
     const bookedScheduleRef = admin
@@ -137,7 +137,7 @@ exports.refundBooking = async (req, res) => {
         //get booked schedule
         const bookedScheduleDoc = await transaction.get(bookedScheduleRef);
 
-        functions.logger.log("bookedScheduleDoc", bookedScheduleDoc);
+        logger.log("bookedScheduleDoc", bookedScheduleDoc);
 
         //if no booked schedule found, return error
         if (!bookedScheduleDoc.exists) {
@@ -176,7 +176,7 @@ exports.refundBooking = async (req, res) => {
           };
         }
 
-        functions.logger.log("updatedBookedSchedule", updatedBookedSchedule);
+        logger.log("updatedBookedSchedule", updatedBookedSchedule);
 
         //update booked schedule
         await transaction.set(bookedScheduleRef, { ...updatedBookedSchedule });
@@ -196,7 +196,7 @@ exports.refundBooking = async (req, res) => {
       booking,
       refundAmount
     );
-    functions.logger.log("emailResponse", emailResponse);
+    logger.log("emailResponse", emailResponse);
 
     res.status(200).send({
       ...removedBookedScheduleResponse,

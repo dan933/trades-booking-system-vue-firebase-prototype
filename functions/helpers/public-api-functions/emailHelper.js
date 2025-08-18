@@ -274,7 +274,7 @@ exports.sendCancelBookingEmail = async (booking, refund) => {
       success: true,
     };
   } catch (error) {
-    functions.logger.error("Email Error", error);
+    logger.error("Email Error", error);
     return {
       message: "Error Email Function",
       error: error,

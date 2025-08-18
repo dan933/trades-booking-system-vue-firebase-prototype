@@ -1,8 +1,9 @@
 // The Firebase Admin SDK to access Firestore.
 const admin = require("firebase-admin");
+const { logger } = require("firebase-functions");
 //--------------------- Gets the customers details ------------------//
 exports.getCustomerDetails = async (req, res) => {
-  functions.logger.log("req", req);
+  logger.log("req", req);
 
   const orgId = req.params.orgId;
 
