@@ -1,21 +1,31 @@
 {
   "projects": {
-    "default": "ajhomeservices-a31dd"
+    "default": "trades-booking-system"
   },
   "targets": {
     "ajhomeservices-a31dd": {
       "hosting": {
-        "ajhomeservices-a31dd": [
-          "ajhomeservices-a31dd"
+        "trades-booking-app": [
+          "trades-booking-app"
         ],
-        "admin-ajhomeservices": [
-          "admin-ajhomeservices"
+        "admin-trades-app": [
+          "admin-trades-app"
+        ]
+      }
+    },
+    "trades-booking-system": {
+      "hosting": {
+        "trades-booking-system": [
+          "trades-booking-system"
+        ],
+        "trades-booking-system-52dbc": [
+          "trades-booking-system-52dbc"
         ]
       }
     }
   },
   "etags": {
-    "ajhomeservices-a31dd": {
+    "trades-booking-system": {
       "extensionInstances": {}
     }
   }

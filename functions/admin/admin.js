@@ -1,7 +1,5 @@
 //----------------- Setup ------------------------------//
 // The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-const functions = require("firebase-functions");
-
 const express = require("express");
 
 const cookieParser = require("cookie-parser")();
@@ -21,11 +19,23 @@ const {
 //-----------------------------------------------------------------------------//
 
 const adminController = require("./adminController.js");
+const { onRequest } = require("firebase-functions/https");
 
 adminApi.use(cors);
 adminApi.use(cookieParser);
 adminApi.use(validateFirebaseAdminIdToken);
-adminApi.use(bodyParser.json());
+adminApi.use(express.json());
+
+adminApi.use((req, res, next) => {
+  const originalSend = res.send;
+  res.send = function (data) {
+    if (typeof data === "object") {
+      return originalSend.call(this, JSON.stringify(data));
+    }
+    return originalSend.call(this, data);
+  };
+  next();
+});
 
 //---------------- Controllers -------------------------//
 //Used to set claims for an admin user
@@ -44,6 +54,4 @@ adminApi.post("/refund-booking", adminController.refundBooking);
 //   adminController.sendCancellationEmail
 // );
 
-exports.adminApi = functions
-  .region("australia-southeast1")
-  .https.onRequest(adminApi);
+exports.adminApi = onRequest({ region: "australia-southeast1" }, adminApi);

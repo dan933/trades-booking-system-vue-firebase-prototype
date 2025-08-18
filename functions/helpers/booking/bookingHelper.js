@@ -1,5 +1,5 @@
-const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { logger } = require("firebase-functions");
 
 exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
   //get the day of the week
@@ -18,7 +18,7 @@ exports.createNewBookedSchedules = (orgAvailabilityDoc, bookingDate) => {
     bookedTimes[index] = false;
   }
 
-  functions.logger.log("bookedTimes", bookedTimes);
+  logger.log("bookedTimes", bookedTimes);
 
   return { bookedTimes, bookingScheduleDate: new Date(bookingDate) };
 };
@@ -35,7 +35,7 @@ exports.getBookingById = async (orgId, bookingId) => {
 
     return bookingDoc.data();
   } catch (error) {
-    functions.logger.error("Error while getting booking:", error);
+    logger.error("Error while getting booking:", error);
     return null;
   }
 };
@@ -51,7 +51,7 @@ exports.updateBookingPaymentStatus = (orgId, bookingId, status, refundId) => {
 
     return bookingDoc.update({ status, refundId });
   } catch (error) {
-    functions.logger.error("Error while updating booking:", error);
+    logger.error("Error while updating booking:", error);
     return null;
   }
 };
@@ -132,11 +132,11 @@ exports.checkRequestedBookingAvailability = (
     return acc + service.hours;
   }, 0);
 
-  functions.logger.log("totalHoursRequired", totalHoursRequired);
+  logger.log("totalHoursRequired", totalHoursRequired);
 
-  functions.logger.log("startHour", startHour);
+  logger.log("startHour", startHour);
 
-  functions.logger.log(
+  logger.log(
     "bookedSchedule.bookingScheduleDate.toDate()",
     bookedSchedule.bookingScheduleDate,
     typeof bookedSchedule.bookingScheduleDate
@@ -148,7 +148,7 @@ exports.checkRequestedBookingAvailability = (
     ? bookedDay.toDate().getDay()
     : bookedDay.getDay();
 
-  functions.logger.log("bookedDay", bookedDay);
+  logger.log("bookedDay", bookedDay);
 
   //check opperating end time for that day
   let opperatingEndTime = orgAvailabilityDoc.openingTimes[bookedDay].end;
@@ -157,11 +157,11 @@ exports.checkRequestedBookingAvailability = (
 
   let gapBetween = orgAvailabilityDoc.gapBetween;
 
-  functions.logger.log("gapBetween", gapBetween);
+  logger.log("gapBetween", gapBetween);
 
   let endHour = startHour + totalHoursRequired;
 
-  functions.logger.log("endHour", endHour);
+  logger.log("endHour", endHour);
 
   for (let index = startHour; index < endHour; index++) {
     //if the hour is already booked return false
@@ -195,7 +195,7 @@ exports.calculateInvoiceTotal = async (orgId, customerServices) => {
   const serviceAmounts = customerServices.map((service) => {
     const matchedService = services.find((s) => s.id === service.selection.id);
 
-    functions.logger.log("matchedService", matchedService);
+    logger.log("matchedService", matchedService);
 
     if (!matchedService) {
       throw new Error(`Service with id ${service.id} not found`);
@@ -212,7 +212,7 @@ exports.calculateInvoiceTotal = async (orgId, customerServices) => {
     // Convert price to cents to avoid floating point arithmetic
     let serviceAmount = Math.round(matchedService.rate * service.hours * 100);
 
-    functions.logger.log("serviceAmount", serviceAmount);
+    logger.log("serviceAmount", serviceAmount);
 
     return serviceAmount;
   });
@@ -230,7 +230,7 @@ exports.calculateInvoiceTotal = async (orgId, customerServices) => {
   // Now that all calculations are done, convert the total back to dollars for Stripe
   let stripeTotal = total;
 
-  functions.logger.log("stripeTotal", stripeTotal);
+  logger.log("stripeTotal", stripeTotal);
 
   // Convert subtotal, gst, and total back to dollars for the return value
   return {

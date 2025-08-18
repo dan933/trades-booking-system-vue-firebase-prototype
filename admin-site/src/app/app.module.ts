@@ -8,12 +8,11 @@ import { AuthComponent } from './shared/auth/auth.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { AngularMaterialsModule } from './angular-materials/angular-materials.module';
 
-
 //Firebase
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
-import { provideAuth,getAuth } from '@angular/fire/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFunctions, getFunctions } from '@angular/fire/functions';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DialogScheduleDetailsComponent } from './components/schedule/dialog-schedule-details/dialog-schedule-details.component';
@@ -34,9 +33,9 @@ import { DialogScheduleDetailsComponent } from './components/schedule/dialog-sch
     BrowserAnimationsModule,
     AppRoutingModule,
     FlexLayoutModule,
-    AngularMaterialsModule
+    AngularMaterialsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

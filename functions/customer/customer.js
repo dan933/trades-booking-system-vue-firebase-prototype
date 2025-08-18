@@ -1,12 +1,10 @@
 //----------------- Setup ------------------------------//
 // The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-const functions = require("firebase-functions");
-
 const express = require("express");
+const { onRequest } = require("firebase-functions/https");
 
 const cookieParser = require("cookie-parser")();
 const cors = require("cors")({ origin: true });
-const bodyParser = require("body-parser");
 
 const customerApi = express();
 
@@ -20,11 +18,21 @@ const {
 //-----------------------------------------------------------------------------//
 
 const customerController = require("./customerController.js");
-
 customerApi.use(cors);
 customerApi.use(validateFirebaseIdToken);
 customerApi.use(cookieParser);
-customerApi.use(bodyParser.json());
+customerApi.use(express.json());
+
+customerApi.use((req, res, next) => {
+  const originalSend = res.send;
+  res.send = function (data) {
+    if (typeof data === "object") {
+      return originalSend.call(this, JSON.stringify(data));
+    }
+    return originalSend.call(this, data);
+  };
+  next();
+});
 
 //---------------- Controllers ---------------------------------------//
 customerApi.get(
@@ -38,6 +46,7 @@ customerApi.patch(
 );
 
 //----------------- Exports ------------------------------//
-exports.customerApi = functions
-  .region("australia-southeast1")
-  .https.onRequest(customerApi);
+exports.customerApi = onRequest(
+  { region: "australia-southeast1" },
+  customerApi
+);

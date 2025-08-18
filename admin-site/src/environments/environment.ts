@@ -1,13 +1,14 @@
 export const environment = {
   production: false,
-  firebaseConfig : {
-    apiKey: "AIzaSyCdC5zL52k0lPYiGaN3zqTWzTAWoUo4_WE",
-    authDomain: "ajhomeservices-a31dd.firebaseapp.com",
-    projectId: "ajhomeservices-a31dd",
-    storageBucket: "ajhomeservices-a31dd.appspot.com",
-    messagingSenderId: "771526104948",
-    appId: "1:771526104948:web:a1993d52cadc728ab07e21",
-    measurementId: "G-D83JXZF563"
+  firebaseConfig: {
+    apiKey: 'AIzaSyAnaoFaml33VbAMKf4QLXJy6wT6bur9hi4',
+    authDomain: 'trades-booking-system.firebaseapp.com',
+    projectId: 'trades-booking-system',
+    storageBucket: 'trades-booking-system.firebasestorage.app',
+    messagingSenderId: '590160899554',
+    appId: '1:590160899554:web:9b8e84e147458c38381dbb',
+    measurementId: 'G-GL8K1ZLQ2H',
   },
-  apiUrl:"https://australia-southeast1-ajhomeservices-a31dd.cloudfunctions.net/adminApi"
+  apiUrl:
+    'https://australia-southeast1-trades-booking-system.cloudfunctions.net/adminApi',
 };

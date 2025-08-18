@@ -1,13 +1,13 @@
-const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { logger } = require("firebase-functions");
 
 exports.validateFirebaseIdToken = async (req, res, next) => {
-  functions.logger.log("Check if request is authorized with Firebase ID token");
-  functions.logger.log("req", req);
-  functions.logger.log("req", req.headers.guest);
+  logger.log("Check if request is authorized with Firebase ID token");
+  logger.log("req", req);
+  logger.log("req", req.headers.guest);
 
   if (req.headers.guest && req.headers.guest === "true") {
-    functions.logger.log("Guest User");
+    logger.log("Guest User");
     next();
     return;
   }
@@ -17,7 +17,7 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
       !req.headers.authorization.startsWith("Bearer ")) &&
     !(req.cookies && req.cookies.__session)
   ) {
-    functions.logger.error(
+    logger.error(
       "No Firebase ID token was passed as a Bearer token in the Authorization header."
     );
     res.status(403).send({ message: "Unauthorized" });
@@ -30,11 +30,11 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
-    functions.logger.log('Found "Authorization" header');
+    logger.log('Found "Authorization" header');
     // Read the ID Token from the Authorization header.
     idToken = req.headers.authorization.split("Bearer ")[1];
   } else if (req.cookies) {
-    functions.logger.log('Found "__session" cookie', req.cookies.__session);
+    logger.log('Found "__session" cookie', req.cookies.__session);
     // Read the ID Token from cookie.
     idToken = req.cookies.__session;
   } else {
@@ -45,25 +45,25 @@ exports.validateFirebaseIdToken = async (req, res, next) => {
 
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    functions.logger.log("ID Token correctly decoded", decodedIdToken);
+    logger.log("ID Token correctly decoded", decodedIdToken);
     req.user = decodedIdToken;
     next();
   } catch (error) {
-    functions.logger.error("Error while verifying Firebase ID token:", error);
+    logger.error("Error while verifying Firebase ID token:", error);
     res.status(403).send({ message: "Unauthorized" });
     return;
   }
 };
 
 exports.validateFirebaseAdminIdToken = async (req, res, next) => {
-  functions.logger.log("Check if request is authorized with Firebase ID token");
+  logger.log("Check if request is authorized with Firebase ID token");
 
   if (
     (!req.headers.authorization ||
       !req.headers.authorization.startsWith("Bearer ")) &&
     !(req.cookies && req.cookies.__session)
   ) {
-    functions.logger.error(
+    logger.error(
       "No Firebase ID token was passed as a Bearer token in the Authorization header."
     );
     res.status(403).send({ message: "Unauthorized" });
@@ -84,12 +84,12 @@ exports.validateFirebaseAdminIdToken = async (req, res, next) => {
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
-    functions.logger.log('Found "Authorization" header');
+    logger.log('Found "Authorization" header');
     // Read the ID Token from the Authorization header.
     idToken = req.headers.authorization.split("Bearer ")[1];
-    // functions.logger.log("line 85 idtoken", idToken);
+    // logger.log("line 85 idtoken", idToken);
   } else if (req.cookies) {
-    functions.logger.log('Found "__session" cookie', req.cookies.__session);
+    logger.log('Found "__session" cookie', req.cookies.__session);
     // Read the ID Token from cookie.
     idToken = req.cookies.__session;
   } else {
@@ -102,12 +102,12 @@ exports.validateFirebaseAdminIdToken = async (req, res, next) => {
     .auth()
     .verifyIdToken(idToken)
     .then((token) => {
-      functions.logger.log("ID Token correctly decoded", token);
+      logger.log("ID Token correctly decoded", token);
       req.user = token;
       return next();
     })
     .catch((error) => {
-      functions.logger.error("Error while verifying Firebase ID token:", error);
+      logger.error("Error while verifying Firebase ID token:", error);
       res.status(403).send({ message: "Unauthorized" });
       return;
     });
@@ -132,7 +132,6 @@ async function checkSuperUser(req, res, next) {
   //Ability to set admin permissions and claims
 
   let idToken = req.headers.authorization.split("Bearer ")[1];
-  functions.logger.log("Admin Token", idToken);
   const IsSuperUser = superUserTokenCheck(idToken);
 
   if (IsSuperUser) {

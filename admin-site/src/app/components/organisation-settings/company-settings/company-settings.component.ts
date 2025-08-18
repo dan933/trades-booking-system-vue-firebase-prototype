@@ -6,14 +6,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-company-settings',
   templateUrl: './company-settings.component.html',
-  styleUrls: ['./company-settings.component.scss']
+  styleUrls: ['./company-settings.component.scss'],
 })
 export class CompanySettingsComponent implements OnInit {
   companySettingsForm = this.fb.group({
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    number: ['', [Validators.required, Validators.pattern("^[0-9\+\s]*$")]],
-    ABN: ['', [Validators.required, Validators.pattern("^[0-9\s]*$")]],
+    number: ['', [Validators.required, Validators.pattern('^[0-9+s]*$')]],
+    ABN: ['', [Validators.required, Validators.pattern('^[0-9s]*$')]],
     gst: [false, [Validators.required]],
   });
 
@@ -21,9 +21,7 @@ export class CompanySettingsComponent implements OnInit {
     private fb: FormBuilder,
     private organisationService: OrganisationService,
     private _snackBar: MatSnackBar
-  ) {
-
-  }
+  ) {}
   ngOnInit(): void {
     this.getOrgSettings();
   }
@@ -33,7 +31,7 @@ export class CompanySettingsComponent implements OnInit {
   }
 
   async getOrgSettings() {
-    let orgSettings:any = await this.organisationService.getOrganisation();
+    let orgSettings: any = await this.organisationService.getOrganisation();
     console.log(orgSettings);
 
     this.companySettingsForm.patchValue({
@@ -43,7 +41,6 @@ export class CompanySettingsComponent implements OnInit {
       ABN: orgSettings.ABN,
       gst: orgSettings.gst ? orgSettings.gst : false,
     });
-
   }
 
   async save() {
@@ -53,15 +50,15 @@ export class CompanySettingsComponent implements OnInit {
       return;
     }
 
-    await this.organisationService.updateOrganisation(this.companySettingsForm.value).then((res) => {
-      console.log(res);
-      this.openSnackBar('Saved', 'Close');
-    }).catch((err) => {
-      console.log(err);
-      this.openSnackBar('Error', 'Close');
-    });
+    await this.organisationService
+      .updateOrganisation(this.companySettingsForm.value)
+      .then((res) => {
+        console.log(res);
+        this.openSnackBar('Saved', 'Close');
+      })
+      .catch((err) => {
+        console.log(err.message);
+        this.openSnackBar('Error', 'Close');
+      });
   }
-
-
-
 }

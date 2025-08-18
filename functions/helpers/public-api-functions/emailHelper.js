@@ -1,5 +1,5 @@
+const { logger } = require("firebase-functions");
 const nodemailer = require("nodemailer");
-const functions = require("firebase-functions");
 
 let generateBookingEmailData = (booking, gstEnabled) => {
   let serviceData = booking.services.map((service) => {
@@ -71,7 +71,7 @@ let generateBookingEmailData = (booking, gstEnabled) => {
   let startTime = convertTo12HourTime(booking.startHour);
   let endTime = convertTo12HourTime(booking.endHour);
 
-  let emailHTMl = `<h1 style="font-size: 20px;">Thank you for booking with AJM Home Services</h1>
+  let emailHTMl = `<h1 style="font-size: 20px;">Thank you for booking with us</h1>
   <br />
   <p>We have successfully booked your appointment for ${formatDate(
     booking.bookingDate
@@ -90,7 +90,7 @@ let generateBookingEmailData = (booking, gstEnabled) => {
 </table>
 <p>Please contact us if you have any questions or changes.</p>
 <p>Best,</p>
-<p>Your Service Provider AJM Home Services</p>`;
+<p>Your Service Provider</p>`;
 
   return emailHTMl;
 };
@@ -126,7 +126,7 @@ exports.createBookingEmail = async (booking, orgDoc) => {
 
     const gstEnabled = !!orgDoc?.gst;
 
-    functions.logger.log("Org Email", orgEmail);
+    logger.log("Org Email", orgEmail);
 
     //validate org email
     let IsValidOrgEmail = validateEmail(orgEmail);
@@ -152,7 +152,7 @@ exports.createBookingEmail = async (booking, orgDoc) => {
       },
     });
     const mailOptions = {
-      from: "Ange <ange@ajmhomeservice.com>",
+      from: "Daniel Albert <danielalbert3377@gmail.com>",
       to: booking.email,
       subject: "Booking Confirmation",
       html: emailHtml,
@@ -177,8 +177,8 @@ exports.createBookingEmail = async (booking, orgDoc) => {
     let startTime = convertTo12HourTime(booking.startHour);
     let endTime = convertTo12HourTime(booking.endHour);
 
-    const mailOptionsForAJM = {
-      from: "Ange <ange@ajmhomeservice.com>",
+    const mailOptionsForDan = {
+      from: "Daniel Albert <danielalbert3377@gmail.com>",
       to: `${orgEmail}`,
       subject: `New booking from ${booking.firstName}`,
       html: `<p>You have a new booking from ${booking.firstName}</p>
@@ -197,7 +197,7 @@ exports.createBookingEmail = async (booking, orgDoc) => {
         success: false,
       };
 
-    await transporter.sendMail(mailOptionsForAJM).catch((error) => {
+    await transporter.sendMail(mailOptionsForDan).catch((error) => {
       return {
         message: "An error occured could not send email to owner",
         success: false,
@@ -210,7 +210,7 @@ exports.createBookingEmail = async (booking, orgDoc) => {
       success: true,
     };
   } catch (error) {
-    functions.logger.error("Email Error", error);
+    logger.error("Email Error", error);
     return {
       message: "Error Email Function",
       error: error,
@@ -250,7 +250,7 @@ exports.sendCancelBookingEmail = async (booking, refund) => {
     });
 
     const mailOptions = {
-      from: "Ange <ange@ajmhomeservice.com>",
+      from: "Daniel Albert <danielalbert3377@gmail.com>",
       to: booking.email,
       subject: `Booking Cancellation ${bookingDate}`,
       html: `<p>Hi ${name},</p>
@@ -258,7 +258,7 @@ exports.sendCancelBookingEmail = async (booking, refund) => {
       <p>We have refunded you ${refundAmount}</p>
       <p>Please contact us if you have any questions or changes.</p>
       <p>From,</p>
-      <p>Your Service Provider AJM Home Services</p>`,
+      <p>Your Service Provider</p>`,
     };
 
     await transporter.sendMail(mailOptions).catch((error) => {
@@ -295,8 +295,8 @@ let validateEmail = (email) => {
 };
 
 function formatDate(date) {
-  functions.logger.log("Date", date);
-  functions.logger.log("Date Type", typeof date);
+  logger.log("Date", date);
+  logger.log("Date Type", typeof date);
   const d = date?.toDate ? date?.toDate() : new Date(date);
   let day = d.getDate();
   let month = d.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12

@@ -1,5 +1,5 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/https");
 
 const nodemailer = require("nodemailer");
 
@@ -11,7 +11,7 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-handler = async (req, res) => {
+const handler = async (req, res) => {
   // Set CORS headers for preflight requests
   // Allows GETs from any origin with the Content-Type header
   // and caches preflight response for 3600s
@@ -60,24 +60,22 @@ handler = async (req, res) => {
     }
 
     const mailOptions = {
-      from: "Ange <ange@ajmhomeservice.com>",
+      from: "Daniel Albert <danielalbert3377@gmail.com>",
       to: email,
-      subject: "Thank you for contacting AJM Home Services",
+      subject: "Thank you for contacting us",
       html: `<h1 style="font-size: 20px;">Thank you for contacting us</h1>
                 <br />
                 <p>We will get back to you as soon as possible.</p>
                 <img style="width:300px;" src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" />
                 <br/>
-                <p>From Ange</p>
-                <strong>AJM Home Services</strong>
-                <p>Director of things</p>
+                <p>From Daniel Albert</p>
             `,
     };
 
-    const mailOptionsForAJM = {
-      from: "Ange <ange@ajmhomeservice.com>",
+    const mailOptionsForDan = {
+      from: "Daniel Albert <danielalbert3377@gmail.com>",
       to: `${process.env.EMAIL}`,
-      subject: `AJM Home Services Message`,
+      subject: `Trades System Message`,
       html: `<p>You have a new message from ${name}</p>
                     <p>
                     email: ${email}
@@ -96,7 +94,7 @@ handler = async (req, res) => {
       );
     });
 
-    await transporter.sendMail(mailOptionsForAJM).catch((error) => {
+    await transporter.sendMail(mailOptionsForDan).catch((error) => {
       return res.status(500).send(
         JSON.stringify({
           message: "An error occured could not send email to owner",
@@ -113,6 +111,7 @@ handler = async (req, res) => {
   }
 };
 
-exports.submitContactForm = functions
-  .region("australia-southeast1")
-  .https.onRequest(handler);
+exports.submitContactForm = onRequest(
+  { region: "australia-southeast1" },
+  handler
+);

@@ -1,8 +1,9 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
 const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 const bookingHelper = require("../helpers/booking/bookingHelper.js");
 const emailHelper = require("../helpers/public-api-functions/emailHelper.js");
+const { logger } = require("firebase-functions");
+const { json } = require("body-parser");
 
 exports.test = (req, res) => {
   res.send("Hello from the Admin API");
@@ -12,15 +13,17 @@ exports.test = (req, res) => {
 exports.setAdminUserPermissions = async (req, res) => {
   const { uid, permissions } = req.body;
 
+  // logger.log("uid", uid);
+
   try {
     await admin.auth().setCustomUserClaims(uid, permissions);
     res.status(200).send({ message: "Permissions set successfully" });
+    return;
   } catch (error) {
-    functions.logger.error("Error while setting permissions:", error);
+    logger.error("Error while setting permissions:", error);
     res.status(500).send({ message: "Error while setting permissions" });
+    return;
   }
-
-  return;
 };
 
 exports.refundBooking = async (req, res) => {

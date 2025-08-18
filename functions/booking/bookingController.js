@@ -1,11 +1,11 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
 const bookingHelper = require("../helpers/booking/bookingHelper.js");
 const emailHelper = require("../helpers/public-api-functions/emailHelper.js");
+const { logger } = require("firebase-functions");
 const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 
 exports.getAvailability = async (req, res) => {
-  functions.logger.log("req", req.body);
+  logger.log("req", req.body);
 
   const requestBody = req.body;
 
