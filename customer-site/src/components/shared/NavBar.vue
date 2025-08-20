@@ -1,192 +1,199 @@
 <template>
-  <nav>
-    <v-app-bar :elevation="2" class="nav">
-      <v-btn v-if="!mdAndUp" @click.stop="drawer = !drawer">
-        <v-icon icon="mdi:mdi-menu"></v-icon>
-      </v-btn>
-      <h4 class="header-text" :class="{ 'ma-5': mdAndUp }">
-        Booking prototype
-      </h4>
-      <div v-if="mdAndUp">
-        <v-btn
-          @click="
-            () => {
-              navigate('/');
-            }
-          "
-          variant="flat"
-          >Overview</v-btn
-        >
-        <v-btn
-          @click="
-            () => {
-              navigate('/about');
-            }
-          "
-          variant="flat"
-          >About</v-btn
-        >
-        <v-btn
-          @click="
-            () => {
-              navigate('/services');
-            }
-          "
-          variant="flat"
-          >Services</v-btn
-        >
-        <v-btn
-          @click="
-            () => {
-              navigate('/org/Okq3IGUln18QM90ObeI4/book');
-            }
-          "
-          variant="flat"
-          >Book Online</v-btn
-        >
-        <v-btn
-          @click="
-            () => {
-              navigate('/contact');
-            }
-          "
-          variant="flat"
-          >Contact</v-btn
-        >
-      </div>
-      <div v-if="!!currentUser" class="account-container">
-        <v-btn color="primary">
-          <v-icon>mdi:mdi-account</v-icon>
-          <v-menu transition="slide-x-transition" activator="parent">
-            <v-list>
-              <v-list-item :title="currentUser.email"> </v-list-item>
-
-              <v-list-item
-                prepend-icon="mdi:mdi-logout"
-                title="Sign Out"
-                value="logoutButton"
-                @click="logout"
-              >
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-btn>
-      </div>
-    </v-app-bar>
+  <nav :class="`nav ${scrollPosition > 0 ? 'nav-sticky' : ''}`">
+    <div class="site-title-container">
+      <a class="site-header" href="#">Easy Booking</a>
+    </div>
+    <ul class="nav-links">
+      <li @click="() => { currentLink = menuItem.name.toLocaleLowerCase() }" v-for="menuItem in menuList"
+        :key="menuItem.name">
+        <a :class="`nav-item ${currentLink === menuItem.name.toLowerCase() && 'active'}`" :href="menuItem.link">{{
+          menuItem.name }}</a>
+      </li>
+    </ul>
+    <button :class="`burger ${activeMobileMenu ? 'play' : ''}`" @click="() => { activeMobileMenu = !activeMobileMenu }">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
   </nav>
-  <v-navigation-drawer v-model="drawer" temporary>
-    <v-divider></v-divider>
-    <v-list density="compact" nav>
-      <v-list-item
-        @click="
-          () => {
-            navigate('/');
-          }
-        "
-        prepend-icon="mdi:mdi-view-dashboard"
-        title="Home"
-        value="home"
-      ></v-list-item>
-      <v-list-item
-        @click="
-          () => {
-            navigate('/about');
-          }
-        "
-        prepend-icon="mdi:mdi-forum"
-        title="About"
-        value="about"
-      ></v-list-item>
-      <v-list-item
-        @click="
-          () => {
-            navigate('/services');
-          }
-        "
-        prepend-icon="mdi:mdi-wrench"
-        title="Services"
-        value="services"
-      ></v-list-item>
-      <v-list-item
-        @click="
-          () => {
-            navigate('/org/Okq3IGUln18QM90ObeI4/book');
-          }
-        "
-        prepend-icon="mdi:mdi-calendar-blank-outline"
-        title="Book Online"
-        value="Book"
-      ></v-list-item>
-      <v-list-item
-        @click="
-          () => {
-            navigate('/contact');
-          }
-        "
-        prepend-icon="mdi:mdi-account-box "
-        title="Contact Us"
-        value="contact"
-      ></v-list-item>
-    </v-list>
-  </v-navigation-drawer>
 </template>
 
-<script lang="js">
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+// import { useRouter, useRoute } from 'vue-router';
 
-import { useDisplay } from 'vuetify'
-import { getAuth, signOut } from "firebase/auth";
+const scrollPosition = ref(0);
+const activeMobileMenu = ref(false);
+const currentLink = ref('home');
 
-export default {
-    name: "NavBar",
-    setup () {
-      // Destructure only the keys we want to use
-        const { mdAndUp } = useDisplay()
+const menuList = ref([
+  { name: 'Home', link: '#home' },
+  { name: 'About', link: '#about' },
+  { name: 'Booking', link: '#services' },
+  { name: 'Contact', link: '#contact' }
+])
 
-      return { mdAndUp }
-    },
-    data () {
-      return {
-            drawer: null,
-            currentUser:null
-      }
-    },
-    methods: {
-        logout() {
-            let auth = getAuth();
 
-            signOut(auth).then(() => {
-                this.$router.push('/');
-            }).catch((err) => {console.log(err)})
-        },
-        navigate(route) {
+const handleScroll = () => {
+  scrollPosition.value = window.scrollY || window.pageYOffset;
+};
 
-            if (!this.mdAndUp) {
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
 
-                this.drawer = !this.drawer;
-            }
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 
-            this.$router.push(route);
-        }
-    },
-    computed: {
-    },
-    mounted() {
-        getAuth()
-            .onAuthStateChanged((auth) => {
-                this.currentUser = auth;
-        })
-    }
-}
+
 </script>
 
-<style lang="scss">
-.account-container {
-  margin-left: auto;
-  margin-right: 15px;
+<style scoped>
+.site-header {
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
 }
 
-.v-toolbar__content {
+.site-title-container {
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none;
+  outline: none;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  color: #ffffff;
+  font-size: 20px;
+  font-family: 'Rubik', sans-serif;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  max-width: 1900px;
+  height: 80px;
+  z-index: 1000;
+  font-size: 18px;
   display: flex;
-  column-gap: 5px;
+  justify-content: space-between;
+  justify-self: center;
+  align-items: center;
+  padding: 0 20px;
+  flex-wrap: wrap;
+}
+
+.nav-sticky {
+  background-color: #7d37e1;
+  position: sticky;
+  top: 0;
+  transition: all ease-in-out 700ms;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2px;
+  list-style: none;
+  margin-bottom: 5px;
+
+  .nav-item {
+    padding: 15px;
+    display: block;
+    font-family: 'Josefin Sans', sans-serif;
+    position: relative;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .nav-item:after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    transition: 0.3s;
+    width: 0;
+    background-color: white;
+  }
+
+  .nav-item:hover:after {
+    width: 100%;
+  }
+
+  .active::after {
+    width: 100%;
+  }
+}
+
+.burger {
+  display: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  width: 30px;
+  right: 30px;
+  top: 30px;
+  z-index: 1000;
+  display: none;
+  cursor: pointer;
+
+  .bar {
+    background-color: #ffffff;
+    width: 30px;
+    height: 3px;
+    display: block;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    position: relative;
+    right: 0;
+    top: 0;
+    opacity: 1;
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  &.play {
+    .bar:nth-child(1) {
+      top: 9px;
+      -webkit-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+
+    .bar:nth-child(2) {
+      right: 20px;
+      opacity: 0;
+    }
+
+    .bar:nth-child(3) {
+      top: -9px;
+      -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .nav-links {
+    display: none;
+  }
+
+  .burger {
+    display: block;
+  }
+
+  .nav {
+
+    a {
+      font-size: 18px;
+      line-height: 0;
+    }
+  }
 }
 </style>

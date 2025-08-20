@@ -106,9 +106,8 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .appointment-section {
-  // overflow: scroll;
   margin-top: 10px;
   display: block;
   justify-content: center;

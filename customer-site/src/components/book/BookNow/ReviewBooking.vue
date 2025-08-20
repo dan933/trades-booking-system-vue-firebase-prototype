@@ -155,9 +155,9 @@ export default {
         .getDate()
         .toString()
         .padStart(2, "0")}/${this.selectedDateTimeSlot?.date
-        .getMonth()
-        .toString()
-        .padStart(2, "0")}/${this.selectedDateTimeSlot?.date.getFullYear()}`;
+          .getMonth()
+          .toString()
+          .padStart(2, "0")}/${this.selectedDateTimeSlot?.date.getFullYear()}`;
     },
     name() {
       return `${this.customerInformation?.firstName} ${this.customerInformation?.lastName}`;
@@ -197,13 +197,14 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .total-container {
   margin-top: 6px;
   display: flex;
   flex-direction: column;
   row-gap: 3px;
 }
+
 .time-container {
   display: flex;
   flex-direction: row;

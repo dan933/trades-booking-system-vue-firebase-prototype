@@ -1,129 +1,46 @@
 <template>
   <v-card flat class="book-now-container">
-    <v-window
-      :touch="false"
-      direction="vertical"
-      v-model="onboarding"
-      class="window-container"
-    >
-      <v-window-item
-        :key="`card-customer-details`"
-        :value="0"
-        class="window-container"
-      >
-        <CustomerDetails
-          @storeCustomerDetails="storeCustomerDetails"
-          ref="customerDetailsRef"
-        ></CustomerDetails>
+    <v-window :touch="false" direction="vertical" v-model="onboarding" class="window-container">
+      <v-window-item :key="`card-customer-details`" :value="0" class="window-container">
+        <CustomerDetails @storeCustomerDetails="storeCustomerDetails" ref="customerDetailsRef"></CustomerDetails>
       </v-window-item>
 
-      <v-window-item
-        :key="`card-timeslots`"
-        :value="1"
-        class="window-container"
-      >
-        <TimeSlots
-          @storeSelectedTimeSlotData="storeSelectedTimeSlotData"
-        ></TimeSlots>
+      <v-window-item :key="`card-timeslots`" :value="1" class="window-container">
+        <TimeSlots @storeSelectedTimeSlotData="storeSelectedTimeSlotData"></TimeSlots>
       </v-window-item>
 
-      <v-window-item
-        :key="`card-add-services`"
-        :value="2"
-        class="window-container"
-      >
-        <SelectService
-          ref="selectServiceRef"
-          :selectedDateTimeSlot="selectedDateTimeSlot"
-          @storeSelectedServices="storeSelectedServices"
-        ></SelectService>
+      <v-window-item :key="`card-add-services`" :value="2" class="window-container">
+        <SelectService ref="selectServiceRef" :selectedDateTimeSlot="selectedDateTimeSlot"
+          @storeSelectedServices="storeSelectedServices"></SelectService>
       </v-window-item>
-      <v-window-item
-        :key="`review-booking`"
-        :value="3"
-        class="window-container"
-      >
-        <ReviewBooking
-          @confirmDetails="confirmDetails"
-          :orgDoc="orgDoc"
-          :selectedDateTimeSlot="selectedDateTimeSlot"
-          :selectedServices="selectedServices"
-          :customerInformation="customerInformation"
-          ref="reviewBookingRef"
-        ></ReviewBooking>
+      <v-window-item :key="`review-booking`" :value="3" class="window-container">
+        <ReviewBooking @confirmDetails="confirmDetails" :orgDoc="orgDoc" :selectedDateTimeSlot="selectedDateTimeSlot"
+          :selectedServices="selectedServices" :customerInformation="customerInformation" ref="reviewBookingRef">
+        </ReviewBooking>
       </v-window-item>
       <v-window-item :key="`payment`" :value="4" class="window-container">
-        <Payment
-          :orgDoc="orgDoc"
-          :selectedDateTimeSlot="selectedDateTimeSlot"
-          :selectedServices="selectedServices"
-          :customerInformation="customerInformation"
-          ref="paymentRef"
-          @submitBooking="submitBooking"
-        ></Payment>
+        <Payment :orgDoc="orgDoc" :selectedDateTimeSlot="selectedDateTimeSlot" :selectedServices="selectedServices"
+          :customerInformation="customerInformation" ref="paymentRef" @submitBooking="submitBooking"></Payment>
       </v-window-item>
     </v-window>
 
     <v-card-actions class="justify-space-evenly">
       <v-item-group v-model="onboarding" class="text-center" mandatory>
-        <v-item
-          :key="`customer-details`"
-          v-slot="{ isSelected, toggle }"
-          :value="0"
-        >
-          <v-btn
-            :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-account"
-            @click="toggle"
-          ></v-btn>
+        <v-item :key="`customer-details`" v-slot="{ isSelected, toggle }" :value="0">
+          <v-btn :variant="isSelected ? 'outlined' : 'text'" icon="mdi:mdi-account" @click="toggle"></v-btn>
         </v-item>
-        <v-item
-          v-if="customerInformation"
-          :key="`timeslots`"
-          v-slot="{ isSelected, toggle }"
-          :value="1"
-        >
-          <v-btn
-            :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-calendar-clock"
-            @click="toggle"
-          ></v-btn>
+        <v-item v-if="customerInformation" :key="`timeslots`" v-slot="{ isSelected, toggle }" :value="1">
+          <v-btn :variant="isSelected ? 'outlined' : 'text'" icon="mdi:mdi-calendar-clock" @click="toggle"></v-btn>
         </v-item>
-        <v-item
-          v-if="selectedDateTimeSlot"
-          :key="`services`"
-          v-slot="{ isSelected, toggle }"
-          :value="2"
-        >
-          <v-btn
-            :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-briefcase-check"
-            @click="toggle"
-          ></v-btn>
+        <v-item v-if="selectedDateTimeSlot" :key="`services`" v-slot="{ isSelected, toggle }" :value="2">
+          <v-btn :variant="isSelected ? 'outlined' : 'text'" icon="mdi:mdi-briefcase-check" @click="toggle"></v-btn>
         </v-item>
-        <v-item
-          v-if="selectedServices?.length > 0 && selectedServices"
-          :key="`review`"
-          v-slot="{ isSelected, toggle }"
-          :value="3"
-        >
-          <v-btn
-            :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-message-draw"
-            @click="toggle"
-          ></v-btn>
+        <v-item v-if="selectedServices?.length > 0 && selectedServices" :key="`review`" v-slot="{ isSelected, toggle }"
+          :value="3">
+          <v-btn :variant="isSelected ? 'outlined' : 'text'" icon="mdi:mdi-message-draw" @click="toggle"></v-btn>
         </v-item>
-        <v-item
-          v-if="customerConfirmation"
-          :key="`payment`"
-          v-slot="{ isSelected, toggle }"
-          :value="4"
-        >
-          <v-btn
-            :variant="isSelected ? 'outlined' : 'text'"
-            icon="mdi:mdi-credit-card-outline"
-            @click="toggle"
-          ></v-btn>
+        <v-item v-if="customerConfirmation" :key="`payment`" v-slot="{ isSelected, toggle }" :value="4">
+          <v-btn :variant="isSelected ? 'outlined' : 'text'" icon="mdi:mdi-credit-card-outline" @click="toggle"></v-btn>
         </v-item>
       </v-item-group>
     </v-card-actions>
@@ -157,7 +74,7 @@ export default {
       //are different to this.customerInformation
       if (
         JSON.stringify(this.customerInformation) !==
-          JSON.stringify(customerDetails) &&
+        JSON.stringify(customerDetails) &&
         !this.IsGuest
       ) {
         this.$refs.customerDetailsRef.toggleLoading(true);
@@ -258,17 +175,17 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .date-input {
   border-radius: 5px;
   padding: 5px;
 }
+
 .book-now-container {
   display: flex;
   align-items: center;
   flex-direction: column;
   width: 90%;
-  // max-height: 700px;
   margin: 10px;
   margin-top: 20px;
   padding: 5px;
@@ -280,6 +197,7 @@ export default {
   height: 100%;
   overflow: auto;
 }
+
 .vc-day-content.vc-disabled {
   text-decoration: line-through;
   color: rgba(211, 211, 211, 0.721);

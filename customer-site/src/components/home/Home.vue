@@ -1,12 +1,6 @@
 <template>
   <div class="carousel-container">
-    <v-carousel
-      cycle
-      height="100%"
-      hide-delimiter-background
-      show-arrows="hover"
-      color="#D3D3D3"
-    >
+    <v-carousel cycle height="100%" hide-delimiter-background show-arrows="hover" color="#D3D3D3">
       <v-carousel-item v-for="(slide, i) in carouselImages" :key="i">
         <div class="d-flex fill-height justify-center align-center">
           <img class="carousel-image" :src="slide" alt="" />
@@ -52,7 +46,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .home-section {
   display: flex;
   justify-content: center;
@@ -71,6 +65,7 @@ export default {
   width: 700px;
   min-height: 200px;
 }
+
 .card {
   margin-top: 5px;
   padding: 5px;

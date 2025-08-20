@@ -6,39 +6,16 @@
       <p><strong>Number of Hours:</strong> {{ hoursBooked }}</p>
     </div>
 
-    <StripeElements
-      v-show="stripeLoaded && !loading"
-      v-slot="{ elements, instance }"
-      ref="elms"
-      :stripe-key="stripeKey"
-      :instance-options="instanceOptions"
-      :elements-options="elementsOptions"
-    >
+    <StripeElements v-show="stripeLoaded && !loading" v-slot="{ elements, instance }" ref="elms" :stripe-key="stripeKey"
+      :instance-options="instanceOptions" :elements-options="elementsOptions">
       <StripeElement ref="card" :elements="elements" :options="cardOptions" />
     </StripeElements>
     <p v-show="!loading" class="mt-3 text-red">{{ errorMessage }}</p>
-    <v-btn
-      v-show="stripeLoaded && !loading"
-      color="primary"
-      elevation="3"
-      class="mt-4"
-      width="150px"
-      type="button"
-      @click="submitForm"
-      >Pay Now</v-btn
-    >
+    <v-btn v-show="stripeLoaded && !loading" color="primary" elevation="3" class="mt-4" width="150px" type="button"
+      @click="submitForm">Pay Now</v-btn>
 
-    <v-container
-      v-if="loading"
-      class="d-flex justify-center align-center"
-      style="height: 100%"
-    >
-      <v-progress-circular
-        :width="10"
-        :size="80"
-        indeterminate
-        color="blue"
-      ></v-progress-circular>
+    <v-container v-if="loading" class="d-flex justify-center align-center" style="height: 100%">
+      <v-progress-circular :width="10" :size="80" indeterminate color="blue"></v-progress-circular>
     </v-container>
   </v-container>
 </template>
@@ -155,13 +132,14 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style>
 /* Stripe Elements Styles */
 .stripe-container {
   margin-left: auto;
   margin-right: auto;
   width: 90%;
 }
+
 .StripeElement {
   box-sizing: border-box;
   height: 40px;
@@ -185,11 +163,13 @@ export default defineComponent({
 .StripeElement--webkit-autofill {
   background-color: #fefde5 !important;
 }
+
 .payment-page-container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
+
 .payment-summary-container {
   padding: 5px;
   border-radius: 5px;
@@ -198,6 +178,7 @@ export default defineComponent({
   row-gap: 5px;
   margin-bottom: 6px;
 }
+
 .expiry-container {
   display: flex;
   flex-direction: row;

@@ -1,19 +1,10 @@
 <template>
   <v-card flat rounded="0" class="book-now-card">
     <h3>Pick a date</h3>
-    <VDatePicker
-      :min-date="tomorrow"
-      :disabled-dates="disabledDates"
-      @dayclick="onCalendarClick"
-    >
+    <VDatePicker :min-date="tomorrow" :disabled-dates="disabledDates" @dayclick="onCalendarClick">
       <template #default="{ togglePopover }">
         <div class="date-input">
-          <v-btn
-            class="text-none text-subtitle-1"
-            color="primary"
-            variant="elevated"
-            @click="togglePopover"
-          >
+          <v-btn class="text-none text-subtitle-1" color="primary" variant="elevated" @click="togglePopover">
             Choose Date
           </v-btn>
         </div>
@@ -22,33 +13,18 @@
     {{ availabilityMessage }}
     <v-container v-if="IsAvailableDate" class="timeslot-container">
       <h3>Pick A Timeslot</h3>
-      <v-autocomplete
-        v-model="selectedTimeSlot"
-        :items="availableTimeSlots"
-        :item-title="
-          (item) => {
-            return item?.time
-              ? `${item.time} (available hours ${item.availableHours})`
-              : '';
-          }
-        "
-        :item-value="(item) => item"
-        label="Select a time slot"
-        style="width: 245px"
-      ></v-autocomplete>
+      <v-autocomplete v-model="selectedTimeSlot" :items="availableTimeSlots" :item-title="(item) => {
+          return item?.time
+            ? `${item.time} (available hours ${item.availableHours})`
+            : '';
+        }
+        " :item-value="(item) => item" label="Select a time slot" style="width: 245px"></v-autocomplete>
       <p v-if="selectedTimeSlot?.availableHours">
-        <strong
-          >This time slot currently has
-          {{ selectedTimeSlot?.availableHours }} hours available.</strong
-        >
+        <strong>This time slot currently has
+          {{ selectedTimeSlot?.availableHours }} hours available.</strong>
       </p>
-      <v-btn
-        v-if="selectedTimeSlot"
-        class="text-none text-subtitle-1"
-        color="primary"
-        variant="elevated"
-        @click="storeSelectedTimeSlotData"
-      >
+      <v-btn v-if="selectedTimeSlot" class="text-none text-subtitle-1" color="primary" variant="elevated"
+        @click="storeSelectedTimeSlotData">
         Next
       </v-btn>
     </v-container>
@@ -249,11 +225,12 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .date-input {
   border-radius: 5px;
   padding: 5px;
 }
+
 .book-now-container {
   display: flex;
   align-items: center;
@@ -264,6 +241,7 @@ export default {
   margin-top: 20px;
   padding: 5px;
 }
+
 .book-now-card {
   display: flex;
   flex-direction: column;
@@ -281,10 +259,12 @@ export default {
   align-items: center;
   row-gap: 15px;
 }
+
 .window-container {
   width: 100%;
   height: 100%;
 }
+
 .vc-day-content.vc-disabled {
   text-decoration: line-through;
   color: rgba(211, 211, 211, 0.721);

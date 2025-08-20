@@ -2,52 +2,29 @@ const Auth = () => Promise.resolve({
 <template>
   <section class="container-center">
     <v-card elevation="5" class="auth-section">
-      <EmailRegister
-        v-if="selectedForm === 'Register'"
-        @switchForm="switchForm"
-        @registerEmailUser="registerEmailUser"
-      ></EmailRegister>
+      <EmailRegister v-if="selectedForm === 'Register'" @switchForm="switchForm" @registerEmailUser="registerEmailUser">
+      </EmailRegister>
 
-      <EmailLogin
-        v-if="selectedForm === 'Login'"
-        :signInResponse="signInResponse"
-        @switchForm="switchForm"
-        @signIn="signIn"
-      ></EmailLogin>
+      <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @switchForm="switchForm"
+        @signIn="signIn"></EmailLogin>
 
       <v-container class="provider-container">
-        <v-btn
-          @click="() => signIn({ providerName: 'Google' })"
-          class="provider-button text-subtitle-2"
-        >
-          <img
-            class="google-logo"
-            src="../../../../public/icons/google-logo.png"
-            alt=""
-            srcset=""
-          />
+        <v-btn @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
+          <img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset="" />
           Continue With Google
         </v-btn>
-        <v-btn
-          @click="() => signIn({ providerName: 'Facebook' })"
-          class="provider-button text-subtitle-2"
-        >
+        <v-btn @click="() => signIn({ providerName: 'Facebook' })" class="provider-button text-subtitle-2">
           <v-icon icon="mdi:mdi-facebook" size="50px" color="blue"></v-icon>
           Continue With Facebook
         </v-btn>
-        <v-btn
-          @click="() => signIn({ providerName: 'Guest' })"
-          class="provider-button text-subtitle-2"
-        >
+        <v-btn @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
           <v-icon icon="mdi:mdi-account" size="50px" color="black"></v-icon>
           Continue as Guest
         </v-btn>
       </v-container>
     </v-card>
-    <LinkCredentialsDialog
-      ref="linkCredentialsDialogRef"
-      @resetSignInResponse="signInResponse = null"
-    ></LinkCredentialsDialog>
+    <LinkCredentialsDialog ref="linkCredentialsDialogRef" @resetSignInResponse="signInResponse = null">
+    </LinkCredentialsDialog>
   </section>
 </template>
 
@@ -133,7 +110,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .container-center {
   display: flex;
   justify-content: center;
@@ -173,6 +150,7 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .google-logo {
   margin-right: 10px;
   height: 40px;

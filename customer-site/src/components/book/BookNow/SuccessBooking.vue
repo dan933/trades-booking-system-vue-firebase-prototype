@@ -82,13 +82,14 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .total-container {
   margin-top: 6px;
   display: flex;
   flex-direction: column;
   row-gap: 3px;
 }
+
 .success-card {
   padding: 40px;
   row-gap: 10px;

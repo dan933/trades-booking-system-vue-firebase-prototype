@@ -20,7 +20,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .failed-card {
   padding: 40px;
   row-gap: 10px;
