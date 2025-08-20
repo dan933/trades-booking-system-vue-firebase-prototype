@@ -224,6 +224,7 @@ a {
   position: absolute;
   top: 80px;
   position: fixed;
+  z-index: 9999;
 
   .mobile-menu-links {
     list-style-type: none;

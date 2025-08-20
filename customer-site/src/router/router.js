@@ -6,12 +6,13 @@ import NotFound from "../components/not-found/NotFound.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth } from "firebase/auth";
 import bookingStore from "../store/bookingStore";
+import Landing from "../components/landing/landing.vue";
 
 const routes = [
   {
-    name: "Home",
+    name: "Landing",
     path: "/",
-    component: Home,
+    component: Landing,
   },
   {
     name: "About",
