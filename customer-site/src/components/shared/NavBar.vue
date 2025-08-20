@@ -4,9 +4,8 @@
       <a class="site-header" href="#">Easy Booking</a>
     </div>
     <ul class="nav-links">
-      <li @click="() => { currentLink = menuItem.name.toLocaleLowerCase() }" v-for="menuItem in menuList"
-        :key="menuItem.name">
-        <a :class="`nav-item ${currentLink === menuItem.name.toLowerCase() && 'active'}`" :href="menuItem.link">{{
+      <li @click="() => { handleNavClick(menuItem) }" v-for="menuItem in menuList" :key="menuItem.name">
+        <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{
           menuItem.name }}</a>
       </li>
     </ul>
@@ -16,23 +15,31 @@
       <span class="bar"></span>
     </button>
   </nav>
+  <div :class="`${activeMobileMenu ? 'mobile-menu-visible' : 'mobile-menu-hidden'}`">
+    <ul class="mobile-menu-links">
+      <li @click="() => { handleNavClick(menuItem) }" v-for="menuItem in menuList" :key="menuItem.name">
+        <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{
+          menuItem.name }}</a>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-// import { useRouter, useRoute } from 'vue-router';
 
-const scrollPosition = ref(0);
 const activeMobileMenu = ref(false);
-const currentLink = ref('home');
+const scrollPosition = ref(0);
+const navMenuChange = ref(false);
 
-const menuList = ref([
-  { name: 'Home', link: '#home' },
-  { name: 'About', link: '#about' },
-  { name: 'Booking', link: '#services' },
-  { name: 'Contact', link: '#contact' }
-])
+const handleNavClick = (menuItem) => {
+  navMenuChange.value = true
+  props.navFunctions.setCurrentLink(menuItem?.name?.toLowerCase?.())
 
+  navMenuChange.value = false
+
+
+}
 
 const handleScroll = () => {
   scrollPosition.value = window.scrollY || window.pageYOffset;
@@ -46,6 +53,30 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll);
 });
 
+
+const props = defineProps({
+  menuList: {
+    type: Array,
+    default: () => [
+      { name: 'Home', link: '#home' },
+      { name: 'About', link: '#about' },
+      { name: 'Booking', link: '#services' },
+      { name: 'Contact', link: '#contact' }
+    ]
+  },
+  scrollPosition: {
+    type: Number,
+    default: 0
+  },
+  currentLink: {
+    type: String,
+    default: 'home'
+  },
+  navFunctions: {
+    type: Object
+  }
+
+})
 
 </script>
 
@@ -98,6 +129,11 @@ a {
   list-style: none;
   margin-bottom: 5px;
 
+  .opacity-zero {
+    opacity: 0;
+  }
+
+
   .nav-item {
     padding: 15px;
     display: block;
@@ -105,6 +141,7 @@ a {
     position: relative;
     font-size: 18px;
     font-weight: 400;
+
   }
 
   .nav-item:after {
@@ -179,7 +216,35 @@ a {
   }
 }
 
-@media screen and (max-width: 600px) {
+.mobile-menu-visible {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  list-style-type: none;
+  position: absolute;
+  top: 80px;
+  position: fixed;
+
+  .mobile-menu-links {
+    list-style-type: none;
+    padding: 5px;
+    background-color: white;
+    width: 80%;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 5px;
+
+    a {
+      color: black;
+    }
+  }
+}
+
+.mobile-menu-hidden {
+  display: none;
+}
+
+@media screen and (max-width: 650px) {
   .nav-links {
     display: none;
   }
@@ -194,6 +259,12 @@ a {
       font-size: 18px;
       line-height: 0;
     }
+  }
+}
+
+@media screen and (min-width: 650px) {
+  .mobile-menu-visible {
+    display: none;
   }
 }
 </style>
