@@ -5,7 +5,10 @@
         <div class="header-description">
           <h2 class="header-title">Customer Bookings made simple</h2>
           <p class="header-subtitle">Streamline customer scheduling and payments</p>
-          <router-link to="/demo" class="live-demo">Live Demo</router-link>
+          <div class="demo-buttons-container">
+            <router-link to="/demo" class="live-demo">Customer Demo</router-link>
+            <router-link to="/demo" class="live-demo">Admin Demo</router-link>
+          </div>
         </div>
         <div class="header-image-container">
           <img class="header-image" src="../../../public/laptop.png" alt="laptop"></img>
@@ -77,9 +80,9 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 70vh;
+  height: 80vh;
   min-height: fit-content;
-  max-height: 700px;
+  max-height: 800px;
   position: relative;
 
 
@@ -88,7 +91,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    height: 70%;
+    /* height: 70%; */
     z-index: 2;
 
     .header-title {
@@ -109,63 +112,75 @@
       text-align: center;
     }
 
-    .live-demo {
-      display: inline-block;
-      padding: 18px 50px;
-      background: rgb(169, 48, 228);
-      border-radius: 5px;
-      color: #ffffff;
-      font-family: 'Josefin Sans', sans-serif;
-      font-weight: 700;
-      position: relative;
-      z-index: 1;
-      -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
-      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      border: none;
-      text-decoration: none;
-      text-align: center;
+    .demo-buttons-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
 
-      &:hover {
+      .live-demo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 10px;
+        width: 200px;
+        max-width: 100%;
+        height: 80px;
+        background: rgb(169, 48, 228);
+        border-radius: 5px;
         color: #ffffff;
-        -webkit-box-shadow: 0 30px 80px -15px #A930E4;
-        box-shadow: 0 20px 40px -15px #A930E4;
+        font-family: 'Josefin Sans', sans-serif;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+        -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: none;
+        text-decoration: none;
+
+        &:hover {
+          color: #ffffff;
+          -webkit-box-shadow: 0 30px 80px -15px #A930E4;
+          box-shadow: 0 20px 40px -15px #A930E4;
+        }
       }
     }
 
+
   }
 
-  .header-image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .tilt {
+    width: 350px;
+    border-radius: 16px;
+
+  }
+
+
+
+  .header-image {
+    display: block;
+    width: auto;
+    width: 400px;
+    max-width: 100%;
+    height: auto;
+    position: relative;
     z-index: 1;
+    object-fit: cover;
+    /* box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5); */
+    transition: transform 0.5s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
 
-    .header-image {
-      width: auto;
-      width: 400px;
-      max-width: 100%;
-      height: auto;
-      position: relative;
-      z-index: 1;
+    &:hover {
+      transform: perspective(1000px) rotateY(15deg) translateY(-10px) scale(1.05);
     }
   }
 
 
+
 }
 
-
-@media screen and (max-width:600px) {
-
-  .header-container {
-    .header-description {
-      .header-title {
-        font-size: 20px;
-      }
-
-    }
-  }
-}
 
 .content-container {
   position: absolute;

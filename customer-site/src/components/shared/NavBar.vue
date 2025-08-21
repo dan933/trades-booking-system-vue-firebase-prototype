@@ -230,7 +230,7 @@ a {
     list-style-type: none;
     padding: 5px;
     background-color: white;
-    width: 80%;
+    width: 95%;
     background: #ffffff;
     padding: 30px;
     border-radius: 5px;
