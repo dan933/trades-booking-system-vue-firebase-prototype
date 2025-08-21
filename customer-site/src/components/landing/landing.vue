@@ -168,7 +168,6 @@
     position: relative;
     z-index: 1;
     object-fit: cover;
-    /* box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5); */
     transition: transform 0.5s ease, box-shadow 0.3s ease;
     transform-style: preserve-3d;
 
