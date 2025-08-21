@@ -6,8 +6,8 @@
           <h2 class="header-title">Customer Bookings made simple</h2>
           <p class="header-subtitle">Streamline customer scheduling and payments</p>
           <div class="demo-buttons-container">
-            <router-link to="/demo" class="live-demo">Customer Demo</router-link>
-            <router-link to="/demo" class="live-demo">Admin Demo</router-link>
+            <a @click="() => { navigate('/org/2FOkq3IGUln18QM90ObeI4/auth') }" class="live-demo">Customer Demo</a>
+            <a @click="() => { navigate('/demo') }" class="live-demo">Admin Demo</a>
           </div>
         </div>
         <div class="header-image-container">
@@ -67,6 +67,17 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
+const router = useRouter();
+
+
+const navigate = (path) => {
+  store.commit("updateView", "auth");
+  router.push(path);
+};
 
 </script>
 <style scoped>
@@ -138,6 +149,7 @@
         overflow: hidden;
         border: none;
         text-decoration: none;
+        cursor: pointer;
 
         &:hover {
           color: #ffffff;

@@ -1,11 +1,8 @@
-import Home from "../components/home/Home.vue";
-import About from "../components/about/About.vue";
-import Services from "../components/services/services.vue";
-import Contact from "../components/contact/contact.vue";
+// import Contact from "../components/contact/contact.vue";
 import NotFound from "../components/not-found/NotFound.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth } from "firebase/auth";
-import bookingStore from "../store/bookingStore";
+import bookingStore from "../store/store";
 import Landing from "../components/landing/landing.vue";
 
 const routes = [
@@ -14,21 +11,11 @@ const routes = [
     path: "/",
     component: Landing,
   },
-  {
-    name: "About",
-    path: "/about",
-    component: About,
-  },
-  {
-    name: "Services",
-    path: "/services",
-    component: Services,
-  },
-  {
-    name: "Contact",
-    path: "/contact",
-    component: Contact,
-  },
+  // {
+  //   name: "Contact",
+  //   path: "/contact",
+  //   component: Contact,
+  // },
   {
     name: "SuccessBooking",
     path: "/org/:id/book/confirmation",
@@ -44,7 +31,6 @@ const routes = [
     path: "/org/:id/book",
     component: () => import("../components/book/BookNow/Book.vue"),
   },
-
   {
     name: "Auth",
     path: "/org/:id/auth",

@@ -1,7 +1,7 @@
 <template>
   <nav :class="`nav ${scrollPosition > 0 ? 'nav-sticky' : ''}`">
     <div class="site-title-container">
-      <a class="site-header" href="#">Easy Booking</a>
+      <a class="site-header" @click="(event) => { handleNavClick('/', event) }">Easy Booking</a>
     </div>
     <ul class="nav-links">
       <li @click="(event) => { handleNavClick(menuItem, event) }" v-for="menuItem in menuList" :key="menuItem.name">
@@ -17,7 +17,7 @@
   </nav>
   <div :class="`${activeMobileMenu ? 'mobile-menu-visible' : 'mobile-menu-hidden'}`">
     <ul class="mobile-menu-links">
-      <li @click="() => { handleNavClick(menuItem) }" v-for="menuItem in menuList" :key="menuItem.name">
+      <li @click="(event) => { handleNavClick(menuItem, event) }" v-for="menuItem in menuList" :key="menuItem.name">
         <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{
           menuItem.name }}</a>
       </li>
@@ -27,13 +27,25 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 const activeMobileMenu = ref(false);
 const scrollPosition = ref(0);
 const navMenuChange = ref(false);
+const store = useStore();
+const router = useRouter();
+
 
 const handleNavClick = async (menuItem, event) => {
   event.preventDefault();
+
+  if (typeof menuItem === "string") {
+    store.commit("updateView", "landing")
+    props.navFunctions.setCurrentLink("home");
+    router.push(menuItem)
+    return;
+  }
+
   navMenuChange.value = true
   props.navFunctions.setCurrentLink(menuItem?.name?.toLowerCase?.())
   navMenuChange.value = false
@@ -97,6 +109,7 @@ const props = defineProps({
 .site-header {
   color: #ffffff;
   font-family: 'Rubik', sans-serif;
+  cursor: pointer;
 }
 
 .site-title-container {

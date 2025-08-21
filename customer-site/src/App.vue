@@ -1,13 +1,29 @@
 <script setup>
+import { useRoute } from "vue-router";
 import NavBar from "./components/shared/NavBar.vue";
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useStore } from "vuex";
 
-const view = ref("landing");
 
-const menuList = ref([
-  { name: 'Home', link: '#home' },
-  { name: 'About', link: '#about' }
-])
+const route = useRoute();
+
+const store = useStore();
+
+const view = computed(() => store.state.navigation.view)
+
+const menuList = computed(() => {
+
+  if (view.value !== "landing") {
+    return [];
+  }
+
+  let menu = [
+    { name: 'Home', link: '#home' },
+    { name: 'About', link: '#about' }
+  ]
+
+  return menu;
+})
 
 const currentLink = ref('home');
 
@@ -18,6 +34,7 @@ const navFunctions = {
   setCurrentLink(link) {
     currentLink.value = link;
   }
+
 }
 
 const handleScroll = () => {
@@ -33,8 +50,6 @@ const handleScroll = () => {
       if (rect.top <= 100 && rect.bottom >= 100) {
         currentLink.value = section;
         window.location.hash = `#${section}`;
-
-        break;
       }
     }
   }

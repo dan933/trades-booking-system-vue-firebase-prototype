@@ -15,6 +15,9 @@ export default createStore({
       gst: 0,
       total: 0,
     },
+    navigation: {
+      view: "landing",
+    },
   },
   mutations: {
     updateBooking(state, payload) {
@@ -37,11 +40,11 @@ export default createStore({
     setBookingRequest(state, payload) {
       state.bookingRequest = payload;
     },
+    //navigation
+    updateView(state, payload) {
+      state.navigation.view = payload;
+    },
   },
-  actions: {
-    // Your action functions here
-  },
-  getters: {
-    // Your getter functions here
-  },
+  actions: {},
+  getters: {},
 });
