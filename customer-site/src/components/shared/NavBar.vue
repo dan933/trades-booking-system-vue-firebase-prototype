@@ -4,7 +4,7 @@
       <a class="site-header" href="#">Easy Booking</a>
     </div>
     <ul class="nav-links">
-      <li @click="() => { handleNavClick(menuItem) }" v-for="menuItem in menuList" :key="menuItem.name">
+      <li @click="(event) => { handleNavClick(menuItem, event) }" v-for="menuItem in menuList" :key="menuItem.name">
         <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{
           menuItem.name }}</a>
       </li>
@@ -32,13 +32,22 @@ const activeMobileMenu = ref(false);
 const scrollPosition = ref(0);
 const navMenuChange = ref(false);
 
-const handleNavClick = (menuItem) => {
+const handleNavClick = async (menuItem, event) => {
+  event.preventDefault();
   navMenuChange.value = true
   props.navFunctions.setCurrentLink(menuItem?.name?.toLowerCase?.())
-
   navMenuChange.value = false
 
+  const element = document.getElementById(menuItem?.name?.toLowerCase());
+  if (element) {
+    const offsetTop = element.offsetTop - 100
+    window.scrollTo({
+      top: offsetTop,
+      behavior: 'smooth'
+    });
+  }
 
+  activeMobileMenu.value = false;
 }
 
 const handleScroll = () => {
@@ -81,6 +90,10 @@ const props = defineProps({
 </script>
 
 <style scoped>
+:global(html) {
+  scroll-behavior: smooth;
+}
+
 .site-header {
   color: #ffffff;
   font-family: 'Rubik', sans-serif;
@@ -104,7 +117,7 @@ a {
   position: sticky;
   top: 0;
   width: 100%;
-  max-width: 1900px;
+  max-width: 1800px;
   height: 80px;
   z-index: 1000;
   font-size: 18px;
@@ -112,15 +125,32 @@ a {
   justify-content: space-between;
   justify-self: center;
   align-items: center;
+  margin: 0 auto;
   padding: 0 20px;
   flex-wrap: wrap;
+  transition: all 0.3s ease-in-out;
+  transform: translateY(0);
 }
 
 .nav-sticky {
   background-color: #7d37e1;
   position: sticky;
   top: 0;
-  transition: all ease-in-out 700ms;
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease-in-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .nav-links {

@@ -1,13 +1,12 @@
 <script setup>
 import NavBar from "./components/shared/NavBar.vue";
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const view = ref("landing");
 
 const menuList = ref([
   { name: 'Home', link: '#home' },
-  { name: 'About', link: '#about' },
-  { name: 'Contact', link: '#contact' }
+  { name: 'About', link: '#about' }
 ])
 
 const currentLink = ref('home');
@@ -24,7 +23,8 @@ const navFunctions = {
 const handleScroll = () => {
   scrollPosition.value = window.scrollY || window.pageYOffset;
 
-  const sections = ['home', 'about', 'services', 'contact'];
+  const sections = ['home', 'about'];
+
 
   for (const section of sections) {
     const element = document.getElementById(section);
@@ -32,6 +32,8 @@ const handleScroll = () => {
       const rect = element.getBoundingClientRect();
       if (rect.top <= 100 && rect.bottom >= 100) {
         currentLink.value = section;
+        window.location.hash = `#${section}`;
+
         break;
       }
     }

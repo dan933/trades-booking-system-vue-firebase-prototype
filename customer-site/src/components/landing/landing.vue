@@ -1,6 +1,6 @@
 <template>
   <div class="landing-conatiner">
-    <header>
+    <header id="home">
       <div class="header-container">
         <div class="header-description">
           <h2 class="header-title">Customer Bookings made simple</h2>
@@ -15,7 +15,7 @@
         </div>
       </div>
     </header>
-    <div class="content-container">
+    <div class="content-container" id="about">
       <section class="content-row">
         <div class="icon">
           <span class="material-symbols-outlined">
