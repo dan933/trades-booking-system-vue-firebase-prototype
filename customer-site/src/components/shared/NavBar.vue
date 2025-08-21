@@ -255,6 +255,7 @@ a {
   }
 
   .nav {
+    background-color: #7a18f2;
 
     a {
       font-size: 18px;

@@ -68,7 +68,7 @@
 </script>
 <style scoped>
 .landing-conatiner {
-  position: absolute;
+  position: relative;
   width: 100%;
 }
 
