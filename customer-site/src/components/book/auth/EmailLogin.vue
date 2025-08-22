@@ -1,84 +1,45 @@
 <template>
-  <v-container>
-    <v-card class="mx-auto" min-width="150">
-      <v-card-text v-if="!IsShowResetForm">
+  <div>
+    <div class="login-card" min-width="150">
+      <div v-if="!IsShowResetForm">
         <h1 class="card-title">Login</h1>
-        <v-form @submit.prevent="login" v-model="loginForm">
-          <v-text-field
-            v-model="user.email"
-            autocomplete="email"
-            label="Email"
-            required
-            :rules="emailRules"
-          ></v-text-field>
-          <v-text-field
-            v-model="user.password"
-            label="Password"
-            autocomplete="current-password"
-            type="password"
-            required
-            :rules="passwordRules"
-          ></v-text-field>
-          <v-alert
-            v-if="signInResponse?.IsPasswordIncorrect"
-            class="mb-3"
-            type="error"
-            :text="signInResponse?.errorMessage"
-            variant="outlined"
-            density="compact"
-          ></v-alert>
+        <div @submit.prevent="login">
+          <input v-model="user.email" autocomplete="email" label="Email" required :rules="emailRules"></input>
+          <input v-model="user.password" label="Password" autocomplete="current-password" type="password" required
+            :rules="passwordRules"></input>
+          <!-- <v-alert v-if="signInResponse?.IsPasswordIncorrect" class="mb-3" type="error"
+            :text="signInResponse?.errorMessage" variant="outlined" density="compact"></v-alert> -->
           <div class="mb-5" @click="() => (IsShowResetForm = true)">
             <a href="#">Forgot Password</a> <br />
           </div>
           <div class="card-button-container">
-            <v-btn size="small" type="submit" color="primary" class="mr-4 mb-4">
+            <button size="small" type="submit" color="primary" class="mr-4 mb-4">
               Login
-            </v-btn>
-            <v-btn
-              size="small"
-              class="mb-5"
-              @click="() => switchForm('Register')"
-              >Register Account</v-btn
-            >
+            </button>
+            <button size="small" class="mb-5" @click="() => switchForm('Register')">Register Account</button>
           </div>
-        </v-form>
-      </v-card-text>
-      <v-card-text v-if="IsShowResetForm">
+        </div>
+      </div>
+      <div v-if="IsShowResetForm">
         <h1 class="card-title">Reset</h1>
-        <v-form @submit.prevent="resetPassword" v-model="resetForm">
-          <v-text-field
-            v-if="!IsPasswordEmailSent"
-            v-model="user.email"
-            autocomplete="email"
-            label="Email"
-            required
-            :rules="emailRules"
-          ></v-text-field>
-          <v-card-text v-if="IsPasswordEmailSent">
+        <div @submit.prevent="resetPassword">
+          <input v-if="!IsPasswordEmailSent" v-model="user.email" autocomplete="email" label="Email" required
+            :rules="emailRules"></input>
+          <div v-if="IsPasswordEmailSent">
             An Email has been sent to {{ this.user.email }} please check your
             spam folder.
-          </v-card-text>
-          <div class="card-button-container">
-            <v-btn
-              v-if="!IsPasswordEmailSent"
-              size="small"
-              type="submit"
-              color="primary"
-              class="mr-4 mb-4"
-            >
-              Reset
-            </v-btn>
-            <v-btn
-              size="small"
-              class="mb-5"
-              @click="() => (IsShowResetForm = false)"
-              >Login</v-btn
-            >
           </div>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-container>
+          <div class="card-button-container">
+            <button v-if="!IsPasswordEmailSent" size="small" type="submit" color="primary" class="mr-4 mb-4">
+              Reset
+            </button>
+            <button size="small" class="mb-5" @click="() => (IsShowResetForm = false)">Login</button>
+          </div>
+        </div>
+      </div>
+      <slot name="providers"></slot>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -136,7 +97,15 @@ export default {
   },
 };
 </script>
-<style type="scss">
+<style>
+.login-card {
+  width: 464px;
+  height: 710px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: white;
+}
+
 .card-button-container {
   width: 100%;
   display: flex;

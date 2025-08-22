@@ -1,56 +1,28 @@
 <template>
-  <v-container>
-    <v-card class="mx-auto" min-width="150">
+  <div>
+    <div class="mx-auto" min-width="150">
       <h1 class="card-title">Register</h1>
-      <v-card-text>
-        <v-form
-          @submit.prevent="register"
-          v-model="registrationForm"
-          ref="registrationFormRef"
-        >
-          <v-text-field
-            class="mb-2"
-            v-model="userRegister.email"
-            label="Email"
-            type="email"
-            autocomplete="email"
-            required
-            :rules="emailRules"
-          ></v-text-field>
-          <v-text-field
-            class="mb-2"
-            v-model="userRegister.password"
-            label="Password"
-            type="password"
-            autocomplete="new-password"
-            :rules="passwordRules"
-            required
-          ></v-text-field>
-          <v-text-field
-            class="mb-2"
-            v-model="userRegister.confirmPassword"
-            label="Confirm Password"
-            type="password"
-            autocomplete="new-password"
-            :rules="confirmPasswordRules"
-            required
-          ></v-text-field>
+      <div>
+        <div @submit.prevent="register">
+          <input class="mb-2" v-model="userRegister.email" label="Email" type="email" autocomplete="email" required
+            :rules="emailRules"></input>
+          <input class="mb-2" v-model="userRegister.password" label="Password" type="password"
+            autocomplete="new-password" :rules="passwordRules" required></input>
+          <input class="mb-2" v-model="userRegister.confirmPassword" label="Confirm Password" type="password"
+            autocomplete="new-password" :rules="confirmPasswordRules" required></input>
           <div class="card-button-container">
-            <v-btn size="small" type="submit" color="primary" class="mr-4 mb-4">
+            <button size="small" type="submit" color="primary" class="mr-4 mb-4">
               Register
-            </v-btn>
-            <v-btn
-              size="small"
-              class="mr-4 mb-4"
-              @click="() => switchForm('Login')"
-            >
+            </button>
+            <button size="small" class="mr-4 mb-4" @click="() => switchForm('Login')">
               Have an account?
-            </v-btn>
+            </button>
           </div>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-container>
+        </div>
+      </div>
+    </div>
+    <slot name="providers"></slot>
+  </div>
 </template>
 
 <script>
@@ -133,6 +105,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .card-title {
   margin-top: 10px;
   text-align: center;

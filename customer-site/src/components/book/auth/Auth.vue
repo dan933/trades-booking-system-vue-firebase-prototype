@@ -1,28 +1,50 @@
 const Auth = () => Promise.resolve({
 <template>
   <section class="container-center">
-    <v-card elevation="5" class="auth-section">
+    <div elevation="5" class="auth-section">
       <EmailRegister v-if="selectedForm === 'Register'" @switchForm="switchForm" @registerEmailUser="registerEmailUser">
+
+        <template #providers>
+          <div class="provider-container">
+            <button @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
+              <img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset="" />
+              Continue With Google
+            </button>
+            <button @click="() => signIn({ providerName: 'Facebook' })" class="provider-button text-subtitle-2">
+              <span icon="mdi:mdi-facebook" size="50px" color="blue"></span>
+              Continue With Facebook
+            </button>
+            <button @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
+              <span icon="mdi:mdi-account" size="50px" color="black"></span>
+              Continue as Guest
+            </button>
+          </div>
+        </template>
+
       </EmailRegister>
 
       <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @switchForm="switchForm"
-        @signIn="signIn"></EmailLogin>
+        @signIn="signIn">
+        <template #providers>
+          <div class="provider-container">
+            <button @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
+              <img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset="" />
+              Continue With Google
+            </button>
+            <button @click="() => signIn({ providerName: 'Facebook' })" class="provider-button text-subtitle-2">
+              <span icon="mdi:mdi-facebook" size="50px" color="blue"></span>
+              Continue With Facebook
+            </button>
+            <button @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
+              <span icon="mdi:mdi-account" size="50px" color="black"></span>
+              Continue as Guest
+            </button>
+          </div>
+        </template>
+      </EmailLogin>
 
-      <v-container class="provider-container">
-        <v-btn @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
-          <img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset="" />
-          Continue With Google
-        </v-btn>
-        <v-btn @click="() => signIn({ providerName: 'Facebook' })" class="provider-button text-subtitle-2">
-          <v-icon icon="mdi:mdi-facebook" size="50px" color="blue"></v-icon>
-          Continue With Facebook
-        </v-btn>
-        <v-btn @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
-          <v-icon icon="mdi:mdi-account" size="50px" color="black"></v-icon>
-          Continue as Guest
-        </v-btn>
-      </v-container>
-    </v-card>
+
+    </div>
     <LinkCredentialsDialog ref="linkCredentialsDialogRef" @resetSignInResponse="signInResponse = null">
     </LinkCredentialsDialog>
   </section>
