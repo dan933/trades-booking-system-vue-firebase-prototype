@@ -8,25 +8,36 @@
         <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{
           menuItem.name }}</a>
       </li>
+      <li v-if="currentUser" class="logout-item" @click="logout">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="logout-text">Logout</span>
+      </li>
+
     </ul>
-    <button v-if="menuList?.length" :class="`burger ${activeMobileMenu ? 'play' : ''}`"
+    <button v-if="menuList?.length || currentUser" :class="`burger ${activeMobileMenu ? 'play' : ''}`"
       @click="() => { activeMobileMenu = !activeMobileMenu }">
       <span class="bar"></span>
       <span class="bar"></span>
       <span class="bar"></span>
     </button>
   </nav>
-  <div v-if="menuList?.length" :class="`${activeMobileMenu ? 'mobile-menu-visible' : 'mobile-menu-hidden'}`">
+  <div v-if="menuList?.length || currentUser"
+    :class="`${activeMobileMenu ? 'mobile-menu-visible' : 'mobile-menu-hidden'}`">
     <ul class="mobile-menu-links">
       <li @click="(event) => { handleNavClick(menuItem, event) }" v-for="menuItem in menuList" :key="menuItem.name">
         <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{
           menuItem.name }}</a>
+      </li>
+      <li v-if="currentUser" class="logout-item logout-item-mobile" @click="logout">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="logout-text">Logout</span>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup>
+import { getAuth, signOut } from "firebase/auth";
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -35,6 +46,7 @@ const scrollPosition = ref(0);
 const navMenuChange = ref(false);
 const store = useStore();
 const router = useRouter();
+const currentUser = ref(null)
 
 
 const handleNavClick = async (menuItem, event) => {
@@ -67,8 +79,24 @@ const handleScroll = () => {
   scrollPosition.value = window.scrollY || window.pageYOffset;
 };
 
+const logout = (event) => {
+  activeMobileMenu.value = false;
+  let auth = getAuth();
+
+  signOut(auth).then(() => {
+    handleNavClick('/', event)
+  }).catch((err) => { console.log(err) })
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
+
+  getAuth()
+    .onAuthStateChanged((auth) => {
+      currentUser.value = auth;
+    })
+
+
 });
 
 onBeforeUnmount(() => {
@@ -131,7 +159,7 @@ a {
   position: sticky;
   top: 0;
   width: 100%;
-  max-width: 1800px;
+  max-width: 1920px;
   height: 80px;
   z-index: 1000;
   font-size: 18px;
@@ -148,8 +176,10 @@ a {
 
 .nav-sticky {
   background-color: #7d37e1;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   transform: translateY(0);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.3s ease-in-out;
@@ -207,6 +237,39 @@ a {
     width: 100%;
   }
 }
+
+.logout-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 19px;
+  transition: 0.4s;
+}
+
+.logout-item-mobile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  cursor: pointer;
+  color: black;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 19px;
+  transition: 0.4s;
+}
+
+.logout-item:hover {
+  opacity: 0.5;
+}
+
+.logout-item .material-symbols-outlined {
+  font-size: 20px;
+}
+
 
 .burger {
   display: none;
