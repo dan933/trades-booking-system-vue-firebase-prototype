@@ -4,22 +4,24 @@ const Auth = () => Promise.resolve({
     <div elevation="5" class="auth-section">
       <EmailRegister v-if="selectedForm === 'Register'" @switchForm="switchForm" @registerEmailUser="registerEmailUser">
         <template #providers>
+          <span class="provider-or">or</span>
           <div class="provider-container">
             <button @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
               <img class="google-logo" src="/icons/google-logo.png" alt="" srcset="" />
-              Google
+              <span>Google</span>
             </button>
             <button @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
-              <span icon="mdi:mdi-account" size="50px" color="black"></span>
-              Continue as Guest
+              <v-icon icon="mdi:mdi-account" size="20px" color="black"></v-icon>
+              <span>Guest</span>
             </button>
           </div>
+          <p @click="() => switchForm('Login')" class="register-text">Already have an account ? <span
+              class="register-bold">Login</span></p>
         </template>
 
       </EmailRegister>
 
-      <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @switchForm="switchForm"
-        @signIn="signIn">
+      <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @signIn="signIn">
         <template #providers>
           <span class="provider-or">or</span>
           <div class="provider-container">
@@ -32,6 +34,8 @@ const Auth = () => Promise.resolve({
               <span>Guest</span>
             </button>
           </div>
+          <p @click="() => switchForm('Register')" class="register-text">Don't have an account ? <span
+              class="register-bold">Register</span></p>
         </template>
       </EmailLogin>
 
@@ -199,6 +203,16 @@ export default {
 .card-title {
   margin-top: 10px;
   text-align: center;
+}
+
+.register-text {
+  text-align: center;
+  cursor: pointer;
+  font-weight: 100;
+
+  .register-bold {
+    font-weight: 900;
+  }
 }
 
 @media screen and (max-width: 400px) {

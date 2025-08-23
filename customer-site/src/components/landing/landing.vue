@@ -6,7 +6,7 @@
           <h2 class="header-title">Customer Bookings made simple</h2>
           <p class="header-subtitle">Streamline customer scheduling and payments</p>
           <div class="demo-buttons-container">
-            <a @click="() => { navigate('/org/2FOkq3IGUln18QM90ObeI4/auth') }" class="live-demo">Customer Demo</a>
+            <a @click="() => { navigate('/org/Okq3IGUln18QM90ObeI4/auth') }" class="live-demo">Customer Demo</a>
             <a @click="() => { navigate('/demo') }" class="live-demo">Admin Demo</a>
           </div>
         </div>

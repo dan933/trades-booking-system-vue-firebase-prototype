@@ -22,7 +22,6 @@
           <v-btn type="submit" color="primary" class="mb-4 pa-5 w-100 d-flex">
             Login
           </v-btn>
-          <!-- <v-btn size="small" class="mb-5" @click="() => switchForm('Register')">Register Account</v-btn> -->
         </div>
       </v-form>
     </div>
@@ -70,13 +69,10 @@ export default {
             v
           ) || "Email must be valid",
       ],
-      passwordRules: [(value) => !!value || "Password Required", (value) => value.length >= 8 || "Password must be at least 8 characters",],
+      passwordRules: [(value) => !!value || "Password Required"],
     };
   },
   methods: {
-    switchForm(selectedForm) {
-      this.$emit("switchForm", selectedForm);
-    },
     login() {
       if (this.loginForm) {
         let request = {
@@ -103,13 +99,14 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .login-card {
   display: flex;
   flex-direction: column;
   justify-self: center;
   width: 464px;
   max-width: 90%;
+  margin: 10px;
   padding: 15px;
   border-radius: 10px;
   background-color: white;
@@ -126,6 +123,8 @@ export default {
 }
 
 .card-title {
+  margin-top: 10px;
+  text-align: center;
   font-family: 'Rubik', sans-serif;
   font-size: 25px;
   color: #7a18f2;
