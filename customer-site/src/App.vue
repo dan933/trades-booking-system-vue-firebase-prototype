@@ -80,7 +80,7 @@ onBeforeUnmount(() => {
   min-height: 100vh;
   /* min-height: 200vh; */
   height: fit-content;
-  background: url("../public/background-header-landing.png");
+  background: url("/background-header-landing.png");
   background-repeat: no-repeat;
   background-position: top -300px center;
 }

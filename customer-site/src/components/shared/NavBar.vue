@@ -9,13 +9,14 @@
           menuItem.name }}</a>
       </li>
     </ul>
-    <button :class="`burger ${activeMobileMenu ? 'play' : ''}`" @click="() => { activeMobileMenu = !activeMobileMenu }">
+    <button v-if="menuList?.length" :class="`burger ${activeMobileMenu ? 'play' : ''}`"
+      @click="() => { activeMobileMenu = !activeMobileMenu }">
       <span class="bar"></span>
       <span class="bar"></span>
       <span class="bar"></span>
     </button>
   </nav>
-  <div :class="`${activeMobileMenu ? 'mobile-menu-visible' : 'mobile-menu-hidden'}`">
+  <div v-if="menuList?.length" :class="`${activeMobileMenu ? 'mobile-menu-visible' : 'mobile-menu-hidden'}`">
     <ul class="mobile-menu-links">
       <li @click="(event) => { handleNavClick(menuItem, event) }" v-for="menuItem in menuList" :key="menuItem.name">
         <a :class="`nav-item ${currentLink === menuItem?.name?.toLowerCase?.() && 'active'}`" :href="menuItem.link">{{

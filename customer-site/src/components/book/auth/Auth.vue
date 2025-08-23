@@ -3,16 +3,11 @@ const Auth = () => Promise.resolve({
   <section class="container-center">
     <div elevation="5" class="auth-section">
       <EmailRegister v-if="selectedForm === 'Register'" @switchForm="switchForm" @registerEmailUser="registerEmailUser">
-
         <template #providers>
           <div class="provider-container">
             <button @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
-              <img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset="" />
-              Continue With Google
-            </button>
-            <button @click="() => signIn({ providerName: 'Facebook' })" class="provider-button text-subtitle-2">
-              <span icon="mdi:mdi-facebook" size="50px" color="blue"></span>
-              Continue With Facebook
+              <img class="google-logo" src="/icons/google-logo.png" alt="" srcset="" />
+              Google
             </button>
             <button @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
               <span icon="mdi:mdi-account" size="50px" color="black"></span>
@@ -26,18 +21,15 @@ const Auth = () => Promise.resolve({
       <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @switchForm="switchForm"
         @signIn="signIn">
         <template #providers>
+          <span class="provider-or">or</span>
           <div class="provider-container">
             <button @click="() => signIn({ providerName: 'Google' })" class="provider-button text-subtitle-2">
-              <img class="google-logo" src="../../../../public/icons/google-logo.png" alt="" srcset="" />
-              Continue With Google
-            </button>
-            <button @click="() => signIn({ providerName: 'Facebook' })" class="provider-button text-subtitle-2">
-              <span icon="mdi:mdi-facebook" size="50px" color="blue"></span>
-              Continue With Facebook
+              <img class="google-logo" src="/icons/google-logo.png" alt="" srcset="" />
+              <span>Google</span>
             </button>
             <button @click="() => signIn({ providerName: 'Guest' })" class="provider-button text-subtitle-2">
-              <span icon="mdi:mdi-account" size="50px" color="black"></span>
-              Continue as Guest
+              <v-icon icon="mdi:mdi-account" size="20px" color="black"></v-icon>
+              <span>Guest</span>
             </button>
           </div>
         </template>
@@ -56,7 +48,6 @@ import LinkCredentialsDialog from "./LinkCredentialsDialog.vue";
 import EmailRegister from "./EmailRegister.vue";
 import EmailLogin from "./EmailLogin.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 export default {
   name: "Auth",
   components: { LinkCredentialsDialog, EmailRegister, EmailLogin },
@@ -79,6 +70,7 @@ export default {
     },
   },
   mounted() {
+    this.$store.commit("updateView", "auth");
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -145,27 +137,53 @@ export default {
 .auth-section {
   display: block;
   overflow: auto;
-  width: 466px;
+  max-width: 100%;
+}
+
+.provider-or {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    position: relative;
+    top: -10px;
+    content: "-------------------";
+    flex: 1;
+    height: 1px;
+  }
+
+  &::before {
+    margin-right: 10px;
+  }
+
+  &::after {
+    margin-left: 10px;
+  }
 }
 
 .provider-container {
   padding: 15px;
-  background-color: lightgrey;
   height: auto;
-  width: 90%;
   min-width: 200px;
   display: flex;
-  row-gap: 30px;
+  gap: 10px;
   border-radius: 5px;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 15px 20px;
 }
 
 .provider-button {
-  padding: 15px;
-  width: 332px;
+  padding: 10px 24px;
+  width: 200px;
+  max-width: 60%;
+  border: solid gray 1px;
+  border-radius: 5px;
   height: auto;
   display: flex;
   flex-direction: row;
@@ -174,9 +192,8 @@ export default {
 }
 
 .google-logo {
-  margin-right: 10px;
-  height: 40px;
-  max-height: 10vh;
+  height: 1.25rem;
+
 }
 
 .card-title {
