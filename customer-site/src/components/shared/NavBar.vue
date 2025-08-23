@@ -1,7 +1,7 @@
 <template>
   <nav :class="`nav ${scrollPosition > 0 ? 'nav-sticky' : ''}`">
     <div class="site-title-container">
-      <a class="site-header" @click="(event) => { handleNavClick('/', event) }">Easy Booking</a>
+      <a class="site-header" @click="(event) => { handleNavClick('/#home', event) }">Easy Booking</a>
     </div>
     <ul class="nav-links">
       <li @click="(event) => { handleNavClick(menuItem, event) }" v-for="menuItem in menuList" :key="menuItem.name">
@@ -40,19 +40,20 @@
 import { getAuth, signOut } from "firebase/auth";
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 const activeMobileMenu = ref(false);
 const scrollPosition = ref(0);
 const navMenuChange = ref(false);
 const store = useStore();
 const router = useRouter();
-const currentUser = ref(null)
+const currentUser = ref(null);
+let route = useRoute();
 
 
 const handleNavClick = async (menuItem, event) => {
   event.preventDefault();
 
-  if (typeof menuItem === "string") {
+  if (typeof menuItem === "string" && route.path !== '/') {
     store.commit("updateView", "landing")
     props.navFunctions.setCurrentLink("home");
     router.push(menuItem)
@@ -60,10 +61,10 @@ const handleNavClick = async (menuItem, event) => {
   }
 
   navMenuChange.value = true
-  props.navFunctions.setCurrentLink(menuItem?.name?.toLowerCase?.())
+  props.navFunctions.setCurrentLink(menuItem?.name?.toLowerCase?.() || 'home')
   navMenuChange.value = false
 
-  const element = document.getElementById(menuItem?.name?.toLowerCase());
+  const element = document.getElementById(menuItem?.name?.toLowerCase() || 'home');
   if (element) {
     const offsetTop = element.offsetTop - 100
     window.scrollTo({
