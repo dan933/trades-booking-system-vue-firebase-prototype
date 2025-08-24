@@ -243,7 +243,7 @@ const navigate = (path) => {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 530px) {
   .landing-conatiner .header-container .header-description .header-title {
     font-size: 30px;
   }
