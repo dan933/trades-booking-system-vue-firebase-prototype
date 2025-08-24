@@ -92,7 +92,9 @@ export default {
       //get the organisation Id
       const orgId = this.$route.params.id;
 
-      this.loading = true;
+      if (signInDetails?.providerName === "email") {
+        this.loading = true;
+      }
 
       //stops redirect to booking page
       //redirect too book happens if the user is already signed in on initial load

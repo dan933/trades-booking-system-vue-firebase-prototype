@@ -6,6 +6,11 @@
       <p><strong>Number of Hours:</strong> {{ hoursBooked }}</p>
     </div>
 
+    <div v-show="stripeLoaded && !loading" class="demo-card-info">
+      <p><strong>Demo Card:</strong> 4242 4242 4242 4242</p>
+      <p><strong>Expiry:</strong> Any future date | <strong>CVC:</strong> Any 3 digits</p>
+    </div>
+
     <StripeElements v-show="stripeLoaded && !loading" v-slot="{ elements, instance }" ref="elms" :stripe-key="stripeKey"
       :instance-options="instanceOptions" :elements-options="elementsOptions">
       <StripeElement ref="card" :elements="elements" :options="cardOptions" />
@@ -133,6 +138,16 @@ export default defineComponent({
 </script>
 
 <style>
+.demo-card-info {
+  background-color: #f0f8ff;
+  border: 1px solid #d1ecf1;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #0c5460;
+}
+
 /* Stripe Elements Styles */
 .stripe-container {
   margin-left: auto;

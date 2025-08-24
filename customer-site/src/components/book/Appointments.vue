@@ -66,8 +66,6 @@ export default {
       let lastVisible = pagination.value.lastVisible;
       let stopCalls = pagination.value.stopCalls;
 
-      console.log(stopCalls);
-
       const response = await getAppointments(
         orgId,
         lastVisible,
