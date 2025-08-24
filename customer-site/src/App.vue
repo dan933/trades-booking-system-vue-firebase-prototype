@@ -1,11 +1,7 @@
 <script setup>
-import { useRoute } from "vue-router";
 import NavBar from "./components/shared/NavBar.vue";
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useStore } from "vuex";
-
-
-const route = useRoute();
 
 const store = useStore();
 
@@ -32,6 +28,7 @@ const scrollPosition = ref(0);
 
 const navFunctions = {
   setCurrentLink(link) {
+    console.log(link)
     currentLink.value = link;
   }
 
@@ -47,7 +44,8 @@ const handleScroll = () => {
     const element = document.getElementById(section);
     if (element) {
       const rect = element.getBoundingClientRect();
-      if (rect.top <= 100 && rect.bottom >= 100) {
+      console.log("rect", rect)
+      if (rect.top?.toFixed() <= 100 && rect.bottom?.toFixed() >= 100) {
         currentLink.value = section;
         window.location.hash = `#${section}`;
       }
@@ -63,6 +61,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll);
 });
 
+
 </script>
 
 <template>
@@ -72,7 +71,7 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .app-container {
   display: block;
   flex-direction: column;

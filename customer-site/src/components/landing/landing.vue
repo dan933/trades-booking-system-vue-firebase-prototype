@@ -194,7 +194,7 @@ const navigate = (path) => {
   }
 
   .content-container {
-    margin-top: 200px;
+    padding-top: 200px;
     padding-bottom: 100px;
     position: absolute;
     display: flex;

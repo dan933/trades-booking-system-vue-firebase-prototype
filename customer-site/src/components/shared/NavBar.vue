@@ -43,7 +43,6 @@ import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 const activeMobileMenu = ref(false);
 const scrollPosition = ref(0);
-const navMenuChange = ref(false);
 const store = useStore();
 const router = useRouter();
 const currentUser = ref(null);
@@ -59,10 +58,6 @@ const handleNavClick = async (menuItem, event) => {
     router.push(menuItem)
     return;
   }
-
-  navMenuChange.value = true
-  props.navFunctions.setCurrentLink(menuItem?.name?.toLowerCase?.() || 'home')
-  navMenuChange.value = false
 
   const element = document.getElementById(menuItem?.name?.toLowerCase() || 'home');
   if (element) {
@@ -111,8 +106,7 @@ const props = defineProps({
     default: () => [
       { name: 'Home', link: '#home' },
       { name: 'About', link: '#about' },
-      { name: 'Booking', link: '#services' },
-      { name: 'Contact', link: '#contact' }
+      // { name: 'Contact', link: '#contact' }
     ]
   },
   scrollPosition: {
