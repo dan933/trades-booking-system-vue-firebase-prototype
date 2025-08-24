@@ -21,7 +21,7 @@ const Auth = () => Promise.resolve({
 
       </EmailRegister>
 
-      <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @signIn="signIn">
+      <EmailLogin v-if="selectedForm === 'Login'" :signInResponse="signInResponse" @signIn="signIn" :loading="loading">
         <template #providers>
           <span class="provider-or">or</span>
           <div class="provider-container">
@@ -57,6 +57,7 @@ export default {
   components: { LinkCredentialsDialog, EmailRegister, EmailLogin },
   data() {
     return {
+      loading: false,
       selectedForm: "Login",
       provider: null,
       signInResponse: null,
@@ -91,11 +92,13 @@ export default {
       //get the organisation Id
       const orgId = this.$route.params.id;
 
-      // console.log("org", orgId);
+      this.loading = true;
 
       //stops redirect to booking page
       //redirect too book happens if the user is already signed in on initial load
-      this.signInResponse = await authService.signIn(signInDetails, orgId);
+      this.signInResponse = await authService.signIn(signInDetails, orgId).finally(() => {
+        this.loading = false;
+      });
 
       //if the user is a Guest
       if (this.signInResponse?.IsGuest) {

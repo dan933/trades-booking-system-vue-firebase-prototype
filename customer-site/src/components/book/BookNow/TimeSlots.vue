@@ -1,7 +1,6 @@
 <template>
   <v-card flat rounded="0" class="book-now-card">
-    <h3>Pick a date</h3>
-    <VDatePicker :min-date="tomorrow" :disabled-dates="disabledDates" @dayclick="onCalendarClick">
+    <VDatePicker :min-date="tomorrow" :disabled-dates="disabledDates" @dayclick="onCalendarClick" title="Pick a Date">
       <template #default="{ togglePopover }">
         <div class="date-input">
           <v-btn class="text-none text-subtitle-1" color="primary" variant="elevated" @click="togglePopover">
@@ -14,10 +13,10 @@
     <v-container v-if="IsAvailableDate" class="timeslot-container">
       <h3>Pick A Timeslot</h3>
       <v-autocomplete v-model="selectedTimeSlot" :items="availableTimeSlots" :item-title="(item) => {
-          return item?.time
-            ? `${item.time} (available hours ${item.availableHours})`
-            : '';
-        }
+        return item?.time
+          ? `${item.time} (available hours ${item.availableHours})`
+          : '';
+      }
         " :item-value="(item) => item" label="Select a time slot" style="width: 245px"></v-autocomplete>
       <p v-if="selectedTimeSlot?.availableHours">
         <strong>This time slot currently has
@@ -39,10 +38,11 @@ import {
 export default {
   name: "TimeSlots",
   data: () => ({
+    loading: false,
     //data that we will get from the db
     availabilityDoc: null,
     bookingScheduleData: null,
-    disabledDates: null,
+    disabledDates: [],
     selectedDate: null,
     availabilityMessage: "",
     IsAvailableDate: false,
@@ -51,6 +51,9 @@ export default {
   }),
   methods: {
     async init() {
+
+      this.loading = true;
+
       //gets the availability of the timeslots and dates from db
       const {
         bookedOutDates,
@@ -72,6 +75,8 @@ export default {
         businessClosedDays,
         bookMonthsAhead
       );
+
+      this.loading = false;
     },
     async disabledUnavailableDates(
       bookedOutDates,
@@ -249,6 +254,8 @@ export default {
   row-gap: 15px;
   height: 90%;
   width: 100%;
+  min-height: 400px;
+  height: fit-content;
   padding: 10px;
   overflow: auto;
 }

@@ -19,7 +19,7 @@ let generateBookingEmailData = (booking, gstEnabled) => {
     serviceHtml += `<tr style="background-color: ${color}">
     <td style="border: 1px solid #ddd; padding: 8px;">${service.name}</td>
     <td style="border: 1px solid #ddd; padding: 8px;">${service.hours}</td>
-    <td style="border: 1px solid #ddd; padding: 8px;">${service.rate}</td>
+    <td style="border: 1px solid #ddd; padding: 8px;">$${service.rate}</td>
     </tr>`;
   });
 

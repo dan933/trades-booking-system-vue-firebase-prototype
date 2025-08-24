@@ -14,7 +14,7 @@
         <v-text-field v-if="IsGuest" v-model="email" label="Email" type="email" :rules="emailRules"></v-text-field>
         <!-- new address format -->
         <!-- seperate inputs for street address, suburb, state and postcode -->
-        <v-container fluid style="padding: 0px">
+        <!-- <v-container fluid style="padding: 0px">
           <v-textarea name="input-2-1" rows="1" variant="filled" :model-value="address" label="Street Address"
             autocomplete="street-address" :rules="[(v) => !!v || 'Street Address is required']" auto-grow></v-textarea>
         </v-container>
@@ -25,12 +25,8 @@
             :items="['VIC', 'NSW', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']"></v-autocomplete>
         </v-container>
         <v-text-field style="width: 150px; margin-top: 20px" label="Postcode" autocomplete="postal-code"
-          :rules="[(v) => !!v || 'Postcode is required']"></v-text-field>
-        <!-- <v-textarea
-          v-model="address"
-          label="Address"
-          :rules="[(v) => !!v || 'Address is required']"
-        ></v-textarea> -->
+          :rules="[(v) => !!v || 'Postcode is required']"></v-text-field> -->
+        <v-textarea v-model="address" label="Address" :rules="[(v) => !!v || 'Address is required']"></v-textarea>
         <v-btn color="primary mt-4" type="submit">Next</v-btn>
       </v-form>
       <v-container v-else class="d-flex justify-center align-center" style="height: 100%">

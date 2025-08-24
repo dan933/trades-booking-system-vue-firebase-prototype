@@ -6,10 +6,10 @@
     <div v-if="!IsShowResetForm">
       <h4 class="card-subtitle">Login</h4>
       <v-form @submit.prevent="login" v-model="loginForm" class="form">
-        <v-text-field variant="outlined" v-model="user.email" autocomplete="email" label="Email" required
-          :rules="emailRules"></v-text-field>
-        <v-text-field variant="outlined" v-model="user.password" label="Password" autocomplete="current-password"
-          :type="showPassword ? 'text' : 'password'" required :rules="passwordRules"
+        <v-text-field :disabled="loading" variant="outlined" v-model="user.email" autocomplete="email" label="Email"
+          required :rules="emailRules"></v-text-field>
+        <v-text-field :disable="loading" variant="outlined" v-model="user.password" label="Password"
+          autocomplete="current-password" :type="showPassword ? 'text' : 'password'" required :rules="passwordRules"
           :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="showPassword = !showPassword">
         </v-text-field>
@@ -19,30 +19,34 @@
           <a href="#">Forgot Password</a> <br />
         </div>
         <div class="card-button-container">
-          <v-btn type="submit" color="primary" class="mb-4 pa-5 w-100 d-flex">
+          <v-btn type="submit" :loading="loading" :disabled="loading" color="primary" class="mb-4 pa-5 w-100 d-flex">
             Login
           </v-btn>
         </div>
       </v-form>
     </div>
     <div v-if="IsShowResetForm">
-      <h1 class="card-title">Reset</h1>
-      <div @submit.prevent="resetPassword">
-        <input v-if="!IsPasswordEmailSent" v-model="user.email" autocomplete="email" label="Email" required
-          :rules="emailRules"></input>
-        <div v-if="IsPasswordEmailSent">
+      <h4 class="card-subtitle">Reset Password</h4>
+      <v-form @submit.prevent="resetPassword" v-model="resetForm">
+        <v-text-field variant="outlined" v-if="!IsPasswordEmailSent" v-model="user.email" autocomplete="email"
+          label="Email" required :rules="emailRules"></v-text-field>
+        <div v-if="IsPasswordEmailSent" class="pa-4">
           An Email has been sent to {{ this.user.email }} please check your
           spam folder.
         </div>
         <div class="card-button-container">
-          <v-btn v-if="!IsPasswordEmailSent" size="small" type="submit" color="primary" class="mr-4 mb-4">
-            Reset
+          <v-btn v-if="!IsPasswordEmailSent" type="submit" :disabled="!user.email" color="primary"
+            class="mt-4 mb-4 pa-5 w-100 d-flex">
+            Reset Password
           </v-btn>
-          <v-btn size="small" class="mb-5" @click="() => (IsShowResetForm = false)">Login</v-btn>
+          <v-btn class="mb-4 pa-5 w-100 d-flex" @click="() => {
+            IsShowResetForm = false;
+            IsPasswordEmailSent = false;
+          }">Back To Login</v-btn>
         </div>
-      </div>
+      </v-form>
     </div>
-    <slot name="providers"></slot>
+    <slot v-if="!IsShowResetForm" name="providers"></slot>
   </v-card>
 </template>
 
@@ -50,7 +54,7 @@
 import { authService } from "../../../services/auth/auth-services.js";
 export default {
   name: "emailLogin",
-  props: ["signInResponse"],
+  props: ["signInResponse", "loading"],
   data() {
     return {
       resetForm: true,

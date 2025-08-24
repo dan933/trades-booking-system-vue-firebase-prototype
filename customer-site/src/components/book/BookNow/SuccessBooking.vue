@@ -19,7 +19,7 @@ const SuccessBooking = () => Promise.resolve({
             <th class="text-left">Service</th>
             <th class="text-left">Rate</th>
             <th class="text-left">Hours</th>
-            <th class="text-left">lineTotal</th>
+            <th class="text-left">Line Total</th>
           </tr>
         </thead>
         <tbody>
@@ -37,7 +37,7 @@ const SuccessBooking = () => Promise.resolve({
           {{ booking.hoursRequired }}
         </p>
         <p>
-          <strong>Subtotal:</strong>
+          <strong>Sub Total:</strong>
           $ {{ `${booking.subtotal.toFixed(2)}` }}
         </p>
         <p>
@@ -49,6 +49,10 @@ const SuccessBooking = () => Promise.resolve({
           $ {{ `${booking.total.toFixed(2)}` }}
         </p>
       </div>
+      
+      <v-btn @click="goBack" color="primary" class="mt-4">
+        Back
+      </v-btn>
     </v-container>
   </v-card>
 </template>
@@ -75,6 +79,9 @@ export default {
       const orgId = this.$route.params.id;
       await sendBookingConfirmationEmail(bookingData, orgId);
     },
+    goBack() {
+      this.$router.go(-1);
+    },
   },
   async mounted() {
     await this.sendConfirmationEmail();
@@ -96,6 +103,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-self: center;
   width: 90%;
   margin: 20px;
   height: 100%;

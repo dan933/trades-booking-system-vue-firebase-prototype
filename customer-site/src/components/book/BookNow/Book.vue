@@ -56,7 +56,6 @@ export default {
 }
 
 .book-section {
-  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,6 +63,8 @@ export default {
   width: 90%;
   height: 100%;
   max-height: 730px;
+  justify-self: center;
+  padding-top: 30px;
 }
 
 .card {

@@ -77,7 +77,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 35px;
   min-height: 100vh;
-  min-height: 200vh;
+  /* min-height: 200vh; */
   height: fit-content;
   background: url("/background-header-landing.png");
   background-repeat: no-repeat;
