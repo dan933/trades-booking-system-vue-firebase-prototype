@@ -28,7 +28,6 @@ const scrollPosition = ref(0);
 
 const navFunctions = {
   setCurrentLink(link) {
-    console.log(link)
     currentLink.value = link;
   }
 
@@ -44,7 +43,6 @@ const handleScroll = () => {
     const element = document.getElementById(section);
     if (element) {
       const rect = element.getBoundingClientRect();
-      console.log("rect", rect)
       if (rect.top?.toFixed() <= 100 && rect.bottom?.toFixed() >= 100) {
         currentLink.value = section;
         window.location.hash = `#${section}`;
