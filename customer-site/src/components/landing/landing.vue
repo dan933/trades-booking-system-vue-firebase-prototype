@@ -32,7 +32,7 @@
           </p>
         </div>
         <div class="content-image">
-          <img src="../../../public/confirmation-booking.png" alt="appointments"
+          <img src="../../../public/appointments.png" alt="appointments"
             style="background-size: cover; width: 100%; height: 100%;">
         </div>
       </section>
