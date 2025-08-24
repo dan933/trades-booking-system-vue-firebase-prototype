@@ -22,7 +22,7 @@ const Appointments = () => Promise.resolve({
             {{
               new Date(
                 appointment.bookingDate.seconds * 1000
-              ).toLocaleDateString()
+              ).toLocaleDateString('en-GB')
             }}
           </td>
           <td>{{ appointment.startHour }}:00</td>
