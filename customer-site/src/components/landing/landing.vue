@@ -16,49 +16,68 @@
       </div>
     </header>
     <div class="content-container" id="about">
-      <section class="content-row">
-        <div class="icon">
-          <span class="material-symbols-outlined">
-            calendar_add_on
-          </span>
+      <section class="content-row left">
+        <div class="content-text">
+          <div class="icon">
+            <span class="material-symbols-outlined">
+              calendar_add_on
+            </span>
+          </div>
+          <h3 class="section-header">
+            Streamline Bookings
+          </h3>
+          <p class="section-description">
+            Effortlessly manage your bookings with our intuitive calendar system, designed to keep you organized and
+            efficient.
+          </p>
         </div>
-        <h3 class="section-header">
-          Streamline Bookings
-        </h3>
-        <p class="section-description">
-          Effortlessly manage your bookings with our intuitive calendar system, designed to keep you organized and
-          efficient.
-        </p>
+        <div class="content-image">
+          <img src="../../../public/confirmation-booking.png" alt="appointments"
+            style="background-size: cover; width: 100%; height: 100%;">
+        </div>
       </section>
-      <section class="content-row">
-        <div class="icon">
-          <span class="material-symbols-outlined">
-            flex_wrap
-          </span>
+      <section class="content-row right">
+        <div class="content-image">
+          <img src="../../../public/book-dates.png" alt="appointments"
+            style="background-size: cover; width: 100%; height: 100%;">
         </div>
-        <h3 class="section-header">
-          Customised Schedule
-        </h3>
-        <p class="section-description">
-          Set your available hours and define gaps between bookings to suit your workflow. Our flexible scheduling
-          options
-          let you control when and how customers can book your services.
-        </p>
+        <div class="content-text">
+          <div class="icon">
+            <span class="material-symbols-outlined">
+              flex_wrap
+            </span>
+          </div>
+          <h3 class="section-header">
+            Customised Schedule
+          </h3>
+          <p class="section-description">
+            Set your available hours and define gaps between bookings to suit your workflow. Our flexible scheduling
+            options
+            let you control when and how customers can book your services.
+          </p>
+        </div>
       </section>
-      <section class="content-row">
-        <div class="icon">
-          <span class="material-symbols-outlined">
-            attach_money
-          </span>
+      <section class="content-row left">
+        <div class="content-text">
+          <div class="icon">
+            <span class="material-symbols-outlined">
+              attach_money
+            </span>
+          </div>
+          <h3 class="section-header">
+            Payment Management
+          </h3>
+          <p class="section-description">
+            Process payments seamlessly through our integrated platform. Customers select their preferred time slot,
+            services,
+            and duration. Need to cancel? Simply click to cancel appointments and automatically process customer
+            refunds.
+          </p>
         </div>
-        <h3 class="section-header">
-          Payment Management
-        </h3>
-        <p class="section-description">
-          Process payments seamlessly through our integrated platform. Customers select their preferred time slot,
-          services,
-          and duration. Need to cancel? Simply click to cancel appointments and automatically process customer refunds.
-        </p>
+        <div class="content-image">
+          <img src="../../../public/confirmation-booking.png" alt="appointments"
+            style="background-size: cover; width: 100%; height: 100%;">
+        </div>
       </section>
     </div>
 
@@ -208,6 +227,24 @@ const navigate = (path) => {
 
     .content-row {
       padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      width: 100%;
+
+      .content-text {
+        flex: 1;
+      }
+
+      .content-image {
+        width: 350px;
+        height: auto;
+        background: linear-gradient(135deg, #8a19fa, #A930E4);
+        border-radius: 5px;
+        opacity: 0.8;
+        display: none;
+        flex-shrink: 0;
+      }
 
       .icon {
         display: flex;
@@ -221,12 +258,11 @@ const navigate = (path) => {
         span {
           font-size: 40px;
         }
-
       }
 
       .section-header {
-        font-size: 60px;
-        line-height: 65px;
+        font-size: clamp(32px, 5vw, 60px);
+        line-height: 1.1em;
         font-weight: 700;
         color: #0f1d46;
         margin-bottom: 30px;
@@ -234,7 +270,7 @@ const navigate = (path) => {
 
       .section-description {
         font-weight: 400;
-        font-size: 16px;
+        font-size: clamp(14px, 2vw, 16px);
         line-height: 1.8em;
         font-family: 'Rubik', sans-serif;
         color: rgba(15, 29, 70, 0.6);
@@ -243,13 +279,26 @@ const navigate = (path) => {
   }
 }
 
+@media screen and (min-width: 768px) {
+  .landing-conatiner .content-container .content-row .content-image {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .landing-conatiner .content-container .content-row {
+    padding: 15px;
+    flex-direction: column;
+  }
+}
+
 @media screen and (max-width: 530px) {
   .landing-conatiner .header-container .header-description .header-title {
     font-size: 30px;
   }
 
-  .landing-conatiner .content-container .content-row .section-header {
-    font-size: 30px;
+  .landing-conatiner .content-container .content-row {
+    padding: 10px;
   }
 }
 </style>
