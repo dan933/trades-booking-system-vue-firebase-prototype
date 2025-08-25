@@ -7,7 +7,7 @@ import { OrganisationService } from 'src/app/services/organisation/organisation.
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.scss']
+  styleUrls: ['./nav-bar.component.scss'],
 })
 export class NavBarComponent implements OnDestroy, OnInit {
   private auth: Auth = inject(Auth);
@@ -17,35 +17,43 @@ export class NavBarComponent implements OnDestroy, OnInit {
   isUserLoggedIn: boolean = false;
 
   //get organisation name from firestore
-  orgName: string = "";
+  orgName: string = '';
+  activeMenu: boolean = false;
 
   constructor(
     private organisationService: OrganisationService,
     private router: Router
   ) {
-    this.idTokenSubscription = this.idToken$.subscribe((token: string | null) => {
-      //handle idToken changes here. Note, that user will be null if there is no currently logged in user.
-      if (token) {
-        this.isUserLoggedIn = true;
-        //get organisation name
-        this.getOrganisationName();
-      } else {
-        this.isUserLoggedIn = false;
+    this.idTokenSubscription = this.idToken$.subscribe(
+      (token: string | null) => {
+        //handle idToken changes here. Note, that user will be null if there is no currently logged in user.
+        if (token) {
+          this.isUserLoggedIn = true;
+          //get organisation name
+          this.getOrganisationName();
+        } else {
+          this.isUserLoggedIn = false;
+        }
       }
-  })
-   }
-  ngOnInit(): void {
+    );
   }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.idTokenSubscription.unsubscribe();
   }
 
+  toggleMenu() {
+    this.activeMenu = !this.activeMenu;
+  }
+
   getOrganisationName() {
-    this.organisationService.getOrganisation().then((orgName: Object | undefined) => {
-      let { name } =  orgName as any;
-      this.orgName = name;
-    })
+    this.organisationService
+      .getOrganisation()
+      .then((orgName: Object | undefined) => {
+        let { name } = orgName as any;
+        this.orgName = name;
+      });
   }
 
   async signOut() {
