@@ -7,39 +7,47 @@
     </button>
     <span class="text-lg">Easy Book</span>
   </nav>
-  <div *ngIf="activeMenu" class="h-screen top-0 bg-primaryColour flex fixed z-[9999]"
+  <div *ngIf="activeMenu" class="h-screen top-0 bg-primaryColour flex fixed z-[1000]"
     [style]="{'opacity-30': activeMenu, 'opacity-0': !activeMenu}">
-    <div class="overflow-auto z-[9999] relative flex flex-col gap-2">
+    <div class="overflow-auto relative flex flex-col gap-2" style="z-index: 9999;">
       <button class="burger relative left-4" [class]="{'play': activeMenu}" (click)="toggleMenu()" style="top:10px;">
         <span class="bar"></span>
         <span class="bar"></span>
         <span class="bar"></span>
       </button>
-      <a routerLink="/dashboard" class="p-4 text-textColour hover:bg-primaryHover text-lg flex gap-1">
+      <a routerLink="/dashboard" class="p-4 text-textColour hover:bg-primaryHover text-base flex gap-1">
         <mat-icon>dashboard</mat-icon>
         <span>
           Dashboard
         </span>
       </a>
-      <a routerLink="/bookings" class="p-4 text-textColour hover:bg-primaryHover text-lg flex gap-1">
+      <a routerLink="/bookings" class="p-4 text-textColour hover:bg-primaryHover text-base flex gap-1">
         <mat-icon>event</mat-icon>
         <span>
           Bookings
         </span>
       </a>
-      <a routerLink="/customers" class="p-4 text-textColour hover:bg-primaryHover text-lg flex gap-1">
+      <a routerLink="/customers" class="p-4 text-textColour hover:bg-primaryHover text-base flex gap-1">
         <mat-icon>people</mat-icon>
         <span>
           Customers
         </span>
       </a>
-      <a routerLink="/settings" class="p-4 text-textColour hover:bg-primaryHover text-lg flex gap-1">
+      <a routerLink="/settings" class="p-4 text-textColour hover:bg-primaryHover text-base flex gap-1">
         <mat-icon>settings</mat-icon>
         <span>
           Settings
         </span>
       </a>
+      <div class="absolute bottom-0 w-full">
+        <button (click)="signOut()"
+          class="w-full text-left p-4 text-textColour hover:bg-primaryHover text-base flex gap-1">
+          <mat-icon>logout</mat-icon>
+          <span>
+            Logout
+          </span>
+        </button>
+      </div>
     </div>
     <div class="w-screen h-full bg-black fixed z-3 opacity-30" (click)="toggleMenu()"></div>
   </div>
-</div>

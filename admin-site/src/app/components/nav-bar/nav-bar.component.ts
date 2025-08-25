@@ -58,6 +58,7 @@ export class NavBarComponent implements OnDestroy, OnInit {
 
   async signOut() {
     await this.auth.signOut();
+    this.toggleMenu();
     this.router.navigate(['/auth']);
   }
 }
