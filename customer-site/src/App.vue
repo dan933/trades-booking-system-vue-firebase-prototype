@@ -26,7 +26,7 @@ const menuList = computed(() => {
     { name: 'Home', link: '#home' },
     { name: 'Customer', link: '#customer' },
     { name: 'Admin', link: '#admin' },
-    { name: 'Contact', link: '#contact' }
+    //{ name: 'Contact', link: '#contact' }
   ]
 
   return menu;

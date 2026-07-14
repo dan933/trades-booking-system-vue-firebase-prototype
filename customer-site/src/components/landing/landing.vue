@@ -120,10 +120,10 @@
         </div>
       </section>
     </div>
-    <div class="content-container" id="contact">
+    <!-- <div class="content-container" id="contact">
       <h2 class="section-heading">Contact Us</h2>
       <Contact />
-    </div>
+    </div> -->
   </div>
 
 </template>
